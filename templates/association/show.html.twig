@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Association{% endblock %}
+
+{% block body %}
+    <h1>Association</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id_association</th>
+                <td>{{ association.idAssociation }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ association.Nom }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ association.Email }}</td>
+            </tr>
+            <tr>
+                <th>Telephone</th>
+                <td>{{ association.Telephone }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ association.Description }}</td>
+            </tr>
+            <tr>
+                <th>Adresse</th>
+                <td>{{ association.Adresse }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_association_index') }}">back to list</a>
+
+    <a href="{{ path('app_association_edit', {'id_association': association.id_association}) }}">edit</a>
+
+    {{ include('association/_delete_form.html.twig') }}
+{% endblock %}

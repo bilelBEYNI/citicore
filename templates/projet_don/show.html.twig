@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ProjetDon{% endblock %}
+
+{% block body %}
+    <h1>ProjetDon</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id_Projet_Don</th>
+                <td>{{ projet_don.idProjetDon }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ projet_don.nom }}</td>
+            </tr>
+            <tr>
+                <th>MontantRecu</th>
+                <td>{{ projet_don.montantRecu }}</td>
+            </tr>
+            <tr>
+                <th>Objectif</th>
+                <td>{{ projet_don.objectif }}</td>
+            </tr>
+            <tr>
+                <th>Date_debut</th>
+                <td>{{ projet_don.dateDebut ? projet_don.dateDebut|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Date_fin</th>
+                <td>{{ projet_don.dateFin ? projet_don.dateFin|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Id_association</th>
+                <td>{{ projet_don.idAssociation }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_projet_don_index') }}">back to list</a>
+
+    <a href="{{ path('app_projet_don_edit', {'id_Projet_Don': projet_don.id_Projet_Don}) }}">edit</a>
+
+    {{ include('projet_don/_delete_form.html.twig') }}
+{% endblock %}

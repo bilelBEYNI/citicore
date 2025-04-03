@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Avi index{% endblock %}
+
+{% block body %}
+    <h1>Avi index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Avis_id</th>
+                <th>Utilisateur_id</th>
+                <th>Commentaire</th>
+                <th>Date_avis</th>
+                <th>Demande_id</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for avi in avis %}
+            <tr>
+                <td>{{ avi.avisId }}</td>
+                <td>{{ avi.UtilisateurId }}</td>
+                <td>{{ avi.commentaire }}</td>
+                <td>{{ avi.dateAvis ? avi.dateAvis|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ avi.DemandeId }}</td>
+                <td>
+                    <a href="{{ path('app_avi_show', {'avis_id': avi.avis_id}) }}">show</a>
+                    <a href="{{ path('app_avi_edit', {'avis_id': avi.avis_id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_avi_new') }}">Create new</a>
+{% endblock %}
