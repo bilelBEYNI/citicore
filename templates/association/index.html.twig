@@ -1,14 +1,14 @@
-{% extends 'base.html.twig' %}
-
+{% extends '/front/index.html.twig' %}
 {% block title %}Association index{% endblock %}
 
 {% block body %}
+{% include 'front/navbar.html.twig' %}
     <h1>Association index</h1>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Id_association</th>
+                
                 <th>Nom</th>
                 <th>Email</th>
                 <th>Telephone</th>
@@ -20,15 +20,15 @@
         <tbody>
         {% for association in associations %}
             <tr>
-                <td>{{ association.idAssociation }}</td>
+                
                 <td>{{ association.Nom }}</td>
                 <td>{{ association.Email }}</td>
                 <td>{{ association.Telephone }}</td>
                 <td>{{ association.Description }}</td>
                 <td>{{ association.Adresse }}</td>
                 <td>
-                    <a href="{{ path('app_association_show', {'id_association': association.id_association}) }}">show</a>
-                    <a href="{{ path('app_association_edit', {'id_association': association.id_association}) }}">edit</a>
+                    <a href="{{ path('app_association_show', {'id_association': association.id}) }}">show</a>
+                    <a href="{{ path('app_association_edit', {'id_association': association.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}

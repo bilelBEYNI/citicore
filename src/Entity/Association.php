@@ -18,7 +18,7 @@ class Association
     #[ORM\Column(type: 'integer')]
     private ?int $id_association = null;
 
-    public function getId_association(): ?int
+    public function getId(): ?int
     {
         return $this->id_association;
     }

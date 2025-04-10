@@ -1,8 +1,8 @@
-{% extends 'base.html.twig' %}
-
+{% extends '/front/index.html.twig' %}
 {% block title %}Edit Association{% endblock %}
 
 {% block body %}
+{% include 'front/navbar.html.twig' %}
     <h1>Edit Association</h1>
 
     {{ include('association/_form.html.twig', {'button_label': 'Update'}) }}

@@ -1,16 +1,14 @@
-{% extends 'base.html.twig' %}
+{% extends '/front/index.html.twig' %}
 
 {% block title %}ProjetDon{% endblock %}
 
 {% block body %}
+{% include 'front/navbar.html.twig' %}
     <h1>ProjetDon</h1>
 
     <table class="table">
         <tbody>
-            <tr>
-                <th>Id_Projet_Don</th>
-                <td>{{ projet_don.idProjetDon }}</td>
-            </tr>
+           
             <tr>
                 <th>Nom</th>
                 <td>{{ projet_don.nom }}</td>
@@ -32,8 +30,8 @@
                 <td>{{ projet_don.dateFin ? projet_don.dateFin|date('Y-m-d') : '' }}</td>
             </tr>
             <tr>
-                <th>Id_association</th>
-                <td>{{ projet_don.idAssociation }}</td>
+                <th>association</th>
+                <td>{{ projet_don.association.nom }}</td>
             </tr>
         </tbody>
     </table>

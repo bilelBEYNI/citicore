@@ -1,36 +1,39 @@
-{% extends 'base.html.twig' %}
+{% extends '/front/index.html.twig' %}
 
 {% block title %}ProjetDon index{% endblock %}
 
+
 {% block body %}
-    <h1>ProjetDon index</h1>
+{% include 'front/navbar.html.twig' %}
+    <h1>List des Projets </h1>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Id_Projet_Don</th>
+                
                 <th>Nom</th>
                 <th>MontantRecu</th>
                 <th>Objectif</th>
                 <th>Date_debut</th>
                 <th>Date_fin</th>
-                <th>Id_association</th>
+                <th>Association</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for projet_don in projet_dons %}
             <tr>
-                <td>{{ projet_don.idProjetDon }}</td>
+                
                 <td>{{ projet_don.nom }}</td>
                 <td>{{ projet_don.montantRecu }}</td>
                 <td>{{ projet_don.objectif }}</td>
                 <td>{{ projet_don.dateDebut ? projet_don.dateDebut|date('Y-m-d') : '' }}</td>
                 <td>{{ projet_don.dateFin ? projet_don.dateFin|date('Y-m-d') : '' }}</td>
-                <td>{{ projet_don.idAssociation }}</td>
+                <td>{{ projet_don.association.nom }}</td>
                 <td>
                     <a href="{{ path('app_projet_don_show', {'id_Projet_Don': projet_don.id_Projet_Don}) }}">show</a>
                     <a href="{{ path('app_projet_don_edit', {'id_Projet_Don': projet_don.id_Projet_Don}) }}">edit</a>
+                    <a href="{{ path('app_projet_don_new') }}">Create new</a>
                 </td>
             </tr>
         {% else %}
@@ -41,5 +44,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_projet_don_new') }}">Create new</a>
+    
 {% endblock %}

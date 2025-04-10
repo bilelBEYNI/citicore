@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Association;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -17,6 +18,10 @@ class ProjetDon
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id_Projet_Don = null;
+
+    #[ORM\ManyToOne(targetEntity: Association::class)]
+    #[ORM\JoinColumn(name: "id_association", referencedColumnName: "id_association")]
+    private ?Association $association = null;  // Relationship field
 
     public function getId_Projet_Don(): ?int
     {
@@ -44,7 +49,7 @@ class ProjetDon
     }
 
     #[ORM\Column(name: 'montantRecu',type: 'decimal', nullable: false)]
-    private ?float $montantRecu = null;
+    private ?float $montantRecu = 0;
 
     public function getMontantRecu(): ?float
     {
@@ -151,6 +156,16 @@ class ProjetDon
     {
         $this->id_association = $id_association;
 
+        return $this;
+    }
+    public function getAssociation(): ?Association
+    {
+        return $this->association;
+    }
+
+    public function setAssociation(?Association $association): self
+    {
+        $this->association = $association;
         return $this;
     }
 
