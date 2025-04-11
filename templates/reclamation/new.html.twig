@@ -1,11 +1,23 @@
-{% extends 'base.html.twig' %}
+{% extends '/front/index.html.twig' %}
 
-{% block title %}New Reclamation{% endblock %}
+{% block title %}Ajouter Réclamation{% endblock %}
 
 {% block body %}
-    <h1>Create new Reclamation</h1>
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">📝 Ajouter une Réclamation</h4>
+        </div>
+        <div class="card-body">
+            
+            {{ include('reclamation/_form.html.twig') }}
 
-    {{ include('reclamation/_form.html.twig') }}
+            <div class="d-flex justify-content-between">
+                <a href="{{ path('app_reclamation_index') }}" class="btn btn-secondary">↩️ Annuler</a>
+            </div>
 
-    <a href="{{ path('app_reclamation_index') }}">back to list</a>
+            
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -3,6 +3,7 @@
 namespace App\Controller\ReclamationController;
 
 use App\Entity\Reponse;
+use App\Entity\Reclamation;
 use App\Form\ReponseType;
 use App\Repository\ReponseRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,9 +24,12 @@ final class ReponseController extends AbstractController
     }
 
     #[Route('/new', name: 'app_reponse_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request,Reclamation $reclamation, EntityManagerInterface $entityManager): Response
     {
         $reponse = new Reponse();
+        $reponse->setReclamation($reclamation);
+        $reponse->setDateReponse(new \DateTime());
+
         $form = $this->createForm(ReponseType::class, $reponse);
         $form->handleRequest($request);
 

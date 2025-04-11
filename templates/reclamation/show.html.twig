@@ -1,46 +1,44 @@
-{% extends 'base.html.twig' %}
+{% extends '/front/index.html.twig' %}
 
-{% block title %}Reclamation{% endblock %}
+{% block title %}Détail Réclamation{% endblock %}
 
 {% block body %}
-    <h1>Reclamation</h1>
+{% include 'front/navbar.html.twig' %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">📌 Sujet : {{ reclamation.Sujet }}</h4>
+        </div>
+        <div class="card-body">
+            <p><strong>Message :</strong> {{ reclamation.Description }}</p>
+            <p><strong>Date :</strong> {{ reclamation.DateCreation ? reclamation.DateCreation|date('Y-m-d H:i:s') : '' }}</p>
+            <p><strong>Statut :</strong> 
+                {% if reclamation.reponses|length > 0 %}
+                    <span class="badge bg-success">Répondu</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">En attente</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>ID_Reclamation</th>
-                <td>{{ reclamation.IDReclamation }}</td>
-            </tr>
-            <tr>
-                <th>Sujet</th>
-                <td>{{ reclamation.Sujet }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ reclamation.Description }}</td>
-            </tr>
-            <tr>
-                <th>Date_Creation</th>
-                <td>{{ reclamation.DateCreation ? reclamation.DateCreation|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Date_Resolution</th>
-                <td>{{ reclamation.DateResolution ? reclamation.DateResolution|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Type_Reclamation</th>
-                <td>{{ reclamation.TypeReclamation }}</td>
-            </tr>
-            <tr>
-                <th>Cin_Utilisateur</th>
-                <td>{{ reclamation.CinUtilisateur }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="mt-4">
+        <h5 class="mb-3">💬 Réponses</h5>
 
-    <a href="{{ path('app_reclamation_index') }}">back to list</a>
+        {% if reclamation.reponses is not empty %}
+            {% for reponse in reclamation.reponses %}
+                <div class="alert alert-secondary animate__animated animate__fadeInUp">
+                    <p><strong>Réponse du {{ reponse.date_Reponse|date('d/m/Y') }} :</strong></p>
+                    <p>{{ reponse.Contenu }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">Aucune réponse pour cette réclamation.</p>
+        {% endif %}
+    </div>
 
-    <a href="{{ path('app_reclamation_edit', {'ID_Reclamation': reclamation.ID_Reclamation}) }}">edit</a>
-
-    {{ include('reclamation/_delete_form.html.twig') }}
+    <div class="mt-4">
+        <a href="{{ path('app_reclamation_index') }}" class="btn btn-secondary">⬅ Retour à la liste</a>
+    </div>
+</div>
 {% endblock %}
