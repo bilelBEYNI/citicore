@@ -1,4 +1,21 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_start(form, {'attr':{'novalidate':'novalidate'}}) }}
+
+{% for field in form %}
+    {% if field.vars.name != '_token' %}
+        <div class="row mb-3 align-items-center">
+            <label class="col-md-4 col-form-label text-md-end">
+                {{ field.vars.label|default(field.vars.name|capitalize) }}
+            </label>
+            <div class="col-md-8">
+                {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(field) }}
+            </div>
+        </div>
+    {% endif %}
+{% endfor %}
+
+<div class="text-center mt-4">
+    <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+</div>
+
 {{ form_end(form) }}

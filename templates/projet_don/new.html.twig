@@ -3,10 +3,18 @@
 {% block title %}New ProjetDon{% endblock %}
 
 {% block body %}
-{% include 'front/navbar.html.twig' %}
-    <h1>Create new ProjetDon</h1>
+    {% include 'front/navbar.html.twig' %}
 
-    {{ include('projet_don/_form.html.twig') }}
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Create New ProjetDon</h1>
 
-    <a href="{{ path('app_projet_don_index') }}">back to list</a>
+        <div class="mx-auto" style="max-width: 700px;">
+            <!-- Assuming '_form.html.twig' includes the form fields -->
+            {{ include('projet_don/_form.html.twig') }}
+        </div>
+
+        <div class="mt-3">
+            <a href="{{ path('app_projet_don_index') }}" class="btn btn-secondary">Back to list</a>
+        </div>
+    </div>
 {% endblock %}

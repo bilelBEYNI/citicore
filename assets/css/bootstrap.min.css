@@ -2477,7 +2477,7 @@ fieldset[disabled] a.btn {
 
 .btn-secondary.focus,
 .btn-secondary:focus {
-    box-shadow: 0 0 0 .2rem rgba(134, 142, 150, .5)
+    box-shadow: 0 0 0 .2rem rgba(255, 255, 255, 0.5)
 }
 
 .btn-secondary.disabled,
@@ -4442,7 +4442,9 @@ tbody.collapse.show {
     }
     .card-group .card:only-child .card-img-bottom {
         border-bottom-right-radius: .25rem;
-        border-bottom-left-radius: .25rem
+        width: 100px; /* Adjust the width of the logo */
+        height: auto; /* Adjust the height of the logo */
+        border-bottom-left-radius: .25rem;
     }
     .card-group .card:not(:first-child):not(:last-child):not(:only-child) {
         border-radius: 0
@@ -8647,6 +8649,7 @@ a.text-dark:hover {
 .invisible {
     visibility: hidden!important
 }
+
 
 
 /*# sourceMappingURL=bootstrap.min.css.map */

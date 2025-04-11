@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 use App\Entity\Association;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -35,6 +37,8 @@ class ProjetDon
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire.')]
+
     private ?string $nom = null;
 
     public function getNom(): ?string
@@ -49,6 +53,8 @@ class ProjetDon
     }
 
     #[ORM\Column(name: 'montantRecu',type: 'decimal', nullable: false)]
+    #[Assert\NotBlank(message: 'Le montant reçu est obligatoire.')]
+    #[Assert\Type(type: 'numeric', message: 'Le montant reçu doit être un nombre.')]
     private ?float $montantRecu = 0;
 
     public function getMontantRecu(): ?float
@@ -63,6 +69,8 @@ class ProjetDon
     }
 
     #[ORM\Column(type: 'decimal', nullable: false)]
+    #[Assert\NotBlank(message: 'L\'objectif est obligatoire.')]
+    #[Assert\Type(type: 'numeric', message: 'L\'objectif doit être un nombre.')]
     private ?float $objectif = null;
 
     public function getObjectif(): ?float
@@ -77,6 +85,8 @@ class ProjetDon
     }
 
     #[ORM\Column(type: 'date', nullable: false)]
+    #[Assert\NotBlank(message: 'La date de début est obligatoire.')]
+    #[Assert\Type(type: 'DateTimeInterface', message: 'La date de début doit être une date valide.')]
     private ?\DateTimeInterface $date_debut = null;
 
     public function getDate_debut(): ?\DateTimeInterface
@@ -91,6 +101,8 @@ class ProjetDon
     }
 
     #[ORM\Column(type: 'date', nullable: false)]
+    #[Assert\NotBlank(message: 'La date de fin est obligatoire.')]
+    #[Assert\Type(type: 'DateTimeInterface', message: 'La date de fin doit être une date valide.')]
     private ?\DateTimeInterface $date_fin = null;
 
     public function getDate_fin(): ?\DateTimeInterface
@@ -168,5 +180,6 @@ class ProjetDon
         $this->association = $association;
         return $this;
     }
+    
 
 }

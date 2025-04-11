@@ -6,6 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\AssociationRepository;
 
@@ -30,6 +31,7 @@ class Association
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "The name is required.")]
     private ?string $Nom = null;
 
     public function getNom(): ?string
@@ -44,6 +46,8 @@ class Association
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "The email is required.")]
+    #[Assert\Email(message: "Please provide a valid email address.")]
     private ?string $Email = null;
 
     public function getEmail(): ?string
@@ -58,6 +62,15 @@ class Association
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "The telephone is required.")]
+    #[Assert\Length(
+        max: 8,
+        maxMessage: "The telephone number cannot exceed 8 characters."
+    )]
+    #[Assert\Regex(
+        pattern: "/^\d+$/",
+        message: "The telephone number must contain only digits."
+    )]
     private ?string $Telephone = null;
 
     public function getTelephone(): ?string
@@ -72,6 +85,7 @@ class Association
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: "The description is required.")]
     private ?string $Description = null;
 
     public function getDescription(): ?string
@@ -86,6 +100,11 @@ class Association
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: "The address is required.")]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "The address cannot exceed 255 characters."
+    )]
     private ?string $Adresse = null;
 
     public function getAdresse(): ?string
