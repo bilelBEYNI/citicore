@@ -1,0 +1,51 @@
+{% extends '/front/index.html.twig' %}
+
+{% block title %}Nos Projets{% endblock %}
+
+{% block body %}
+    {% include 'front/navbar.html.twig' %}
+    
+    <!-- Add 'Nos Associations' Button -->
+    <div class="container mt-4">
+        <div class="text-right mb-4">
+            <a href="{{ path('front_projet_nosassociation') }}" class="btn btn-primary">
+                Nos Associations
+            </a>
+        </div>
+    </div>
+
+    
+
+        <h1 class="text-center mb-4">Nos Projets</h1>
+        <!-- Search Bar -->
+    <div class="container my-5">
+        <form method="get" action="{{ path('app_front_projet') }}">
+            <div class="input-group mb-4">
+                <input type="text" class="form-control" name="search" placeholder="Rechercher un projet" value="{{ app.request.query.get('search') }}">
+                <button class="btn btn-primary" type="submit">Rechercher</button>
+            </div>
+        </form>
+
+        <div class="row">
+            {% for projet in projets %}
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body d-flex flex-column align-items-center text-center">
+                            <h5 class="card-title">{{ projet.nom }}</h5>
+                            <p class="card-text"><strong>Objectif :</strong> {{ projet.objectif }} DT</p>
+                            <p class="card-text"><strong>Montant reçu :</strong> {{ projet.montantRecu }} DT</p>
+                            <p class="card-text"><strong>Date de début :</strong> {{ projet.date_debut|date('d/m/Y') }}</p>
+                            <p class="card-text"><strong>Date de fin :</strong> {{ projet.date_fin|date('d/m/Y') }}</p>
+                            <!-- Link to the donation page for the project -->
+                            <a href="{{ path('app_projet_don_donner', {'id_Projet_Don': projet.id_Projet_Don}) }}" class="btn btn-primary">Faire un don</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <p class="text-center">Aucun projet disponible pour le moment.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

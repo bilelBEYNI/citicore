@@ -40,4 +40,13 @@ class ProjetDonRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    // Method to find projects by name (using LIKE for partial matching)
+    public function findByName(string $name)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.nom LIKE :name')
+            ->setParameter('name', '%' . $name . '%')
+            ->getQuery()
+            ->getResult();
+    }
 }

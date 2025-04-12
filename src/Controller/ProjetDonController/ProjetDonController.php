@@ -93,4 +93,34 @@ final class ProjetDonController extends AbstractController
 
         return $this->redirectToRoute('app_projet_don_index', [], Response::HTTP_SEE_OTHER);
     }
+    #[Route('/{id_Projet_Don}/donner', name: 'app_projet_don_donner', methods: ['GET', 'POST'])]
+public function donner(Request $request, ProjetDon $projetDon, EntityManagerInterface $entityManager): Response
+{
+    // Handle the donation form submission
+    if ($request->isMethod('POST')) {
+        // Retrieve the donation amount from the request
+        $montant = floatval($request->request->get('montant'));
+
+        // Ensure that the amount is positive
+        if ($montant > 0) {
+            // Update the montantRecu for the project
+            $projetDon->setMontantRecu($projetDon->getMontantRecu() + $montant);
+            $entityManager->flush(); // Save the updated amount
+
+            // Flash success message
+            $this->addFlash('success', 'Merci pour votre don !');
+
+            // Redirect to the same page to refresh the project details
+            return $this->redirectToRoute('app_projet_don_donner', ['id_Projet_Don' => $projetDon->getId_Projet_Don()]);
+        } else {
+            $this->addFlash('error', 'Le montant doit être supérieur à zéro.');
+        }
+    }
+
+    // Render the page with the donation form (assuming your front end handles it)
+    return $this->render('front_projet/donner.html.twig', [
+        'projet_don' => $projetDon,
+    ]);
+}
+
 }
