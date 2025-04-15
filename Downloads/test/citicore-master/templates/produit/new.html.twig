@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un Produit{% endblock %}
+
+{% block body %}
+  <div class="form-container">
+    <h1>Ajouter un Produit</h1>
+
+    {{ form_start(form) }}
+      {{ form_widget(form) }}
+      <button type="submit" class="btn btn-success mt-3">Ajouter</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_produit_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+  </div>
+{% endblock %}

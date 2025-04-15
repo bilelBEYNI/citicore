@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Utilisateur index{% endblock %}
+
+{% block body %}
+    <h1>Utilisateur index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Cin</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Num_Tel</th>
+                <th>Email</th>
+                <th>Genre</th>
+                <th>Photo_Utilisateur</th>
+                <th>Mot_De_Passe</th>
+                <th>Role</th>
+                <th>Token</th>
+                <th>Failed_attempts</th>
+                <th>Ban_time</th>
+                <th>Login_failures</th>
+                <th>Is_banned</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for utilisateur in utilisateurs %}
+            <tr>
+                <td>{{ utilisateur.Cin }}</td>
+                <td>{{ utilisateur.Nom }}</td>
+                <td>{{ utilisateur.Prenom }}</td>
+                <td>{{ utilisateur.NumTel }}</td>
+                <td>{{ utilisateur.Email }}</td>
+                <td>{{ utilisateur.Genre }}</td>
+                <td>{{ utilisateur.PhotoUtilisateur }}</td>
+                <td>{{ utilisateur.MotDePasse }}</td>
+                <td>{{ utilisateur.Role }}</td>
+                <td>{{ utilisateur.Token }}</td>
+                <td>{{ utilisateur.failedAttempts }}</td>
+                <td>{{ utilisateur.banTime ? utilisateur.banTime|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ utilisateur.loginFailures }}</td>
+                <td>{{ utilisateur.isBanned ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('app_utilisateur_show', {'Cin': utilisateur.Cin}) }}">show</a>
+                    <a href="{{ path('app_utilisateur_edit', {'Cin': utilisateur.Cin}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="15">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_utilisateur_new') }}">Create new</a>
+{% endblock %}

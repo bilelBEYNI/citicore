@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Commandes{% endblock %}
+
+{% block body %}
+<div class="container-custom animated fadeIn">
+    <h1 class="mb-4 header-title">Liste des Commandes</h1>
+
+    <table class="table table-hover table-bordered table-custom animated fadeInUp">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Date de commande</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for commande in commandes %}
+            <tr>
+                <td>{{ commande.id }}</td>
+                <td>{{ commande.dateCommande ? commande.dateCommande|date('d/m/Y') : '' }}</td>
+                <td>
+                  <span class="badge badge-status">{{ commande.status }}</span>
+                </td>
+                <td>
+                    
+                    <a href="{{ path('app_commande_edit', {'id': commande.id}) }}" class="btn btn-primary btn-sm me-1">Modifier</a>
+                    <form method="post" action="{{ path('app_commande_delete', {'id': commande.id}) }}" style="display:inline-block;" onsubmit="return confirm('Êtes-vous sûr ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ commande.id) }}">
+                        <button class="btn btn-danger btn-sm">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4" class="text-center">Aucune commande trouvée.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

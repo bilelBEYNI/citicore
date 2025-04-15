@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l'Avis{% endblock %}
+
+{% block body %}
+    <h1>Détails de l'Avis</h1>
+
+    <table class="table">
+        <tr>
+            <th>Auteur</th>
+            <td>{{ avi.auteur }}</td>
+        </tr>
+        <tr>
+            <th>Message</th>
+            <td>{{ avi.message }}</td>
+        </tr>
+        <tr>
+            <th>Note</th>
+            <td>{{ avi.note }}</td>
+        </tr>
+        <tr>
+            <th>Date de création</th>
+            <td>{{ avi.createdAt ? avi.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+        </tr>
+    </table>
+
+    <a href="{{ path('app_avi_edit', {'id': avi.id}) }}" class="btn btn-warning">Éditer</a>
+    <a href="{{ path('app_avi_index') }}" class="btn btn-secondary">Retour à la liste</a>
+{% endblock %}

@@ -1,0 +1,49 @@
+.container-custom {
+    margin-top: 20px;
+    animation: fadeInCustom 0.8s ease-in;
+}
+
+@keyframes fadeInCustom {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.header-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    animation: fadeInDownCustom 0.8s ease-out;
+    color: #5a189a;
+}
+
+@keyframes fadeInDownCustom {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.table-custom {
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table-custom th {
+    background-color: #7209b7;
+    color: white;
+}
+
+.btn-sm {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+
+.badge-status {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    border-radius: 20px;
+    background-color: #f0f0f0;
+    color: #333;
+    font-weight: bold;
+}

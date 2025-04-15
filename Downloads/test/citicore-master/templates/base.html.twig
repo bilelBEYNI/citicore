@@ -1,0 +1,52 @@
+{# templates/base.html.twig #}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset('front/css/produit/form-style.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/produit/commande.css') }}">
+     <link href="{{ asset('front/css/produit/shop.css') }}" rel="stylesheet">
+     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+     <!-- Dans base.html.twig -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+
+
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><text y='1.2em' font-size='96'>⚫️</text><text y='1.3em' x='0.2em' font-size='76' fill='#fff'>sf</text></svg>'">
+
+    {{ encore_entry_link_tags('app') }}
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/datepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/animate.min.css') }}">
+    
+    {# Inclusion du fichier CSS personnalisé #}
+    <link rel="stylesheet" href="{{ asset('front/css/produit/style.css') }}">
+
+    {% block stylesheets %}{% endblock %}
+    {% block javascripts %}
+      {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+  </head>
+  <body>
+    {# Ajout d'un header simple, vous pouvez le personnaliser #}
+    <header class="bg-primary text-white p-3">
+      <div class="container text-center">
+        <h1>{% block headerTitle %}Mon Application{% endblock %}</h1>
+      </div>
+    </header>
+
+    {# Zone principale qui sera remplacée par chaque template enfant #}
+    <main class="container mt-4">
+      {% block body %}{% endblock %}
+    </main>
+
+    <footer class="bg-light text-center text-muted py-3 mt-4">
+      <div class="container">
+        <p>© 2025 Mon Application - Tous droits réservés</p>
+      </div>
+    </footer>
+  </body>
+</html>

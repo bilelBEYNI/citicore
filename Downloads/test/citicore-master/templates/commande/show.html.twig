@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<div class="container">
+    <h1>Détails de la commande</h1>
+
+    <p><strong>Date :</strong> {{ commande.dateCommande|date('Y-m-d') }}</p>
+    <p><strong>Status :</strong> {{ commande.status }}</p>
+
+    <h3>Produits associés :</h3>
+    <ul>
+        {% for produit in commande.produits %}
+            <li>{{ produit.nom }}</li>
+        {% else %}
+            <li>Aucun produit.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ path('app_commande_index') }}" class="button">⬅ Retour</a>
+    <a href="{{ path('app_commande_edit', {'id': commande.id}) }}" class="button">✏️ Modifier</a>
+</div>
+{% endblock %}

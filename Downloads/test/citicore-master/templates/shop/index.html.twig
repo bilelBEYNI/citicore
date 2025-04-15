@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bienvenue dans notre Boutique{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        }
+        .shop-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #111827;
+        }
+        .product-card {
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            cursor: pointer;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .product-card img {
+            height: 250px;
+            object-fit: contain;
+            background: #f8f8f8;
+            padding: 10px;
+        }
+        .product-card h5 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+        .product-card .price {
+            color: #e63946;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .btn {
+            margin-top: 5px;
+        }
+        .btn.add-to-cart {
+            background-color: #111827;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .btn.add-to-cart:hover {
+            background-color: #374151;
+            transform: scale(1.05);
+        }
+        .btn-details {
+            background-color: #6c757d;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .btn-details:hover {
+            background-color: #5a6268;
+            transform: scale(1.05);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="shop-title">Bienvenue dans notre Shop</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">{{ message }}</div>
+    {% endfor %}
+
+    <div class="row">
+        {% for produit in produits %}
+            <div class="col-md-3 mb-4 d-flex align-items-stretch">
+                <div class="card product-card shadow-sm border-0">
+                    <img src="{{ asset('uploads/' ~ produit.photo) }}" class="card-img-top" alt="{{ produit.nom }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ produit.nom|upper }}</h5>
+                        <p class="price">{{ produit.prix }} €</p>
+                        <div class="btn-group w-100">
+                            <a href="#" class="btn btn-details w-50">Détails</a>
+                            <a href="{{ path('app_cart_add', {id: produit.id_produit}) }}" class="btn btn-success w-50">
+                                <i class="fas fa-shopping-bag me-2"></i> Ajouter
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p class="col-12 text-center">Aucun produit disponible.</p>
+        {% endfor %}
+    </div>
+
+    <div class="text-end mt-4">
+        <a href="{{ path('app_cart') }}" class="btn btn-primary">
+            🛒 Voir mon panier
+        </a>
+    </div>
+</div>
+{% endblock %}
