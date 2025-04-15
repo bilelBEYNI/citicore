@@ -65,14 +65,6 @@
         });
     });
 
-    document.getElementById('statusFilter').addEventListener('change', function () {
-        let status = this.value;
-        let rows = document.querySelectorAll('#reclamationsTable tbody tr');
-        rows.forEach(row => {
-            let badge = row.querySelector('.badge');
-            let currentStatus = badge.classList.contains('bg-success') ? 'repondu' : 'en_attente';
-            row.style.display = status === '' || status === currentStatus ? '' : 'none';
-        });
-    });
+    
 </script>
 {% endblock %}
