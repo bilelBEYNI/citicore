@@ -9,6 +9,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Association;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+
 
 use App\Repository\ProjetDonRepository;
 
@@ -180,6 +182,16 @@ class ProjetDon
         $this->association = $association;
         return $this;
     }
+    #[Assert\Callback]
+public function validateDates(ExecutionContextInterface $context, $payload)
+{
+    if ($this->date_debut && $this->date_fin && $this->date_debut > $this->date_fin) {
+        $context->buildViolation('La date de début doit être antérieure à la date de fin.')
+            ->atPath('date_debut')
+            ->addViolation();
+    }
+}
+
     
 
 

@@ -71,6 +71,12 @@ public function donner(Request $request, ProjetDonRepository $projetDonRepositor
             'associations' => $associations,
         ]);
     }
+    #[Route('/front/chatbot', name: 'chatbot_page')]
+public function chatbot(): Response
+{
+    return $this->render('front_projet/chatbot.html.twig');
+}
+
 
 
 }

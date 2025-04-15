@@ -12,7 +12,7 @@
         <form method="GET" action="{{ path('front_projet_nosassociation') }}" class="mb-4">
             <div class="input-group">
                 <input type="text" name="search" class="form-control" placeholder="Rechercher une association" value="{{ app.request.get('search') }}" />
-                <button class="btn btn-primary" type="submit">Rechercher</button>
+                <button class="btn btn-primary" type="submit">Rechercher 🔍</button>
             </div>
         </form>
 
@@ -37,5 +37,8 @@
                 Aucune association disponible pour le moment.
             </div>
         {% endif %}
+        <div class="mt-4">
+            <a href="{{ path('app_front_projet') }}" class="btn btn-secondary">Retour aux Projets</a>
+        </div>
     </div>
 {% endblock %}

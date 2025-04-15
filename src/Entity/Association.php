@@ -31,7 +31,7 @@ class Association
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
-    #[Assert\NotBlank(message: "The name is required.")]
+    #[Assert\NotBlank(message: "le nom est obligatoire..")]
     private ?string $Nom = null;
 
     public function getNom(): ?string
@@ -46,8 +46,8 @@ class Association
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
-    #[Assert\NotBlank(message: "The email is required.")]
-    #[Assert\Email(message: "Please provide a valid email address.")]
+    #[Assert\NotBlank(message: "email est obligatoire.")]
+    #[Assert\Email(message: "Veuillez fournir une adresse e-mail valide.")]
     private ?string $Email = null;
 
     public function getEmail(): ?string
@@ -62,14 +62,14 @@ class Association
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
-    #[Assert\NotBlank(message: "The telephone is required.")]
+    #[Assert\NotBlank(message: "Le numéro de téléphone est requis.")]
     #[Assert\Length(
         max: 8,
-        maxMessage: "The telephone number cannot exceed 8 characters."
+        maxMessage:"Le numéro de téléphone ne peut pas dépasser 8 caractères."
     )]
     #[Assert\Regex(
         pattern: "/^\d+$/",
-        message: "The telephone number must contain only digits."
+        message: "Le numéro de téléphone doit contenir uniquement des chiffres."
     )]
     private ?string $Telephone = null;
 
@@ -85,7 +85,7 @@ class Association
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Assert\NotBlank(message: "The description is required.")]
+    #[Assert\NotBlank(message: "La description est requise.")]
     private ?string $Description = null;
 
     public function getDescription(): ?string
@@ -100,10 +100,10 @@ class Association
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Assert\NotBlank(message: "The address is required.")]
+    #[Assert\NotBlank(message: "L'adresse est requise.")]
     #[Assert\Length(
         max: 255,
-        maxMessage: "The address cannot exceed 255 characters."
+        maxMessage: "L'adresse ne peut pas dépasser 255 caractères."
     )]
     private ?string $Adresse = null;
 

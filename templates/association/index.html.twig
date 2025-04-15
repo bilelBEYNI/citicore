@@ -7,6 +7,13 @@
 
     <div class="container my-5">
         <h1 class="text-center mb-4">Liste des Associations </h1>
+        <div class="text-center mb-4">
+        <h5>
+            <a href="{{ path('app_association_new') }}">
+                ✚ Ajouter une nouvelle association
+            </a>
+            </h5>
+        </div>
 
         <div class="table-responsive">
             <table class="table table-bordered table-striped">
@@ -31,7 +38,7 @@
                         <td>
                             <a href="{{ path('app_association_show', {'id_association': association.id}) }}" class="btn ">👁️</a> 
                             <a href="{{ path('app_association_edit', {'id_association': association.id}) }}" class="btn ">✏️</a>
-                            <a href="{{ path('app_association_new') }}" class="btn ">✚</a>
+                            
                             
                         </td>
                     </tr>
