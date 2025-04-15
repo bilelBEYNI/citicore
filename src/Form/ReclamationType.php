@@ -21,7 +21,7 @@ class ReclamationType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('Type_Reclamation')
-            ->add('Cin_Utilisateur')
+           
         ;
     }
 

@@ -1,42 +1,57 @@
 {% extends '/front/index.html.twig' %}
 
-{% block title %}Reponse index{% endblock %}
+{% block title %}Réponses{% endblock %}
 
 {% block body %}
-{% include 'front/navbar.html.twig' %}
-    <h1>Reponse index</h1>
+    {% include 'front/navbar.html.twig' %}
+    <div class="container mt-5">
+        <h2 class="mb-4 text-center">📋 Mes Réponses</h2>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID_Reponse</th>
-                <th>Contenu</th>
-                <th>Date_Reponse</th>
-                <th>Statut</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for reponse in reponses %}
-            <tr>
-                <td>{{ reponse.IDReponse }}</td>
-                <td>{{ reponse.Contenu }}</td>
-                <td>{{ reponse.DateReponse ? reponse.DateReponse|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ reponse.Statut }}</td>
-                <td>
-                    <a href="{{ path('app_reponse_show', {'ID_Reponse': reponse.ID_Reponse}) }}">show</a>
-                    <a href="{{ path('app_reponse_edit', {'ID_Reponse': reponse.ID_Reponse}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-     <a href="{{ path('app_reponse_new')  }}" class="btn btn-success">
-        ➕ Ajouter une reclamation
+  
     </a>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <input type="text" id="filterInput" class="form-control" placeholder="🔍 Filtrer par sujet...">
+            </div>
+            <table class="table table-hover" id="reponsesTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID Réponse</th>
+                        <th>Contenu</th>
+                        <th>Date Réponse</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reponse in reponses %}
+                        <tr>
+                            <td>{{ reponse.ID_Reponse }}</td>
+                            <td>{{ reponse.Contenu }}</td>
+                            <td>{{ reponse.DateReponse ? reponse.DateReponse|date('Y-m-d H:i:s') : '' }}</td>
+                            <td>{{ reponse.Statut }}</td>
+                            <td>
+                                <a href="{{ path('app_reponse_show', {'id': reponse.ID_Reponse}) }}" class="btn btn-sm btn-primary">👁 Voir</a>
+                                <a href="{{ path('app_reponse_edit', {'id': reponse.ID_Reponse}) }}" class="btn btn-sm btn-warning">✏️ Modifier</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="5">Aucune réponse trouvée.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+ 
+        </div>
+
+        <script>
+            document.getElementById('filterInput').addEventListener('keyup', function () {
+                let filter = this.value.toLowerCase();
+                let rows = document.querySelectorAll('#reponsesTable tbody tr');
+                rows.forEach(row => {
+                    let contenu = row.children[1].textContent.toLowerCase();
+                    row.style.display = contenu.includes(filter) ? '' : 'none';
+                });
+            });
+        </script>
+    </div>
 {% endblock %}

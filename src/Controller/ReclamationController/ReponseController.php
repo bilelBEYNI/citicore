@@ -23,30 +23,33 @@ final class ReponseController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_reponse_new', methods: ['GET', 'POST'])]
-    public function new(Request $request,Reclamation $reclamation, EntityManagerInterface $entityManager): Response
-    {
-        $reponse = new Reponse();
-        $reponse->setReclamation($reclamation);
-        $reponse->setDateReponse(new \DateTime());
+    #[Route('/reponses/new/{id}', name: 'app_reponse_new', methods: ['GET', 'POST'])]
+public function new(Request $request, Reclamation $reclamation, EntityManagerInterface $entityManager): Response
+{
+    $reponse = new Reponse();
+    $reponse->setReclamation($reclamation);
+    $reponse->setDateReponse(new \DateTime());
 
-        $form = $this->createForm(ReponseType::class, $reponse);
-        $form->handleRequest($request);
+    $form = $this->createForm(ReponseType::class, $reponse);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($reponse);
-            $entityManager->flush();
+    if ($form->isSubmitted() && $form->isValid()) {
+        // On n'a plus besoin de rechercher la réclamation par sujet
+        $entityManager->persist($reponse);
+        $entityManager->flush();
 
-            return $this->redirectToRoute('app_reponse_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('reponse/new.html.twig', [
-            'reponse' => $reponse,
-            'form' => $form,
-        ]);
+        return $this->redirectToRoute('app_reponse_index');
     }
 
-    #[Route('/{ID_Reponse}', name: 'app_reponse_show', methods: ['GET'])]
+    return $this->render('reponse/new.html.twig', [
+        'reponse' => $reponse,
+        'reclamation' => $reclamation,
+        'form' => $form->createView(),
+    ]);
+}
+
+
+    #[Route('/{id}', name: 'app_reponse_show', methods: ['GET'])]
     public function show(Reponse $reponse): Response
     {
         return $this->render('reponse/show.html.twig', [
@@ -54,7 +57,7 @@ final class ReponseController extends AbstractController
         ]);
     }
 
-    #[Route('/{ID_Reponse}/edit', name: 'app_reponse_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'app_reponse_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Reponse $reponse, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ReponseType::class, $reponse);
@@ -68,11 +71,11 @@ final class ReponseController extends AbstractController
 
         return $this->render('reponse/edit.html.twig', [
             'reponse' => $reponse,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
-    #[Route('/{ID_Reponse}', name: 'app_reponse_delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'app_reponse_delete', methods: ['POST'])]
     public function delete(Request $request, Reponse $reponse, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$reponse->getID_Reponse(), $request->getPayload()->getString('_token'))) {

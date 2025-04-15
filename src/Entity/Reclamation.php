@@ -6,8 +6,10 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\ReclamationRepository;
+use App\Entity\Reponse;
 
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
 #[ORM\Table(name: 'reclamation')]
@@ -17,6 +19,55 @@ class Reclamation
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'ID_Reclamation', type: 'integer')]
     private ?int $ID_Reclamation = null;
+
+    #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Le sujet ne doit pas être vide.')]
+    #[Assert\Length(
+        min: 5,
+        max: 255,
+        minMessage: 'Le sujet doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'Le sujet ne doit pas dépasser {{ limit }} caractères.'
+    )]
+    private ?string $Sujet = null;
+
+    #[ORM\Column(type: 'text', nullable: false)]
+    #[Assert\NotBlank(message: 'La description ne doit pas être vide.')]
+    #[Assert\Length(
+        min: 10,
+        minMessage: 'La description doit contenir au moins {{ limit }} caractères.'
+    )]
+    private ?string $Description = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $Date_Creation = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $Date_Resolution = null;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Choice(
+        choices: ['Marketplace', 'Demande', 'Evenement', 'Projetdon'],
+        message: 'Le type de réclamation doit être : Marketplace, Demande, Evenement ou Projetdon.'
+    )]
+    private ?string $Type_Reclamation = null;
+
+    #[ORM\Column(type: 'integer', nullable: false)]
+    #[Assert\NotNull(message: 'Le numéro CIN de l’utilisateur est requis.')]
+    #[Assert\Positive(message: 'Le CIN doit être un nombre positif.')]
+    #[Assert\Length(
+        min: 8,
+        max: 8,
+        exactMessage: 'Le CIN doit contenir exactement {{ limit }} chiffres.'
+    )]
+    private ?int $Cin_Utilisateur = null;
+
+    #[ORM\OneToMany(targetEntity: Reponse::class, mappedBy: 'reclamation')]
+    private Collection $reponses;
+
+    public function __construct()
+    {
+        $this->reponses = new ArrayCollection();
+    }
 
     public function getID_Reclamation(): ?int
     {
@@ -29,9 +80,6 @@ class Reclamation
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $Sujet = null;
-
     public function getSujet(): ?string
     {
         return $this->Sujet;
@@ -42,9 +90,6 @@ class Reclamation
         $this->Sujet = $Sujet;
         return $this;
     }
-
-    #[ORM\Column(type: 'text', nullable: false)]
-    private ?string $Description = null;
 
     public function getDescription(): ?string
     {
@@ -57,9 +102,6 @@ class Reclamation
         return $this;
     }
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $Date_Creation = null;
-
     public function getDate_Creation(): ?\DateTimeInterface
     {
         return $this->Date_Creation;
@@ -70,9 +112,6 @@ class Reclamation
         $this->Date_Creation = $Date_Creation;
         return $this;
     }
-
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $Date_Resolution = null;
 
     public function getDate_Resolution(): ?\DateTimeInterface
     {
@@ -85,9 +124,6 @@ class Reclamation
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Type_Reclamation = null;
-
     public function getType_Reclamation(): ?string
     {
         return $this->Type_Reclamation;
@@ -99,9 +135,6 @@ class Reclamation
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $Cin_Utilisateur = null;
-
     public function getCin_Utilisateur(): ?int
     {
         return $this->Cin_Utilisateur;
@@ -111,14 +144,6 @@ class Reclamation
     {
         $this->Cin_Utilisateur = $Cin_Utilisateur;
         return $this;
-    }
-
-    #[ORM\OneToMany(targetEntity: Reponse::class, mappedBy: 'reclamation')]
-    private Collection $reponses;
-
-    public function __construct()
-    {
-        $this->reponses = new ArrayCollection();
     }
 
     /**
@@ -146,7 +171,7 @@ class Reclamation
         return $this;
     }
 
-    // Getter and setter methods for camelCase properties
+    // Alias getter/setter (camelCase)
     public function getIDReclamation(): ?int
     {
         return $this->ID_Reclamation;
@@ -160,7 +185,6 @@ class Reclamation
     public function setDateCreation(?\DateTimeInterface $Date_Creation): static
     {
         $this->Date_Creation = $Date_Creation;
-
         return $this;
     }
 
@@ -172,7 +196,6 @@ class Reclamation
     public function setDateResolution(?\DateTimeInterface $Date_Resolution): static
     {
         $this->Date_Resolution = $Date_Resolution;
-
         return $this;
     }
 
@@ -184,7 +207,6 @@ class Reclamation
     public function setTypeReclamation(?string $Type_Reclamation): static
     {
         $this->Type_Reclamation = $Type_Reclamation;
-
         return $this;
     }
 
@@ -196,7 +218,6 @@ class Reclamation
     public function setCinUtilisateur(int $Cin_Utilisateur): static
     {
         $this->Cin_Utilisateur = $Cin_Utilisateur;
-
         return $this;
     }
 }

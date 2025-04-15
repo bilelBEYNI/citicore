@@ -6,6 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\ReponseRepository;
 
@@ -45,6 +46,7 @@ class Reponse
     }
 
     #[ORM\Column(type: 'text', nullable: false)]
+    #[Assert\NotBlank(message: "Le contenu de la réponse ne peut pas être vide.")]
     private ?string $Contenu = null;
 
     public function getContenu(): ?string
@@ -59,16 +61,16 @@ class Reponse
     }
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $Date_Reponse = null;
+    private ?\DateTimeInterface $DateReponse = null;
 
-    public function getDate_Reponse(): ?\DateTimeInterface
+    public function getDateReponse(): ?\DateTimeInterface
     {
-        return $this->Date_Reponse;
+        return $this->DateReponse;
     }
 
-    public function setDate_Reponse(?\DateTimeInterface $Date_Reponse): self
+    public function setDateReponse(?\DateTimeInterface $DateReponse): self
     {
-        $this->Date_Reponse = $Date_Reponse;
+        $this->DateReponse = $DateReponse;
         return $this;
     }
 
@@ -83,23 +85,6 @@ class Reponse
     public function setStatut(?string $Statut): self
     {
         $this->Statut = $Statut;
-        return $this;
-    }
-
-    public function getIDReponse(): ?int
-    {
-        return $this->ID_Reponse;
-    }
-
-    public function getDateReponse(): ?\DateTimeInterface
-    {
-        return $this->Date_Reponse;
-    }
-
-    public function setDateReponse(?\DateTimeInterface $Date_Reponse): static
-    {
-        $this->Date_Reponse = $Date_Reponse;
-
         return $this;
     }
 

@@ -1,4 +1,11 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
+{{ form_start(form, {'attr':{'novalidate':'novalidate'}}) }}    
+
+    {{ form_row(form.Sujet) }}
+    {{ form_row(form.Description) }}
+    {{ form_row(form.Type_Reclamation) }}
+    {{ form_row(form.Date_Creation) }}
+    {{ form_row(form.Date_Resolution) }}
+  
+
     <button type="submit" class="btn btn-success">💾 Enregistrer</button>
 {{ form_end(form) }}

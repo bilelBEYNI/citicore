@@ -29,20 +29,19 @@
                 <th>Date_Creation</th>
                 <th>Date_Resolution</th>
                 <th>Type_Reclamation</th>
-                <th>Cin_Utilisateur</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for reclamation in reclamations %}
             <tr>
-                <td>{{ reclamation.IDReclamation }}</td>
+                <td>{{ reclamation.ID_Reclamation }}</td>
                 <td>{{ reclamation.Sujet }}</td>
                 <td>{{ reclamation.Description }}</td>
-                <td>{{ reclamation.DateCreation ? reclamation.DateCreation|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ reclamation.DateResolution ? reclamation.DateResolution|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ reclamation.TypeReclamation }}</td>
-                <td>{{ reclamation.CinUtilisateur }}</td>
+                <td>{{ reclamation.Date_Creation ? reclamation.Date_Creation|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ reclamation.Date_Resolution ? reclamation.Date_Resolution|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ reclamation.Type_Reclamation }}</td>
+                
                 <td>
                     {% if reclamation.reponses|length > 0 %}
                         <span class="badge bg-success">Répondu</span>
@@ -60,10 +59,7 @@
         {% endfor %}
         </tbody>
     </table>
-    <a href="{{ path('app_reclamation_new')  }}" class="btn btn-success">
-        ➕ Ajouter une reclamation
-    </a>
-       
+    <a href="{{ path('app_reclamation_new')  }}" class="btn btn-success">➕ Ajouter une reclamation</a>
 </div>
 
 <script>

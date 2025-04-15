@@ -28,7 +28,7 @@
         {% if reclamation.reponses is not empty %}
             {% for reponse in reclamation.reponses %}
                 <div class="alert alert-secondary animate__animated animate__fadeInUp">
-                    <p><strong>Réponse du {{ reponse.date_Reponse|date('d/m/Y') }} :</strong></p>
+                    <p><strong>Réponse du {{ reponse.dateReponse|date('d/m/Y') }} :</strong></p>
                     <p>{{ reponse.Contenu }}</p>
                 </div>
             {% endfor %}
