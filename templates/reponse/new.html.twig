@@ -5,8 +5,9 @@
 {% block body %}
 <div class="container mt-5">
     <div class="card shadow">
+
         <div class="card-header bg-info text-white">
-            <h4 class="mb-0">➕ Ajouter une réponse à : <em>{{ reclamation.ID_Reclamation }}</em></h4>
+            <h4 class="mb-0">➕ Ajouter une réponse à : <em> {{ reclamation.ID_Reclamation }} </em></h4>
         </div>
         
         <div class="card-body">
@@ -17,8 +18,7 @@
                     <button type="submit" class="btn btn-info">💬 Répondre</button>
                     <a href="{{ path('app_reponse_index') }}" class="btn btn-secondary">⬅ Retour</a>
                 </div>
-            {{ form_end(form) }}
-            
+            {{ form_end(form) }}    
         </div>
     </div>
 </div>

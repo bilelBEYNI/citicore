@@ -3,34 +3,48 @@
 {% block title %}Détail Reponse{% endblock %}
 
 {% block body %}
-{% include 'front/navbar.html.twig' %}
-    <h1>Reponse</h1>
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">📩 Détail de la Réponse</h2>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>ID_Reponse</th>
-                <td>{{ reponse.ID_Reponse }}</td>
-            </tr>
-            <tr>
-                <th>Contenu</th>
-                <td>{{ reponse.Contenu }}</td>
-            </tr>
-            <tr>
-                <th>DateReponse</th>
-                <td>{{ reponse.DateReponse ? reponse.DateReponse|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Statut</th>
-                <td>{{ reponse.Statut }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="mt-4">
-        <a href="{{ path('app_reponse_index') }}" class="btn btn-secondary">⬅ Retour à la liste</a>
-
-        
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                    <tr>
+                        <th class="bg-light">🆔 ID</th>
+                        <td>{{ reponse.ID_Reponse }}</td>
+                    </tr>
+                    <tr>
+                        <th class="bg-light">✉️ Contenu</th>
+                        <td>{{ reponse.Contenu }}</td>
+                    </tr>
+                    <tr>
+                        <th class="bg-light">📅 Date de Réponse</th>
+                        <td>{{ reponse.DateReponse ? reponse.DateReponse|date('Y-m-d H:i:s') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="bg-light">📌 Statut</th>
+                        <td>
+                            {% if reponse.Statut == 'Résolue' %}
+                                <span class="badge bg-success">Résolue</span>
+                            {% elseif reponse.Statut == 'En attente' %}
+                                <span class="badge bg-warning text-dark">En attente</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ reponse.Statut }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-    {{ include('reponse/_delete_form.html.twig') }}
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a href="{{ path('app_reponse_index') }}" class="btn btn-outline-primary">
+            ⬅ Retour à la liste
+        </a>
+
+        {{ include('reponse/_delete_form.html.twig') }}
+    </div>
+</div>
 {% endblock %}
