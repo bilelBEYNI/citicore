@@ -1,0 +1,115 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}Réponses{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+
+    {% if app.session.flashbag.has('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ app.session.flashbag.get('success')[0] }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-center">📋 Mes Réponses</h2>
+
+        <form id="selectReclamationForm" class="d-flex" method="get" onsubmit="return redirectToReponseNew();">
+            <select id="reclamationSujetSelect" class="form-select me-2" name="reclamation_id" required>
+                <option value="" disabled selected>🔽 Choisir un sujet</option>
+                {% for reclamation in reclamations %}
+                    <option value="{{ reclamation.ID_Reclamation }}">{{ reclamation.sujet }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-success" aria-label="Ajouter une réponse">Ajouter une réponse</button>
+        </form>
+    </div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-6">
+            <input type="text" id="filterInput" class="form-control" placeholder="🔍 Filtrer par sujet...">
+        </div>
+        <div class="col-md-4">
+            <select id="statusFilter" class="form-select">
+                <option value="">🔽 Tous les statuts</option>
+                <option value="repondu">Répondu</option>
+                <option value="en_attente">En attente</option>
+            </select>
+        </div>
+    </div>
+
+    <table class="table table-hover" id="reponsesTable">
+        <thead class="table-dark">
+            <tr>
+                <th>Sujet</th>
+                <th>Contenu</th>
+                <th>Date Réponse</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reponse in reponses %}
+                <tr>
+                    
+                    <td>{{ reponse.Contenu }}</td>
+                    <td>{{ reponse.Statut }}</td>
+                    <td>
+                        <a href="{{ path('app_reponse_show', {'id': reponse.ID_Reponse}) }}" class="btn btn-sm btn-primary">👁 Voir</a>
+                        <a href="{{ path('app_reponse_edit', {'id': reponse.ID_Reponse}) }}" class="btn btn-sm btn-warning">✏️ Modifier</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">Aucune réponse trouvée.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Filtrage par sujet et statut
+    const filterInput = document.getElementById('filterInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const rows = document.querySelectorAll('#reponsesTable tbody tr');
+
+    function applyFilters() {
+        const sujetFilter = filterInput.value.toLowerCase();
+        const selectedStatut = statusFilter.value.toLowerCase();
+
+        rows.forEach(row => {
+            const sujet = row.children[0].textContent.toLowerCase();
+            const statut = row.children[3].textContent.toLowerCase();
+
+            const matchSujet = sujet.includes(sujetFilter);
+            const matchStatut = selectedStatut === "" || statut === selectedStatut;
+
+            row.style.display = matchSujet && matchStatut ? "" : "none";
+        });
+    }
+
+    filterInput.addEventListener('keyup', applyFilters);
+    statusFilter.addEventListener('change', applyFilters);
+
+    // Redirection vers la route d'ajout de réponse avec l'ID sélectionné
+    function redirectToReponseNew() {
+        const select = document.getElementById('reclamationSujetSelect');
+        const selectedId = select.value;
+
+        if (selectedId) {
+            const url = "{{ path('app_reponse_new', {'id': 'REPLACE_ID'}) }}".replace('REPLACE_ID', selectedId);
+            window.location.href = url;
+        }
+        return false;
+    }
+</script>
+
+<style>
+    table.table-hover tbody tr:hover {
+        background-color: #f2f2f2;
+        transition: background-color 0.3s ease;
+    }
+</style>
+{% endblock %}

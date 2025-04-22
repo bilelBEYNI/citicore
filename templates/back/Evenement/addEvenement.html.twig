@@ -1,0 +1,71 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block body %}
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="w-50">
+        <h1 class="text-center mb-4">Ajouter un événement</h1>
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'return validateForm()'}}) }}
+            <div class="form-group">
+                {{ form_label(form.nom_evenement) }}
+                {{ form_widget(form.nom_evenement, {'attr': {'class': 'form-control', 'id': 'evenement_nom_evenement'}}) }}
+                <div class="alert alert-danger d-none" id="nomEvenementError"></div>
+            </div>
+            <div class="form-group">
+                {{ form_label(form.date_evenement) }}
+                {{ form_widget(form.date_evenement, {'attr': {'class': 'form-control', 'id': 'evenement_date_evenement'}}) }}
+                <div class="alert alert-danger d-none" id="dateEvenementError"></div>
+            </div>
+            <div class="form-group">
+                {{ form_label(form.lieu_evenement) }}
+                {{ form_widget(form.lieu_evenement, {'attr': {'class': 'form-control', 'id': 'evenement_lieu_evenement'}}) }}
+                <div class="alert alert-danger d-none" id="lieuEvenementError"></div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<script>
+    function validateForm() {
+        let valid = true;
+
+        // Vérification du champ Nom de l'événement
+        const nomEvenement = document.getElementById("evenement_nom_evenement").value.trim();
+        const nomEvenementError = document.getElementById("nomEvenementError");
+        if (nomEvenement === "") {
+            nomEvenementError.textContent = "Le nom de l'événement ne peut pas être vide.";
+            nomEvenementError.classList.remove('d-none');
+            valid = false;
+        } else {
+            nomEvenementError.classList.add('d-none');
+        }
+
+        // Vérification du champ Date de l'événement
+        const dateEvenement = document.getElementById("evenement_date_evenement").value;
+        const dateEvenementError = document.getElementById("dateEvenementError");
+        if (dateEvenement === "") {
+            dateEvenementError.textContent = "La date de l'événement est requise.";
+            dateEvenementError.classList.remove('d-none');
+            valid = false;
+        } else {
+            dateEvenementError.classList.add('d-none');
+        }
+
+        // Vérification du champ Lieu de l'événement
+        const lieuEvenement = document.getElementById("evenement_lieu_evenement").value.trim();
+        const lieuEvenementError = document.getElementById("lieuEvenementError");
+        if (lieuEvenement === "") {
+            lieuEvenementError.textContent = "Le lieu de l'événement est requis.";
+            lieuEvenementError.classList.remove('d-none');
+            valid = false;
+        } else {
+            lieuEvenementError.classList.add('d-none');
+        }
+
+        return valid; // Si toutes les vérifications passent, soumettre le formulaire
+    }
+</script>
+{% endblock %}

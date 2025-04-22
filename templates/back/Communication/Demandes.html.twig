@@ -1,0 +1,85 @@
+{% extends 'back/Dashboard.html.twig' %}
+{% block title %}Gestion des Demandes{% endblock %}
+
+{% block body %}
+<div id="layoutSidenav_content">
+    <main>
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">Liste des Demandes</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item active">Demandes</li>
+            </ol>
+
+             <!-- Carte des participants -->
+             <div class="col-xl-3 col-md-6">
+                <div class="card bg-primary text-white mb-4">
+                    <div class="card-body">
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <a class="small text-white stretched-link" href="#">View Details</a>
+                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-warning text-white mb-4">
+                    <div class="card-body">
+                       
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <a class="small text-white stretched-link" href="#">View Details</a>
+                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-4">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Utilisateur ID</th>
+                                <th scope="col">Contenu</th>
+                                <th scope="col">Date de la demande</th>
+                                <th scope="col">Statut</th>
+                                <th scope="col">Modifier</th>
+                                <th scope="col">Supprimer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for demande in demandes %}
+                                <tr>
+                                    <td>{{ demande.Demande_id }}</td>
+                                    <td>{{ demande.Utilisateur_id }}</td>
+                                    <td>{{ demande.contenu }}</td>
+                                    <td>{{ demande.date_demande|date('d/m/Y') }}</td>
+                                    <td>
+                                        <span class="badge bg-info">{{ demande.statut }}</span>
+                                    </td>
+                                    <td>
+                                        <a href="" class="btn btn-warning">Modifier</a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('app_demande_delete', {'id': demande.Demande_id}) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer cette demande ?')">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">
+                                        Aucune demande trouvée
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <a href="{{ path('app_demande_new') }}" class="btn btn-success mt-3">Ajouter une Demande</a>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

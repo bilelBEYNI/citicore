@@ -1,0 +1,25 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}Ajouter Réclamation{% endblock %}
+
+{% block body %}
+
+<div class="container mt-5">
+    <div class="card shadow">
+
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">📝 Ajouter une Réclamation</h4>
+        </div>
+
+        <div class="card-body">
+            
+            {{ include('back/Reclamation/Reclamation/_form.html.twig') }} 
+
+            <div class="d-flex justify-content-between">
+                <a href="{{ path('app_reclamation_index') }}" class="btn btn-secondary">↩️ Annuler</a>
+            </div> 
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}Réclamations{% endblock %}
+
+
+{% block body %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">📋 Mes Réclamations</h2>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="{{ path('app_reclamation_new') }}" class="btn btn-success">
+            ➕ Ajouter une réclamation
+        </a>
+        <div class="d-flex gap-2">
+            <input type="text" id="filterInput" class="form-control" placeholder="🔍 Filtrer par sujet...">
+            <select id="statusFilter" class="form-select">
+                <option value="">📂 Tous les statuts</option>
+                <option value="repondu">✅ Répondu</option>
+                <option value="en_attente">⏳ En attente</option>
+            </select>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover shadow-sm" id="reclamationsTable">
+        <thead class="table-dark">
+            <tr>
+                <th>Sujet</th>
+                <th>Description</th>
+                <th>Date de création</th>
+                <th>Date de résolution</th>
+                <th>Type</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for reclamation in reclamations %}
+            <tr>
+                <td>{{ reclamation.Sujet }}</td>
+                <td>{{ reclamation.Description }}</td>
+                <td>{{ reclamation.Date_Creation ? reclamation.Date_Creation|date('Y-m-d H:i') : '' }}</td>
+                <td>{{ reclamation.Date_Resolution ? reclamation.Date_Resolution|date('Y-m-d H:i') : '-' }}</td>
+                <td>{{ reclamation.Type_Reclamation }}</td>
+                <td>
+                 
+                </td>
+                <td>
+                    <a href="{{ path('app_reclamation_show', {'ID_Reclamation': reclamation.ID_Reclamation}) }}" class="btn btn-sm btn-outline-primary">👁 Voir</a>
+                    <a href="{{ path('app_reclamation_edit', {'ID_Reclamation': reclamation.ID_Reclamation}) }}" class="btn btn-sm btn-outline-warning">✏️ Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7" class="text-center text-muted">Aucune réclamation trouvée.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.getElementById('filterInput').addEventListener('keyup', function () {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#reclamationsTable tbody tr');
+        rows.forEach(row => {
+            let sujet = row.children[0].textContent.toLowerCase();
+            row.style.display = sujet.includes(filter) ? '' : 'none';
+        });
+    });
+
+    document.getElementById('statusFilter').addEventListener('change', function () {
+        let status = this.value;
+        let rows = document.querySelectorAll('#reclamationsTable tbody tr');
+        rows.forEach(row => {
+            let badge = row.querySelector('.badge');
+            let currentStatus = badge.classList.contains('bg-success') ? 'repondu' : 'en_attente';
+            let match = (status === '') || (status === currentStatus);
+
+            // On garde aussi le filtre texte actif
+            let sujet = row.children[0].textContent.toLowerCase();
+            let searchTerm = document.getElementById('filterInput').value.toLowerCase();
+            let matchesSearch = sujet.includes(searchTerm);
+
+            row.style.display = match && matchesSearch ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}

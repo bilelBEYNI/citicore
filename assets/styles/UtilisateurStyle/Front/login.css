@@ -1,0 +1,66 @@
+/* login.css */
+body {
+  background-color: #f0f0f0;
+  font-family: Arial, sans-serif;
+}
+
+/* La boîte de connexion : on conserve la structure et on fixe uniquement la largeur finale */
+.login-box {
+  background-color: #F8F9FA;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  /* Supprimez la valeur conflictuelle 300px pour la largeur, on garde celle de 800px */
+  width: 800px;
+  margin: auto;
+  height: 600px;
+}
+
+/* Titre centré avec une taille de texte augmentée et marge inférieure */
+h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 32px;  /* Taille du texte augmentée */
+}
+
+/* Ajustement des groupes d'entrée pour un positionnement centré et espacés verticalement */
+.input-group {
+  margin: 40px auto;  /* Centrage horizontal et marge verticale réajustée */
+  width: 70%;         /* Largeur du groupe d'entrée (modifiable selon vos besoins) */
+}
+
+/* Facultatif : on peut appliquer un style sur le label pour changer la taille */
+.input-group label {
+  font-size: 18px;   /* Taille du texte des labels augmentée */
+  color: #2c3e50;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Champs de saisie en pleine largeur dans leur conteneur */
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;   /* Taille de texte un peu plus grande pour la saisie */
+}
+
+
+.buttonlogin {
+  display: block;
+  margin: 30px auto;
+  width: 50%;
+  padding: 12px;
+  background-color: #9b59b6;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-size: 18px;   /* Texte plus grand */
+}
+
+.buttonlogin:hover {
+  background-color: #D5B2D6;
+}

@@ -1,0 +1,24 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}Edit Reclamation{% endblock %}
+
+{% block body %}
+
+<div class="container mt-5">
+    <div class="card shadow">
+    
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0">✏️ Modifier la Réclamation</h4>
+        </div>
+
+        {{ include('reclamation/_form.html.twig') }}
+
+        <div class="d-flex justify-content-between">
+            <a href="{{ path('app_reclamation_index') }}" class="btn btn-secondary">⬅ Retour</a>
+        </div>
+
+        {{ include('reclamation/_delete_form.html.twig') }}
+
+    </div>
+    
+{% endblock %}

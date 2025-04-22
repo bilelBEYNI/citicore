@@ -1,0 +1,32 @@
+security:
+    password_hashers:
+        App\Entity\Utilisateur:
+            algorithm: plaintext # Utilise le mot de passe en clair (non recommandé en production)
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\Utilisateur
+                property: Cin
+
+    firewalls:
+        main:
+            lazy: true
+            provider: app_user_provider
+            form_login:
+                login_path: login
+                check_path: login
+                enable_csrf: true
+                csrf_token_id: authenticate
+                username_parameter: cin
+                password_parameter: password
+                default_target_path: /redirect-after-login # Redirection par défaut après connexion
+            logout:
+                path: logout
+                target: login
+
+    access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/participant, roles: ROLE_PARTICIPANT }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+
