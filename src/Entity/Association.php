@@ -39,7 +39,7 @@ class Association
         return $this->Nom;
     }
 
-    public function setNom(string $Nom): self
+    public function setNom(?string $Nom): self
     {
         $this->Nom = $Nom;
         return $this;
@@ -55,7 +55,7 @@ class Association
         return $this->Email;
     }
 
-    public function setEmail(string $Email): self
+    public function setEmail(?string $Email): self
     {
         $this->Email = $Email;
         return $this;
@@ -78,7 +78,7 @@ class Association
         return $this->Telephone;
     }
 
-    public function setTelephone(string $Telephone): self
+    public function setTelephone(?string $Telephone): self
     {
         $this->Telephone = $Telephone;
         return $this;
