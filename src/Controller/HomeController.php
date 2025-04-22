@@ -30,7 +30,7 @@ final class HomeController extends AbstractController
 
     private $entityManager;
 
-    // Injecter l'EntityManagerInterface dans le constructeur
+    
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -39,9 +39,9 @@ final class HomeController extends AbstractController
     #[Route('/login', name: 'login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // get the login error if there is one
+        
         $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
+       
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('Front/security/login.html.twig', [
@@ -53,7 +53,7 @@ final class HomeController extends AbstractController
     #[Route('/logout', name: 'logout')]
     public function logout(): void
     {
-        // Symfony gère automatiquement le logout
+        
     }
     
 }
