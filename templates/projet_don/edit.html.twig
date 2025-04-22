@@ -1,0 +1,13 @@
+{% extends '/front/index.html.twig' %}
+{% block title %}Edit ProjetDon{% endblock %}
+
+{% block body %}
+{% include 'front/navbar.html.twig' %}
+    <h1>Edit ProjetDon</h1>
+
+    {{ include('projet_don/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_projet_don_index') }}">back to list</a>
+
+    {{ include('projet_don/_delete_form.html.twig') }}
+{% endblock %}

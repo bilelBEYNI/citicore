@@ -1,0 +1,32 @@
+parameters:
+    env(WKHTMLTOPDF_PATH): ''
+    env(WKHTMLTOIMAGE_PATH): ''
+    uploads_directory: '%kernel.project_dir%/public/uploads'
+    stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
+    stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    knp_snappy.pdf.binary: '%env(WKHTMLTOPDF_PATH)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Entity\CartService:
+        public: true
+
+    App\service\DescriptionGenerator:
+        arguments:
+            $client: '@http_client'
+
+    Knp\Snappy\Pdf:
+        class: Knp\Snappy\Pdf
+        arguments:
+            - '%knp_snappy.pdf.binary%'

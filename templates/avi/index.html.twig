@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Avis{% endblock %}
+
+{% block body %}
+    <h1>Liste des Avis</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Auteur</th>
+                <th>Note</th>
+                <th>Message</th>
+                <th>Créé le</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for avi in avis %}
+            <tr>
+                <td>{{ avi.id }}</td>
+                <td>{{ avi.auteur }}</td>
+                <td>{{ avi.note }}</td>
+                <td>{{ avi.message }}</td>
+                <td>{{ avi.createdAt|date('Y-m-d H:i') }}</td>
+                <td>
+                    <a href="{{ path('app_avi_show', {'id': avi.id}) }}">Voir</a>
+                    <a href="{{ path('app_avi_edit', {'id': avi.id}) }}">Éditer</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">Aucun avis trouvé.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_avi_new') }}">Créer un nouvel avis</a>
+{% endblock %}

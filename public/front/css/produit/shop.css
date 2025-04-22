@@ -1,0 +1,320 @@
+/* public/front/css/produit/shop.css */
+
+/* ────────────────────────────────────────────────────── */
+/*  Corps de page                                        */
+/* ────────────────────────────────────────────────────── */
+body {
+    background-color: #f9faf8;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* ────────────────────────────────────────────────────── */
+/*  Titre principal                                      */
+/* ────────────────────────────────────────────────────── */
+.shop-title {
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    color: #0056B3;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ────────────────────────────────────────────────────── */
+/*  Carte produit                                        */
+/* ────────────────────────────────────────────────────── */
+.product-card {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.product-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* ────────────────────────────────────────────────────── */
+/*  Image produit                                        */
+/* ────────────────────────────────────────────────────── */
+.product-card img {
+    height: 250px;
+    width: 100%;
+    object-fit: cover;
+    background: #F8F9FA;
+    border-radius: 10px;
+}
+
+/* ────────────────────────────────────────────────────── */
+/*  Nom du produit                                       */
+/* ────────────────────────────────────────────────────── */
+.product-card h5 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-top: 20px;
+    color: #343A40;
+    text-transform: uppercase;
+}
+
+/* ────────────────────────────────────────────────────── */
+/*  Prix                                                 */
+/* ────────────────────────────────────────────────────── */
+.product-card .price {
+    color: #0056B3;
+    font-weight: bold;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+}
+
+/* ────────────────────────────────────────────────────── */
+/*  Groupe de boutons                                    */
+/* ────────────────────────────────────────────────────── */
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+}
+
+/* ────────────────────────────────────────────────────── */
+/*  Style général des boutons                            */
+/* ────────────────────────────────────────────────────── */
+.btn {
+    font-weight: 600;
+    padding: 14px 20px;
+    border-radius: 35px;
+    transition: transform 0.2s ease;
+    font-size: 1rem;
+    white-space: nowrap;
+    flex: 1;
+    text-align: center;
+}
+
+/* ────────────────────────────────────────────────────── */
+/*  Bouton Ajouter au panier                             */
+/* ────────────────────────────────────────────────────── */
+.btn.add-to-cart {
+    background-color: #0056B3;
+    color: #fff;
+    border: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn.add-to-cart:hover {
+    background-color: #003f7f;
+    transform: scale(1.05);
+}
+
+/* ────────────────────────────────────────────────────── */
+/*  Bouton Détails                                       */
+/* ────────────────────────────────────────────────────── */
+.btn-details {
+    background-color: #9B59B6;
+    color: #fff;
+    border: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-details:hover {
+    background-color: #D5B2D6;
+    color: #343A40;
+    transform: scale(1.05);
+}
+
+/* ────────────────────────────────────────────────────── */
+/*  Icône favoris (statique, sans effet actif)           */
+/* ────────────────────────────────────────────────────── */
+.fav-icon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    background: #F8F9FA;
+    border: 2px solid #9B59B6;
+    border-radius: 50%;
+    color: #9B59B6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    z-index: 10;
+}
+
+.fav-icon:hover {
+    background: #D5B2D6;
+    color: #F8F9FA;
+    transform: scale(1.1);
+    box-shadow: 0 0 8px rgba(149, 72, 180, 0.5);
+}
+
+/* Aucune classe .fav-icon.active ici */
+/* Aucun @keyframes heartbeat non plus */
+
+/* ────────────────────────────────────────────────────── */
+/*  Panier flottant                                      */
+/* ────────────────────────────────────────────────────── */
+.floating-cart {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #0056B3;
+    color: white;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    z-index: 999;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    transition: background-color 0.3s ease;
+}
+
+.floating-cart:hover {
+    background-color: #003f7f;
+    text-decoration: none;
+}
+
+.floating-cart .badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background-color: #e63946;
+    color: white;
+    border-radius: 50%;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* ────────────────────────────────────────────────────── */
+/*  Alertes flash                                        */
+/* ────────────────────────────────────────────────────── */
+.alert {
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+}
+
+/* ────────────────────────────────────────────────────── */
+/*  Responsive                                           */
+/* ────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .shop-title {
+        font-size: 2.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-group {
+        display: flex;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .floating-cart {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+
+    .floating-cart .badge {
+        padding: 4px 10px;
+        font-size: 12px;
+    }
+}
+/* Topbar */
+.topbar {
+    background-color: #fafafa;
+    padding: .5rem 0;
+  }
+  .topbar .top-links li + li,
+  .topbar .top-contact li + li {
+    margin-left: 1.5rem;
+  }
+  .topbar a {
+    color: #333;
+    text-decoration: none;
+    font-size: .9rem;
+  }
+  
+  /* Main navbar */
+  .navbar-main {
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,.1);
+    padding: .75rem 0;
+  }
+  .navbar-main .navbar-brand h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    color: #222;
+  }
+  .navbar-main .nav-link {
+    color: #333;
+    margin: 0 .5rem;
+    position: relative;
+    font-weight: 500;
+  }
+  .navbar-main .nav-link.active::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 3px;
+    background-color: #9b59b6; /* violet */
+    border-radius: 2px;
+  }
+  .btn-connect {
+    background-color: #9b59b6;
+    color: #fff;
+    padding: .5rem 1rem;
+    border-radius: .25rem;
+  }
+  .btn-connect:hover {
+    background-color: #8e44ad;
+  }
+  
+  /* Favoris button */
+  .btn-fav {
+    color: #9b59b6;
+    font-size: 1.25rem;
+  }
+  .fav-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background-color: #e74c3c;
+    color: #fff;
+    font-size: .7rem;
+    padding: 2px 5px;
+    border-radius: 50%;
+  }
+  
+  /* Mobile toggler icon color */
+  .navbar-toggler {
+    border: none;
+  }
+  .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='%239b59b6' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+  }
+  

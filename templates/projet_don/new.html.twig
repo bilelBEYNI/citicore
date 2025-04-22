@@ -1,0 +1,12 @@
+{% extends '/front/index.html.twig' %}
+
+{% block title %}New ProjetDon{% endblock %}
+
+{% block body %}
+{% include 'front/navbar.html.twig' %}
+    <h1>Create new ProjetDon</h1>
+
+    {{ include('projet_don/_form.html.twig') }}
+
+    <a href="{{ path('app_projet_don_index') }}">back to list</a>
+{% endblock %}

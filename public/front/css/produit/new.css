@@ -1,0 +1,190 @@
+/* Corps de la page */
+body {
+    background-color: #f8f9fa; /* Gris très clair */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Conteneur principal du formulaire */
+.form-container {
+    background-color: white;
+    max-width: 800px; /* Largeur optimale pour la lecture */
+    margin: 50px auto;
+    padding: 40px;
+    border-radius: 20px; /* Coins très arrondis */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Ombre plus douce et marquée */
+    border: 1px solid #e0e0e0;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Effet de survol sur le formulaire */
+.form-container:hover {
+    transform: translateY(-8px); /* Décalage vers le haut pour une sensation de profondeur */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); /* Ombre plus marquée au survol */
+}
+
+/* Titre principal */
+h1 {
+    color: #343a40; /* Gris foncé */
+    text-align: center;
+    font-size: 3rem; /* Taille de police très grande pour l'impact */
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+/* Ligne décorative sous le titre */
+h1::after {
+    content: "";
+    display: block;
+    width: 70px;
+    height: 4px;
+    background-color: #9B59B6; /* Mauve doux */
+    margin: 20px auto;
+    border-radius: 50px;
+}
+
+/* Styles de bouton général */
+.btn {
+    padding: 15px 30px; /* Boutons plus grands pour plus de confort */
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    transition: all 0.4s ease-in-out;
+    text-align: center;
+}
+
+/* Bouton de soumission (Ajouter un Produit) */
+.btn-success {
+    background-color: #9B59B6; /* Mauve doux */
+    color: white;
+    border: none;
+    margin-top: 30px;
+}
+
+.btn-success:hover {
+    background-color: #D5B2D6; /* Mauve clair */
+    transform: scale(1.05); /* Légère augmentation de la taille */
+}
+
+/* Bouton secondaire (Retour) */
+.btn-secondary {
+    background-color: #0056B3; /* Bleu principal */
+    color: white;
+    border: none;
+    margin-top: 20px;
+}
+
+.btn-secondary:hover {
+    background-color: #6CB2EB; /* Bleu clair */
+    color: #343A40; /* Gris foncé */
+    transform: scale(1.05); /* Zoom au survol */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Ombre marquée */
+}
+
+/* Effets d'ombre et survol */
+.btn:hover {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Champs de formulaire (input, textarea, select) */
+input, textarea, select {
+    width: 100%;
+    padding: 12px 20px; /* Plus de padding pour plus de confort */
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #F8F9FA; /* Gris très clair */
+    transition: all 0.3s ease;
+}
+
+/* Focus sur les champs de formulaire */
+input:focus, textarea:focus, select:focus {
+    border-color: #6CB2EB; /* Bordure bleue claire lors du focus */
+    background-color: white;
+    box-shadow: 0 0 10px rgba(108, 178, 235, 0.5); /* Ombre douce */
+}
+
+/* Placeholder des champs de formulaire */
+input::placeholder, textarea::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+/* Style des liens dans le formulaire */
+.form-container a {
+    color: #0056B3; /* Bleu principal */
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.form-container a:hover {
+    color: #6CB2EB; /* Bleu clair au survol */
+}
+
+/* Mise en page pour les petits écrans (responsive) */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 25px; /* Réduction des espacements sur mobile */
+    }
+
+    h1 {
+        font-size: 2rem; /* Réduction de la taille de la police pour le titre */
+    }
+
+    .btn, .form-container a {
+        font-size: 16px; /* Taille du texte réduite */
+        padding: 10px 20px; /* Plus petit padding sur mobile */
+    }
+}
+
+/* Animation de transition pour la page */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-container {
+    animation: fadeIn 0.6s ease-out; /* Animation pour faire apparaître la page avec fluidité */
+}
+/* Bouton secondaire (Retour) */
+.btn-secondary {
+    background-color: #0056B3; /* Bleu principal */
+    color: white;
+    border: none;
+    margin-top: 20px;
+    padding: 15px 30px; /* Un peu plus d'espace pour un bouton plus confortable */
+    border-radius: 12px; /* Coins arrondis */
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #6CB2EB; /* Bleu clair */
+    color: #343A40; /* Gris foncé */
+    transform: scale(1.05); /* Zoom au survol */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Ombre marquée */
+}
+
+/* Effet de survol plus marqué avec une transition douce */
+.btn-secondary:active {
+    background-color: #00408B; /* Bleu plus foncé lors du clic */
+    transform: scale(0.98); /* Un léger effet de compression */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Ombre plus marquée */
+}
