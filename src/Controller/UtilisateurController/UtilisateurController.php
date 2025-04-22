@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\UtilisateurController;
 
 use App\Entity\Utilisateur;
 use App\Repository\UtilisateurRepository;

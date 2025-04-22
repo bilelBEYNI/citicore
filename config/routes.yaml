@@ -8,8 +8,8 @@ home:
 
 admin_dashboard:
     path: /admin/dashboard
-    controller: App\Controller\LoginController::adminDashboard
+    controller: App\Controller\UtilisateurController\LoginController::adminDashboard
 
 participant_dashboard:
     path: /participant/dashboard
-    controller: App\Controller\LoginController::participantDashboard
+    controller: App\Controller\UtilisateurController\LoginController::participantDashboard
