@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Favoris{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="{{ asset('front/css/produit/details.css') }}?v=6.0">
+
+{% endblock %}
+
+{% block body %}
+<div class="container favoris-container">
+    <h1 class="favoris-title">💖 Mes Produits Favoris</h1>
+
+    {% if produits is not empty %}
+        {% for produit in produits %}
+            <div class="card favoris-card">
+                <div class="row g-0 align-items-center">
+                    <div class="col-md-2 text-center p-2">
+                        <img src="{{ asset('uploads/' ~ produit.photo) }}" class="img-fluid favoris-image" alt="{{ produit.nom }}">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <h5 class="card-title mb-1 favoris-nom">{{ produit.nom }}</h5>
+                            <p class="card-text mb-1">
+                                <span class="favoris-prix">{{ produit.prix }} DA</span>
+                                {% if produit.prix_original is defined and produit.prix_original > produit.prix %}
+                                    <span class="text-muted text-decoration-line-through ms-2">{{ produit.prix_original }} DA</span>
+                                    <span class="badge favoris-remise ms-2">
+                                        -{{ ((produit.prix_original - produit.prix) / produit.prix_original * 100)|round(0, 'floor') }}%
+                                    </span>
+                                {% endif %}
+                            </p>
+                
+                        </div>
+                    </div>
+                   <div class="col-md-4 text-end pe-4">
+    <a href="{{ path('app_favoris_toggle', {id: produit.id_produit}) }}" class="btn favoris-supprimer me-2 d-inline-flex align-items-center">
+        <i class="bi bi-heartbreak-fill me-1"></i> Supprimer
+    </a>
+    <a href="{{ path('app_cart_add', {id: produit.id_produit}) }}" class="btn favoris-panier d-inline-flex align-items-center">
+        <i class="bi bi-cart-plus-fill me-1"></i> Ajouter
+    </a>
+</div>
+
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center">
+            <p class="text-muted">Aucun produit favori pour l’instant.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ produit.nom|capitalize }} | Détails{% endblock %}
+
+{% block stylesheets %}
+<style>
+  /* Déclaration des couleurs du template */
+  :root {
+    --color-primary: #6CB2EB;
+    --color-primary-dark: #0056B3;
+    --color-secondary: #9B59B6;
+    --color-secondary-light: #D5B2D6;
+    --color-bg: #F8F9FA;
+    --color-text-light: #F8F9FA;
+    --color-text-dark: #0056B3;
+  }
+
+  /* Section produit */
+  #product-detail {
+    background-color: var(--color-bg);
+    padding: 60px 0;
+  }
+  #product-detail .product-img {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  }
+  #product-detail .product-title {
+    color: var(--color-text-dark);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0;
+  }
+
+  /* Icone favori */
+  #product-detail .fav-icon-inline i {
+    font-size: 1.8rem;
+    color: #ccc;
+    transition: color 0.3s;
+  }
+  #product-detail .fav-icon-inline.active i { color: var(--color-secondary); }
+  #product-detail .fav-icon-inline:hover i { color: var(--color-secondary); }
+
+  /* Prix / description */
+  #product-detail .product-price {
+    font-size: 1.8rem;
+    color: var(--color-secondary);
+    margin: 0.5rem 0;
+  }
+  #product-detail .product-description {
+    font-size: 1.1rem;
+    color: #343A40;
+  }
+
+  /* Base pour tous les boutons “modern” */
+  .btn-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background 0.3s, box-shadow 0.2s, transform 0.2s, color 0.3s;
+  }
+
+  /* Bouton Ajouter au panier */
+  .btn-shop-modern {
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border: none;
+  }
+  .btn-shop-modern:hover {
+    background-color: var(--color-primary-dark);
+    box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+  }
+  .btn-shop-modern:active {
+    background-color: var(--color-primary-dark);
+    box-shadow: 0 3px 4px rgba(0,0,0,0.1);
+    transform: translateY(1px);
+  }
+
+  /* Bouton Retour à la boutique */
+  .btn-retour-modern {
+    background-color: transparent;
+    color: var(--color-secondary);
+    border: 2px solid var(--color-secondary);
+  }
+  .btn-retour-modern:hover {
+    background-color: var(--color-secondary);
+    color: var(--color-text-light);
+    transform: translateY(-2px);
+  }
+  .btn-retour-modern:active {
+    background-color: var(--color-secondary);
+    transform: translateY(1px);
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<section id="product-detail">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-md-6">
+        <img src="{{ asset('uploads/' ~ produit.photo) }}"
+             alt="{{ produit.nom }}"
+             class="product-img">
+      </div>
+      <div class="col-md-6">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h1 class="product-title">{{ produit.nom }}</h1>
+          <a href="{{ path('app_favoris_toggle', {id: produit.id_produit}) }}"
+             class="fav-icon-inline {% if app.session.get('favoris') is defined and produit.id_produit in app.session.get('favoris') %}active{% endif %}"
+             title="Ajouter aux favoris">
+            <i class="fas fa-heart"></i>
+          </a>
+        </div>
+        <p class="product-price">{{ produit.prix }} DA</p>
+        <p class="product-description">{{ produit.description }}</p>
+
+        <a href="{{ path('app_cart_add', {id: produit.id_produit}) }}"
+           class="btn-modern btn-shop-modern mt-3">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Ajouter au panier</span>
+        </a>
+
+        <div class="mt-4">
+          <a href="{{ path('app_shop') }}"
+             class="btn-modern btn-retour-modern">
+            <i class="fas fa-arrow-left"></i>
+            <span>Retour à la boutique</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
