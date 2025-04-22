@@ -1,0 +1,56 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}Association index{% endblock %}
+
+{% block body %}
+    
+
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Liste des Associations </h1>
+        <div class="text-center mb-4">
+        <h5>
+            <a href="{{ path('app_association_new') }}">
+                ✚ Ajouter une nouvelle association
+            </a>
+            </h5>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Telephone</th>
+                        <th>Description</th>
+                        <th>Adresse</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for association in associations %}
+                    <tr>
+                        <td>{{ association.Nom }}</td>
+                        <td>{{ association.Email }}</td>
+                        <td>{{ association.Telephone }}</td>
+                        <td>{{ association.Description }}</td>
+                        <td>{{ association.Adresse }}</td>
+                        <td>
+                            <a href="{{ path('app_association_show', {'id_association': association.id}) }}" class="btn ">👁️</a> 
+                            <a href="{{ path('app_association_edit', {'id_association': association.id}) }}" class="btn ">✏️</a>
+                            
+                            
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">No records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        
+    </div>
+{% endblock %}

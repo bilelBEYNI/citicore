@@ -1,0 +1,44 @@
+{% extends '/front/index.html.twig' %}
+
+{% block title %}Nos Associations{% endblock %}
+
+{% block body %}
+    
+
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Nos Associations</h1>
+
+        <!-- Search Form -->
+        <form method="GET" action="{{ path('front_projet_nosassociation') }}" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Rechercher une association" value="{{ app.request.get('search') }}" />
+                <button class="btn btn-primary" type="submit">Rechercher 🔍</button>
+            </div>
+        </form>
+
+        {% if associations|length > 0 %}
+            <div class="row">
+                {% for association in associations %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100"> {# Added h-100 for equal height cards #}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ association.Nom }}</h5>
+                                <p class="card-text"><strong>Email:</strong> {{ association.Email }}</p>
+                                <p class="card-text"><strong>Téléphone:</strong> {{ association.Telephone }}</p>
+                                <p class="card-text"><strong>Description:</strong> {{ association.Description }}</p>
+                                <p class="card-text"><strong>Adresse:</strong> {{ association.Adresse }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                Aucune association disponible pour le moment.
+            </div>
+        {% endif %}
+        <div class="mt-4">
+            <a href="{{ path('app_front_projet') }}" class="btn btn-secondary">Retour aux Projets</a>
+        </div>
+    </div>
+{% endblock %}

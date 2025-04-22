@@ -1,0 +1,19 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}Edit ProjetDon{% endblock %}
+
+{% block body %}
+    
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Modifier le Projet</h1>
+
+        <div class="mx-auto" style="max-width: 700px;">
+            {{ include('back/ProjetDon/ProjetDon/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ path('app_projet_don_index') }}" class="btn btn-secondary">Retour⬅️</a>
+                {{ include('projet_don/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

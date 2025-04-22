@@ -1,0 +1,44 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}Association{% endblock %}
+
+{% block body %}
+    
+
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Détails de l'Association</h1>
+
+        <div class="mx-auto" style="max-width: 700px;">
+            <table class="table table-bordered table-striped">
+                <tbody>
+                    <tr>
+                        <th>Nom</th>
+                        <td>{{ association.Nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>{{ association.Email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Téléphone</th>
+                        <td>{{ association.Telephone }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ association.Description }}</td>
+                    </tr>
+                    <tr>
+                        <th>Adresse</th>
+                        <td>{{ association.Adresse }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-center mt-4 gap-2">
+                <a href="{{ path('app_association_index') }}" class="btn btn-secondary">Retour⬅️</a>
+                <a href="{{ path('app_association_edit', {'id_association': association.id}) }}" class="btn btn-secondary">Modifier✏️</a>
+                {{ include('back/ProjetDon/Association/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends '/front/index.html.twig' %}
+{% block title %}Faire un don{% endblock %}
+
+{% block body %}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Détails du Projet</h2>
+
+    <div class="card p-4 mx-auto" style="max-width: 700px;">
+        <h4 class="text-center">{{ projet_don.nom }}</h4>
+
+        <div class="mb-3 text-center">
+            <strong style="font-weight: bold;">Montant Reçu : </strong> {{ projet_don.montantRecu }} DT<br>
+            <strong style="font-weight: bold;">Objectif : </strong> {{ projet_don.objectif }} DT<br>
+            <strong>Date de début : </strong> {{ projet_don.date_debut|date('d/m/Y') }}<br>
+            <strong>Date de fin : </strong> {{ projet_don.date_fin|date('d/m/Y') }}<br>
+            <strong>Association : </strong> {{ projet_don.association.nom }}
+        </div>
+
+        <div class="progress mb-4" style="height: 25px;">
+            {% set progress = (projet_don.montantRecu / projet_don.objectif * 100)|round(0, 'floor') %}
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar"
+                style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">
+                {{ progress }}%
+            </div>
+        </div>
+
+        <form method="POST">
+            <div class="mb-3">
+                <label for="montant" class="form-label">Montant à donner (DT)</label>
+                <input type="number" class="form-control" name="montant" min="1" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Confirmer le don</button>
+        </form>
+        
+        
+    </div>
+    <div class="mt-4">
+            <a href="{{ path('app_front_projet') }}" class="btn btn-secondary">Retour aux Projets</a>
+        </div>
+</div>
+
+{% endblock %}

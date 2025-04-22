@@ -1,0 +1,61 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}ProjetDon index{% endblock %}
+
+
+{% block body %}
+    
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Liste des Projets</h1>
+        <div class="text-center mb-4">
+        <h5>
+    <a href="{{ path('app_projet_don_new') }}">
+        ✚ Ajouter un nouveau projet
+    </a>
+    </h5>
+</div>
+
+        <div class="mx-auto" style="max-width: 90%;">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>Nom</th>
+                        <th>Montant Reçu</th>
+                        <th>Objectif</th>
+                        <th>Date début</th>
+                        <th>Date fin</th>
+                        <th>Association</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for projet_don in projet_dons %}
+                    <tr>
+                        <td>{{ projet_don.nom }}</td>
+                        <td>{{ projet_don.montantRecu }}</td>
+                        <td>{{ projet_don.objectif }}</td>
+                        <td>{{ projet_don.dateDebut ? projet_don.dateDebut|date('Y-m-d') : '' }}</td>
+                        <td>{{ projet_don.dateFin ? projet_don.dateFin|date('Y-m-d') : '' }}</td>
+                        <td>{{ projet_don.association.nom }}</td>
+                        <td>
+                            <a href="{{ path('app_projet_don_show', {'id_Projet_Don': projet_don.id_Projet_Don}) }}" class="btn" title="View">
+    👁️
+</a>
+<a href="{{ path('app_projet_don_edit', {'id_Projet_Don': projet_don.id_Projet_Don}) }}" class="btn btn-sm btn-warning me-1" title="Edit">
+    ✏️
+</a>
+
+
+
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">No records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
