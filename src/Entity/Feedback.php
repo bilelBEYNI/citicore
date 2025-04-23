@@ -14,6 +14,7 @@ class Feedback
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
     private int $id_FeedBack;
+    
 
     #[ORM\Column(type: "text")]
     private string $contenu;
