@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Form\UtilisateurType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-
+use App\REpository\FeedbackRepository;
 class UtilisateurController extends AbstractController
 { 
     
@@ -55,7 +55,38 @@ public function utilisateurindex(UtilisateurRepository $utilisateurRepository, E
 
     
 
-    
+#[Route('/dashboard/utilisateur/ajouter/{Cin}', name: 'feedback_add')]
+public function AjouterFeedBack(string $Cin, Request $request, EntityManagerInterface $em, UtilisateurRepository $utilisateurRepository): Response
+{
+    // Récupérer l'organisateur à partir du Cin
+    $organisateur = $utilisateurRepository->findOneBy(['Cin' => $Cin]);
+
+    if (!$organisateur) {
+        throw $this->createNotFoundException('Organisateur non trouvé.');
+    }
+
+    // Créer un nouvel objet Feedback
+    $feedback = new Feedback();
+    $feedback->setOrganisateur($organisateur); // Associer l'organisateur au feedback
+
+    // Créer le formulaire pour le feedback
+    $form = $this->createForm(FeedbackType::class, $feedback);
+
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $em->persist($feedback);
+        $em->flush();
+
+        $this->addFlash('success', 'Feedback ajouté avec succès.');
+        return $this->redirectToRoute('participant_dashboard');
+    }
+
+    return $this->render('back/utilisateur/addfeedback.html.twig', [
+        'form' => $form->createView(),
+        'organisateur' => $organisateur,
+    ]);
+}
 
     #[Route('/dashboard/utilisateur/show/{CIN}', name: 'app_user_show')]
     public function show(int $CIN, UtilisateurRepository $utilisateurRepository): Response
