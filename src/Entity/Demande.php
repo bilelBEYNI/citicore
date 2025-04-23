@@ -3,7 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
 class Demande
@@ -19,11 +20,20 @@ class Demande
     #[ORM\Column(type: "text")]
     private string $contenu;
 
-    #[ORM\Column(type: "date")]
-    private \DateTimeInterface $date_demande;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $date_demande = null;
+
 
     #[ORM\Column(type: "string", length: 255)]
     private string $statut;
+
+    #[ORM\OneToMany(mappedBy: "demande", targetEntity: Avis::class)]
+    private Collection $avis;
+
+    public function __construct()
+    {
+        $this->avis = new ArrayCollection();
+    }
 
     public function getDemande_id()
     {
@@ -73,5 +83,15 @@ class Demande
     public function setStatut($value)
     {
         $this->statut = $value;
+    }
+
+    public function getAvis(): Collection
+    {
+        return $this->avis;
+    }
+
+    public function getFormattedDateDemande(): string
+    {
+        return $this->date_demande->format('Y-m-d'); // Format de la date (année-mois-jour)
     }
 }

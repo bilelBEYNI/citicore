@@ -2,82 +2,86 @@
 
 namespace App\Entity;
 
+use App\Repository\CommandeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Doctrine\Common\Collections\Collection;
-use App\Entity\Commande_produit;
-
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: CommandeRepository::class)]
+#[ORM\Table(name: 'commande')]
 class Commande
 {
-
     #[ORM\Id]
-    #[ORM\Column(type: "integer")]
-    private int $id_commande;
+    #[ORM\GeneratedValue]
+    #[ORM\Column(name: 'id_commande', type: 'integer')]
+    private ?int $id = null;
 
-    #[ORM\Column(type: "date")]
-    private \DateTimeInterface $date_commande;
+    #[ORM\Column(name: 'date_commande', type: 'date')]
+    private ?\DateTimeInterface $date_commande = null;
 
-    #[ORM\Column(type: "string", length: 200)]
-    private string $status;
+    #[ORM\Column(name: 'status', type: 'string', length: 200)]
+    private ?string $status = null;
 
-    public function getId_commande()
+    #[ORM\ManyToMany(targetEntity: Produit::class, mappedBy: 'commandes')]
+    private Collection $produits;
+
+    public function __construct()
     {
-        return $this->id_commande;
+        $this->produits = new ArrayCollection();
+        $this->status = 'en_attente'; // ✅ valeur par défaut
     }
 
-    public function setId_commande($value)
+    public function getId(): ?int
     {
-        $this->id_commande = $value;
+        return $this->id;
     }
 
-    public function getDate_commande()
+    public function getIdCommande(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getDateCommande(): ?\DateTimeInterface
     {
         return $this->date_commande;
     }
 
-    public function setDate_commande($value)
+    public function setDateCommande(\DateTimeInterface $date): self
     {
-        $this->date_commande = $value;
+        $this->date_commande = $date;
+        return $this;
     }
 
-    public function getStatus()
+    public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    public function setStatus($value)
+    public function setStatus(string $status): self
     {
-        $this->status = $value;
+        $this->status = $status;
+        return $this;
     }
 
-    #[ORM\OneToMany(mappedBy: "id_commande", targetEntity: Commande_produit::class)]
-    private Collection $commande_produits;
+    public function getProduits(): Collection
+    {
+        return $this->produits;
+    }
 
-        public function getCommande_produits(): Collection
-        {
-            return $this->commande_produits;
+    public function addProduit(Produit $produit): self
+    {
+        if (!$this->produits->contains($produit)) {
+            $this->produits->add($produit);
+            $produit->addCommande($this); // synchronisation inverse
         }
-    
-        public function addCommande_produit(Commande_produit $commande_produit): self
-        {
-            if (!$this->commande_produits->contains($commande_produit)) {
-                $this->commande_produits[] = $commande_produit;
-                $commande_produit->setId_commande($this);
-            }
-    
-            return $this;
+        return $this;
+    }
+
+    public function removeProduit(Produit $produit): self
+    {
+        if ($this->produits->removeElement($produit)) {
+            $produit->removeCommande($this); // synchronisation inverse
         }
-    
-        public function removeCommande_produit(Commande_produit $commande_produit): self
-        {
-            if ($this->commande_produits->removeElement($commande_produit)) {
-                // set the owning side to null (unless already changed)
-                if ($commande_produit->getId_commande() === $this) {
-                    $commande_produit->setId_commande(null);
-                }
-            }
-    
-            return $this;
-        }
+        return $this;
+    }
 }

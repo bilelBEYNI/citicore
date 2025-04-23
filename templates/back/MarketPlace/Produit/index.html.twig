@@ -1,0 +1,81 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}Catalogue des Produits{% endblock %}
+
+{% block body %}
+<div class="container-custom animated fadeIn">
+  <h1 class="mb-4 header-title">Catalogue des Produits</h1>
+  
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="{{ path('app_produit_new') }}" class="btn-add">Ajouter un Produit</a>
+    <input type="text" class="input-search" placeholder="Rechercher..." id="searchInput">
+  </div>
+
+  <table class="table table-hover table-bordered table-custom animated fadeInUp">
+    <thead class="thead-dark">
+      <tr>
+        <th>Nom</th>
+        <th>Description</th>
+        <th>Prix</th>
+        <th>Date d'ajout</th>
+        <th>Photo</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="produitTable">
+      {% for produit in produits %}
+        <tr>
+          <td>{{ produit.nom }}</td>
+          <td>{{ produit.description }}</td>
+          <td>{{ produit.prix }} €</td>
+          <td>{{ produit.date_ajout|date('d/m/Y') }}</td>
+          <td>
+            {% if produit.photo %}
+              <img src="{{ asset('uploads/' ~ produit.photo) }}" alt="Photo du produit" class="img-thumbnail" style="max-width:100px;">
+            {% else %}
+              <span class="text-muted">Aucun</span>
+            {% endif %}
+          </td>
+      <td>
+<a href="{{ path('app_produit_edit', {'id': produit.idProduit}) }}" class="btn btn-warning">Modifier</a>
+
+  <form method="post" action="{{ path('app_produit_delete', {'id': produit.idProduit}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');" class="d-inline-block">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.idProduit) }}">
+    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+  </form>
+</td>
+
+
+
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="7" class="text-center">Aucun produit trouvé.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const searchInput = document.getElementById('searchInput');
+  const tableRows = document.querySelectorAll('#produitTable tr');
+
+  searchInput.addEventListener('keyup', function () {
+    const filter = searchInput.value.toLowerCase();
+
+    tableRows.forEach(row => {
+      const rowText = row.innerText.toLowerCase();
+      if (rowText.includes(filter)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+});
+</script>
+
+
+{% endblock %}

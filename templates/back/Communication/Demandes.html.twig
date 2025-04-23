@@ -1,4 +1,5 @@
 {% extends 'back/Dashboard.html.twig' %}
+
 {% block title %}Gestion des Demandes{% endblock %}
 
 {% block body %}
@@ -10,76 +11,93 @@
                 <li class="breadcrumb-item active">Demandes</li>
             </ol>
 
-             <!-- Carte des participants -->
-             <div class="col-xl-3 col-md-6">
-                <div class="card bg-primary text-white mb-4">
-                    <div class="card-body">
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between">
-                        <a class="small text-white stretched-link" href="#">View Details</a>
-                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-    
-            <div class="col-xl-3 col-md-6">
-                <div class="card bg-warning text-white mb-4">
-                    <div class="card-body">
-                       
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between">
-                        <a class="small text-white stretched-link" href="#">View Details</a>
-                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
             <div class="container mt-4">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-dark">
+                <table class="table table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>CIN</th>
+                            <th>contenu</th>
+                            <th>Statut</th>
+                            <th>Détails</th>
+                            <th>Modifier</th>
+                            <th>Supprimer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for demande in demandes %}
                             <tr>
-                                <th scope="col">ID</th>
-                                <th scope="col">Utilisateur ID</th>
-                                <th scope="col">Contenu</th>
-                                <th scope="col">Date de la demande</th>
-                                <th scope="col">Statut</th>
-                                <th scope="col">Modifier</th>
-                                <th scope="col">Supprimer</th>
+                                <td>{{ demande.Demande_id }}</td>
+                                <td>{{ demande.Utilisateur_id }}</td>
+                                <td>{{ demande.contenu }}</td>
+                                <td>{{ demande.statut }}</td>
+                                
+                                <td>
+                                    <a href="{{ path('demande_avis', { id: demande.id }) }}" class="btn btn-info">
+                                        <i class="fas fa-eye"></i> Voir Avis
+                                    </a>
+                                </td>
+                                <td>
+                                    <form method="post" action="{{ path('app_demande_update_status', {'id': demande.Demande_id}) }}">
+                                        <select name="statut" class="form-select form-select-sm" onchange="this.form.submit()">
+                                            <option value="En attente" {{ demande.statut == 'En attente' ? 'selected' : '' }}>En attente</option>
+                                            <option value="Acceptée" {{ demande.statut == 'Acceptée' ? 'selected' : '' }}>Acceptée</option>
+                                            <option value="Refusée" {{ demande.statut == 'Refusée' ? 'selected' : '' }}>Refusée</option>
+                                        </select>
+                                        <input type="hidden" name="_token" value="{{ csrf_token('update_status' ~ demande.Demande_id) }}">
+                                    </form>
+                                </td>
+                                <td>
+                                    <a href="{{ path('app_demande_delete', {'id': demande.Demande_id}) }}" class="btn btn-sm btn-danger">🗑️</a>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {% for demande in demandes %}
-                                <tr>
-                                    <td>{{ demande.Demande_id }}</td>
-                                    <td>{{ demande.Utilisateur_id }}</td>
-                                    <td>{{ demande.contenu }}</td>
-                                    <td>{{ demande.date_demande|date('d/m/Y') }}</td>
-                                    <td>
-                                        <span class="badge bg-info">{{ demande.statut }}</span>
-                                    </td>
-                                    <td>
-                                        <a href="" class="btn btn-warning">Modifier</a>
-                                    </td>
-                                    <td>
-                                        <a href="{{ path('app_demande_delete', {'id': demande.Demande_id}) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer cette demande ?')">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% else %}
-                                <tr>
-                                    <td colspan="7" class="text-center text-muted">
-                                        Aucune demande trouvée
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <a href="{{ path('app_demande_new') }}" class="btn btn-success mt-3">Ajouter une Demande</a>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
 </div>
+
+<!-- Modal Bootstrap -->
+<div class="modal fade" id="avisModal" tabindex="-1" aria-labelledby="avisModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="avisModalLabel">Liste des Avis</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenu des avis chargé dynamiquement -->
+                <div id="avisContent">
+                    <p>Chargement des avis...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadAvis(demandeId) {
+        const avisContent = document.getElementById('avisContent');
+        avisContent.innerHTML = '<p>Chargement des avis...</p>';
+
+        fetch(`/demandes/${demandeId}/avis`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    avisContent.innerHTML = '<ul>' + data.map(avis => `<li>${avis.contenu}</li>`).join('') + '</ul>';
+                } else {
+                    avisContent.innerHTML = '<p>Aucun avis trouvé pour cette demande.</p>';
+                }
+            })
+            .catch(error => {
+                avisContent.innerHTML = '<p>Erreur lors du chargement des avis.</p>';
+                console.error('Erreur:', error);
+            });
+    }
+</script>
 {% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une Demande{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="text-center">Ajouter une Demande</h1>
+
+        {# Affichage des messages de succès ou d'erreur #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} mt-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {# Formulaire d'ajout de demande #}
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button type="submit" class="btn btn-primary mt-3">Ajouter</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

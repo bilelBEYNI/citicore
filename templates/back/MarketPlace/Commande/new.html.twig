@@ -1,0 +1,23 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}Nouvelle Commande{% endblock %}
+
+{% block body %}
+<div class="container mt-5 animated fadeIn">
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-4 animated fadeInDown">Créer une Nouvelle Commande</h2>
+
+            <div class="mb-4">
+                {{ include('back/MarketPlace/Commande/_form.html.twig') }}
+            </div>
+
+            <div class="text-center">
+                <a href="{{ path('app_commande_index') }}" class="btn btn-secondary">
+                    ← Retour à la liste
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
