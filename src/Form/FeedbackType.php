@@ -12,7 +12,7 @@ class FeedbackType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('content', TextareaType::class, [
+            ->add('contenu', TextareaType::class, [
                 'label' => 'Votre Feedback',
                 'attr' => ['rows' => 5],
             ]);

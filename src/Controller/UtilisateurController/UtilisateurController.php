@@ -10,8 +10,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Form\UtilisateurType;
+use App\Form\FeedbackType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\REpository\FeedbackRepository;
+use App\Entity\Feedback;
+
 class UtilisateurController extends AbstractController
 { 
     
@@ -56,7 +59,7 @@ public function utilisateurindex(UtilisateurRepository $utilisateurRepository, E
     
 
 #[Route('/dashboard/utilisateur/ajouter/{Cin}', name: 'feedback_add')]
-public function AjouterFeedBack(string $Cin, Request $request, EntityManagerInterface $em, UtilisateurRepository $utilisateurRepository): Response
+public function AjouterFeedBack(int $Cin, Request $request, EntityManagerInterface $em, UtilisateurRepository $utilisateurRepository): Response
 {
     // Récupérer l'organisateur à partir du Cin
     $organisateur = $utilisateurRepository->findOneBy(['Cin' => $Cin]);
@@ -64,12 +67,16 @@ public function AjouterFeedBack(string $Cin, Request $request, EntityManagerInte
     if (!$organisateur) {
         throw $this->createNotFoundException('Organisateur non trouvé.');
     }
-
+    
     // Créer un nouvel objet Feedback
     $feedback = new Feedback();
-    $feedback->setOrganisateur($organisateur); // Associer l'organisateur au feedback
-
-    // Créer le formulaire pour le feedback
+    $feedback->setCin_Organisateur($Cin); // Associer l'organisateur au feedback
+    $user = $this->getUser(); // Cela donne l'utilisateur actuellement connecté
+    if ($user) {
+        $feedback->setCin_Participant($user->getCin()); // Associer le participant au feedback
+    } else {
+        throw $this->createAccessDeniedException('Vous devez être connecté pour ajouter un feedback.');
+    }
     $form = $this->createForm(FeedbackType::class, $feedback);
 
     $form->handleRequest($request);
