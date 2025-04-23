@@ -61,19 +61,19 @@ public function utilisateurindex(UtilisateurRepository $utilisateurRepository, E
 #[Route('/dashboard/utilisateur/ajouter/{Cin}', name: 'feedback_add')]
 public function AjouterFeedBack(int $Cin, Request $request, EntityManagerInterface $em, UtilisateurRepository $utilisateurRepository): Response
 {
-    // Récupérer l'organisateur à partir du Cin
+    
     $organisateur = $utilisateurRepository->findOneBy(['Cin' => $Cin]);
 
     if (!$organisateur) {
         throw $this->createNotFoundException('Organisateur non trouvé.');
     }
     
-    // Créer un nouvel objet Feedback
+    
     $feedback = new Feedback();
-    $feedback->setCin_Organisateur($Cin); // Associer l'organisateur au feedback
-    $user = $this->getUser(); // Cela donne l'utilisateur actuellement connecté
+    $feedback->setCin_Organisateur($Cin); 
+    $user = $this->getUser();
     if ($user) {
-        $feedback->setCin_Participant($user->getCin()); // Associer le participant au feedback
+        $feedback->setCin_Participant($user->getCin()); 
     } else {
         throw $this->createAccessDeniedException('Vous devez être connecté pour ajouter un feedback.');
     }
@@ -202,6 +202,15 @@ public function add(Request $request, EntityManagerInterface $em): Response
         'form' => $form->createView(),
     ]);
 }
+#[Route('/dashboard/feedback', name: 'app_feedback_index')]
+public function showFeedbacks(FeedbackRepository $feedbackRepository): Response
+{
+    // Récupérer tous les feedbacks
+    $feedbacks = $feedbackRepository->findAll();
 
+    return $this->render('user/feedbacks.html.twig', [
+        'feedbacks' => $feedbacks
+    ]);
+}
 
 }

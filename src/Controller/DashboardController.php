@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\UtilisateurRepository;
+use App\Repository\FeedbackRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,14 +21,21 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/participant/dashboard', name: 'participant_dashboard')]
-    public function participantDashboard(): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_PARTICIPANT'); // Vérifie que l'utilisateur a le rôle ROLE_PARTICIPANT
+public function afficherOrganisateurs(UtilisateurRepository $utilisateurRepository, FeedbackRepository $feedbackRepository): Response
+{
+    // Récupérer les organisateurs
+    $organisateurs = $utilisateurRepository->findBy(['Role' => 'Organisateur']);
 
-        return $this->render('front/utilisateur/participant.html.twig', [
-            'controller_name' => 'Participant Dashboard',
-        ]);
+    // Récupérer les feedbacks pour chaque organisateur
+    foreach ($organisateurs as $organisateur) {
+        $organisateur->feedbacks = $feedbackRepository->findBy(['Cin_Organisateur' => $organisateur->getCin()]);
     }
+
+    return $this->render('front/utilisateur/participant.html.twig', [
+        'organisateurs' => $organisateurs,
+    ]);
+}
+
 
     #[Route('/redirect-after-login', name: 'redirect_after_login')]
     public function redirectAfterLogin(): Response
