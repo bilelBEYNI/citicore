@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Form\UtilisateurType;
 use App\Form\FeedbackType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\REpository\FeedbackRepository;
+use App\Repository\FeedbackRepository;
 use App\Entity\Feedback;
 
 class UtilisateurController extends AbstractController
@@ -205,7 +205,7 @@ public function add(Request $request, EntityManagerInterface $em): Response
 #[Route('/dashboard/feedback', name: 'app_feedback_index')]
 public function showFeedbacks(FeedbackRepository $feedbackRepository): Response
 {
-    // Récupérer tous les feedbacks
+    
     $feedbacks = $feedbackRepository->findAll();
 
     return $this->render('user/feedbacks.html.twig', [
