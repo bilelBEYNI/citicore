@@ -2,78 +2,101 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
-use App\Entity\Reclamation;
+use App\Repository\ReponseRepository;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ReponseRepository::class)]
+#[ORM\Table(name: 'reponse')]
 class Reponse
 {
-
     #[ORM\Id]
-    #[ORM\Column(type: "integer")]
-    private int $ID_Reponse;
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private ?int $ID_Reponse = null;
 
-        #[ORM\ManyToOne(targetEntity: Reclamation::class, inversedBy: "reponses")]
-    #[ORM\JoinColumn(name: 'ID_Reclamation', referencedColumnName: 'ID_Reclamation', onDelete: 'CASCADE')]
-    private Reclamation $ID_Reclamation;
-
-    #[ORM\Column(type: "text")]
-    private string $Contenu;
-
-    #[ORM\Column(type: "datetime")]
-    private \DateTimeInterface $Date_Reponse;
-
-    #[ORM\Column(type: "string", length: 20)]
-    private string $Statut;
-
-    public function getID_Reponse()
+    public function getID_Reponse(): ?int
     {
         return $this->ID_Reponse;
     }
 
-    public function setID_Reponse($value)
+    public function setID_Reponse(int $ID_Reponse): self
     {
-        $this->ID_Reponse = $value;
+        $this->ID_Reponse = $ID_Reponse;
+        return $this;
     }
 
-    public function getID_Reclamation()
+    #[ORM\ManyToOne(targetEntity: Reclamation::class, inversedBy: 'reponses')]
+    #[ORM\JoinColumn(name: 'ID_Reclamation', referencedColumnName: 'ID_Reclamation')]
+    #[Assert\NotNull(message: "La réclamation associée est obligatoire.")]
+    private ?Reclamation $reclamation = null;
+
+    public function getReclamation(): ?Reclamation
     {
-        return $this->ID_Reclamation;
+        return $this->reclamation;
     }
 
-    public function setID_Reclamation($value)
+    public function setReclamation(?Reclamation $reclamation): self
     {
-        $this->ID_Reclamation = $value;
+        $this->reclamation = $reclamation;
+        return $this;
     }
 
-    public function getContenu()
+    #[ORM\Column(type: 'text', nullable: false)]
+    #[Assert\NotBlank(message: "Le contenu de la réponse ne peut pas être vide.")]
+    #[Assert\Length(
+        min: 5,
+        minMessage: "Le contenu doit contenir au moins {{ limit }} caractères."
+    )]
+
+    private ?string $Contenu = null;
+
+    public function getContenu(): ?string
     {
         return $this->Contenu;
     }
 
-    public function setContenu($value)
+    public function setContenu(string $Contenu): self
     {
-        $this->Contenu = $value;
+        $this->Contenu = $Contenu;
+        return $this;
     }
 
-    public function getDate_Reponse()
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Assert\Type("\DateTimeInterface")]
+    private ?\DateTimeInterface $DateReponse = null;
+
+    public function getDateReponse(): ?\DateTimeInterface
     {
-        return $this->Date_Reponse;
+        return $this->DateReponse;
     }
 
-    public function setDate_Reponse($value)
+    public function setDateReponse(?\DateTimeInterface $DateReponse): self
     {
-        $this->Date_Reponse = $value;
+        $this->DateReponse = $DateReponse;
+        return $this;
     }
 
-    public function getStatut()
+    #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Choice(
+        choices: ['Traitée', 'En Cours', 'Rejetée'],
+        message: "Le statut doit être 'Traité', 'En attente' ou 'Refusé'."
+    )]
+    private ?string $Statut = null;
+
+    public function getStatut(): ?string
     {
         return $this->Statut;
     }
 
-    public function setStatut($value)
+    public function setStatut(?string $Statut): self
     {
-        $this->Statut = $value;
+        $this->Statut = $Statut;
+        return $this;
     }
+
 }

@@ -22,25 +22,33 @@ final class ReclamationController extends AbstractController
         ]);
     }
 
+
     #[Route('/new', name: 'app_reclamation_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $reclamation = new Reclamation();
-        $form = $this->createForm(ReclamationType::class, $reclamation);
-        $form->handleRequest($request);
+    $reclamation = new Reclamation();
+    $form = $this->createForm(ReclamationType::class, $reclamation);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($reclamation);
-            $entityManager->flush();
+    if ($form->isSubmitted() && $form->isValid()) {
+        // → 1. Récupération de l'utilisateur connecté
+        $user = $this->getUser();
 
-            return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
-        }
+        // → 2. Injection du CIN dans l'entité
+        $reclamation->setCin_Utilisateur($user->getCin());
 
-        return $this->render('back/Reclamation/Reclamation/new.html.twig', [
-            'reclamation' => $reclamation,
-            'form' => $form,
-        ]);
+        // → 3. Persistance et flush
+        $entityManager->persist($reclamation);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    return $this->render('back/Reclamation/Reclamation/new.html.twig', [
+        'reclamation' => $reclamation,
+        'form'        => $form,
+    ]);
+}
 
     #[Route('/{ID_Reclamation}', name: 'app_reclamation_show', methods: ['GET'])]
     public function show(Reclamation $reclamation): Response
