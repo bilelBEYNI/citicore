@@ -10,7 +10,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use App\Repository\UtilisateurRepository;
-
+use App\Entity\Feedback;
 
 class LoginController extends AbstractController
 {
