@@ -36,3 +36,7 @@ services:
         class: Knp\Snappy\Pdf
         arguments:
             - '%knp_snappy.pdf.binary%'    
+            
+    App\Controller\CommuniactionController\DemandeController:
+        tags: ['controller.service_arguments']
+        

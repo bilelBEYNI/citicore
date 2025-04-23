@@ -47,6 +47,8 @@ class LoginController extends AbstractController
     public function participantDashboard(): Response
     {
         $this->denyAccessUnlessGranted('ROLE_PARTICIPANT'); // Vérifie que l'utilisateur a le rôle ROLE_PARTICIPANT
+        //$user = $this->getUser(); // Récupère l'utilisateur connecté
+        //$cin = $user->getCin(); // Récupère le CIN de l'utilisateur connecté
 
         return $this->render('front/utilisateur/participant.html.twig', [
             'controller_name' => 'Participant Dashboard',
