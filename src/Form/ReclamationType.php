@@ -33,8 +33,8 @@ class ReclamationType extends AbstractType
                 'Projetdon' => 'Projetdon',
             ],
             'placeholder' => 'Choisissez un type',
-        ]);
-        //->add('Cin_utilisateur');
+        ])
+        ->add('Cin_utilisateur');
         
     }
 

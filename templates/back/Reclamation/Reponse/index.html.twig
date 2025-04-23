@@ -16,25 +16,35 @@
         <h2 class="text-center">📋 Mes Réponses</h2>
 
         <form id="selectReclamationForm" class="d-flex" method="get" onsubmit="return redirectToReponseNew();">
-            <select id="reclamationSujetSelect" class="form-select me-2" name="reclamation_id" required>
-                <option value="" disabled selected>🔽 Choisir un sujet</option>
-                {% for reclamation in reclamations %}
-                    <option value="{{ reclamation.ID_Reclamation }}">{{ reclamation.sujet }}</option>
-                {% endfor %}
-            </select>
+            <div class="mb-4">
+               
+                <select id="reclamationSujetSelect" class="form-select border-info shadow-sm" name="reclamation_id" required>
+                    <option value="" disabled selected>🔽 Choisir un sujet</option>
+                    {% for reclamation in reclamations %}
+                        <option value="{{ reclamation.ID_Reclamation }}">
+                            📝 {{ reclamation.sujet }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
             <button type="submit" class="btn btn-success" aria-label="Ajouter une réponse">Ajouter une réponse</button>
         </form>
     </div>
 
     <div class="row g-3 mb-3">
-        <div class="col-md-6">
-            <input type="text" id="filterInput" class="form-control" placeholder="🔍 Filtrer par sujet...">
+        <div class="col-md-6 mb-3 position-relative">
+            <input type="text" id="filterInput" class="form-control ps-5 shadow-sm border-info" placeholder="🔍 Filtrer par sujet...">
+            <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-info">
+                <i class="bi bi-search"></i> 
+            </span>
         </div>
-        <div class="col-md-4">
-            <select id="statusFilter" class="form-select">
-                <option value="">🔽 Tous les statuts</option>
-                <option value="repondu">Répondu</option>
-                <option value="en_attente">En attente</option>
+
+       <div class="col-md-4">
+            <select id="statusFilter" class="form-select status-select">
+              <option value="">🔍 Tous</option>
+              <option value="en cours">🕒 En Cours</option>
+              <option value="traitée">✅ Traitée</option>
+              <option value="rejetée">❌ Rejetée</option>
             </select>
         </div>
     </div>
@@ -47,13 +57,15 @@
                 <th>Date Réponse</th>
                 <th>Statut</th>
                 <th>Actions</th>
+                
             </tr>
         </thead>
         <tbody>
             {% for reponse in reponses %}
                 <tr>
-                    
+                    <td>{{ reponse.reclamation.sujet }}</td>
                     <td>{{ reponse.Contenu }}</td>
+                    <td>{{ reponse.DateReponse ? reponse.DateReponse|date('Y-m-d H:i:s') : '' }}</td>
                     <td>{{ reponse.Statut }}</td>
                     <td>
                         <a href="{{ path('app_reponse_show', {'id': reponse.ID_Reponse}) }}" class="btn btn-sm btn-primary">👁 Voir</a>
@@ -69,47 +81,108 @@
     </table>
 </div>
 
+
 <script>
-    // Filtrage par sujet et statut
-    const filterInput = document.getElementById('filterInput');
-    const statusFilter = document.getElementById('statusFilter');
-    const rows = document.querySelectorAll('#reponsesTable tbody tr');
+document.addEventListener('DOMContentLoaded', () => {
+    const filterInput   = document.getElementById('filterInput');
+    const statusFilter  = document.getElementById('statusFilter');
+    const tableBody     = document.querySelector('#reponsesTable tbody');
+
+    // On génère ici l’URL de redirection une seule fois
+    const reponseNewUrlTemplate = "{{ path('app_reponse_new', {'id': 'REPLACE_ID'}) }}";
 
     function applyFilters() {
-        const sujetFilter = filterInput.value.toLowerCase();
-        const selectedStatut = statusFilter.value.toLowerCase();
+        const sujetFilter   = filterInput.value.trim().toLowerCase();
+        const selectedStatut = statusFilter.value.trim().toLowerCase();
 
+        // On recalcule les lignes à chaque filtre, pour prendre en compte un éventuel reload
+        const rows = tableBody.querySelectorAll('tr');
         rows.forEach(row => {
-            const sujet = row.children[0].textContent.toLowerCase();
-            const statut = row.children[3].textContent.toLowerCase();
+            // Attention à bien pointer la bonne cellule : ici 0 = sujet, 3 = statut
+            const sujet  = row.cells[0].textContent.trim().toLowerCase();
+            const statut = row.cells[3].textContent.trim().toLowerCase();
 
-            const matchSujet = sujet.includes(sujetFilter);
-            const matchStatut = selectedStatut === "" || statut === selectedStatut;
+            const matchSujet   = sujet.includes(sujetFilter);
+            const matchStatut  = !selectedStatut || statut === selectedStatut;
 
-            row.style.display = matchSujet && matchStatut ? "" : "none";
+            row.style.display = (matchSujet && matchStatut) ? '' : 'none';
         });
     }
 
-    filterInput.addEventListener('keyup', applyFilters);
+    // Attache sur input et change
+    filterInput.addEventListener('input', applyFilters);
     statusFilter.addEventListener('change', applyFilters);
 
-    // Redirection vers la route d'ajout de réponse avec l'ID sélectionné
-    function redirectToReponseNew() {
-        const select = document.getElementById('reclamationSujetSelect');
+    // Fonction de redirection
+    window.redirectToReponseNew = () => {
+        const select     = document.getElementById('reclamationSujetSelect');
         const selectedId = select.value;
-
         if (selectedId) {
-            const url = "{{ path('app_reponse_new', {'id': 'REPLACE_ID'}) }}".replace('REPLACE_ID', selectedId);
+            const url = reponseNewUrlTemplate.replace('REPLACE_ID', selectedId);
             window.location.href = url;
         }
         return false;
-    }
+    };
+});
 </script>
+
 
 <style>
     table.table-hover tbody tr:hover {
         background-color: #f2f2f2;
         transition: background-color 0.3s ease;
     }
+    .status-select {
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+}
+
+.status-select:hover {
+  border-color: #999;
+}
+
+.status-select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0,123,255,0.5);
+}
+
+label.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.form-select {
+    border-radius: 10px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-select:focus {
+    border-color: #17a2b8;
+    box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
+}
+#filterInput {
+    border-radius: 10px;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+#filterInput:focus {
+    border-color: #17a2b8;
+    box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
+}
+
+.position-absolute i {
+    font-size: 1.1rem;
+}
+
+
 </style>
+
+
 {% endblock %}
+

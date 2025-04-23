@@ -31,6 +31,7 @@
                 <th>Type</th>
                 <th>Statut</th>
                 <th>Actions</th>
+               
             </tr>
         </thead>
         <tbody>
@@ -42,11 +43,15 @@
                 <td>{{ reclamation.Date_Resolution ? reclamation.Date_Resolution|date('Y-m-d H:i') : '-' }}</td>
                 <td>{{ reclamation.Type_Reclamation }}</td>
                 <td>
-                 
+                    {% if reclamation.reponses|length > 0 %}
+                        <span class="badge bg-success">Répondu</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">En attente</span>
+                    {% endif %}
                 </td>
                 <td>
-                    <a href="{{ path('app_reclamation_show', {'ID_Reclamation': reclamation.ID_Reclamation}) }}" class="btn btn-sm btn-outline-primary">👁 Voir</a>
-                    <a href="{{ path('app_reclamation_edit', {'ID_Reclamation': reclamation.ID_Reclamation}) }}" class="btn btn-sm btn-outline-warning">✏️ Modifier</a>
+                    <a href="{{ path('app_reclamation_show', {'ID_Reclamation': reclamation.ID_Reclamation}) }}" class="btn btn-sm btn-primary">👁 Voir</a>
+                    <a href="{{ path('app_reclamation_edit', {'ID_Reclamation': reclamation.ID_Reclamation}) }}" class="btn btn-sm btn-warning">✏️ Modifier</a>
                 </td>
             </tr>
         {% else %}

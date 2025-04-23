@@ -10,7 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Route('/reclamation')]
 final class ReclamationController extends AbstractController
@@ -23,29 +22,14 @@ final class ReclamationController extends AbstractController
         ]);
     }
 
-
     #[Route('/new', name: 'app_reclamation_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // (1) facultatif : n’autoriser que les participants
-        $this->denyAccessUnlessGranted('ROLE_PARTICIPANT');
-
         $reclamation = new Reclamation();
         $form = $this->createForm(ReclamationType::class, $reclamation);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // (2) récupérer l'utilisateur authentifié
-            $user = $this->getUser();
-            if (!$user) {
-                throw $this->createAccessDeniedException('Vous devez être connecté pour déposer une réclamation.');
-            }
-
-            // (3) injecter le CIN via le setter correct
-            //    Votre entité doit avoir setCinUtilisateur(), pas setCin_Utilisateur()
-            $reclamation->setCin_Utilisateur($user->getCin());
-
-            // (4) persister et flusher
             $entityManager->persist($reclamation);
             $entityManager->flush();
 
@@ -54,7 +38,7 @@ final class ReclamationController extends AbstractController
 
         return $this->render('back/Reclamation/Reclamation/new.html.twig', [
             'reclamation' => $reclamation,
-            'form'        => $form->createView(),
+            'form' => $form,
         ]);
     }
 
