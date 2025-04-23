@@ -11,19 +11,18 @@ class Feedback
 {
 
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
     private int $id_FeedBack;
 
     #[ORM\Column(type: "text")]
     private string $contenu;
 
-        #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "feedbacks")]
-    #[ORM\JoinColumn(name: 'Cin_Participant', referencedColumnName: 'Cin', onDelete: 'CASCADE')]
-    private Utilisateur $Cin_Participant;
+    #[ORM\Column(type: "integer")]     
+    private int $Cin_Participant;
 
-        #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "feedbacks")]
-    #[ORM\JoinColumn(name: 'Cin_Organisateur', referencedColumnName: 'Cin', onDelete: 'CASCADE')]
-    private Utilisateur $Cin_Organisateur;
+    #[ORM\Column(type: "integer")]
+    private int $Cin_Organisateur;
 
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $date_creation;
