@@ -15,17 +15,29 @@ final class DashboardController extends AbstractController
             'controller_name' => 'DashboardController',
         ]);
     }
-
+    
+   
+/*
     #[Route('/dashboard/utilisateur', name: 'utilisateur')]
     public function charts(): Response
     {
         return $this->render('back/utilisateur/Utilisateur.html.twig');
     }
     
-    #[Route('/dashboard/utilisateur', name: 'InterfaceClient')]
+    #[Route('/dashboard/utilisateurs', name: 'app_user_index')]
+    public function utilisateurindex(UtilisateurRepository $utilisateurRepository): Response
+    {
+        $utilisateurs = $utilisateurRepository->findAll();
+
+        return $this->render('back/utilisateur/Utilisateur.html.twig', [
+            'utilisateurs' => $utilisateurs,
+        ]);
+    }
+
+    #[Route('/dashboard/utilisateursd', name: 'InterfaceClient')]
     public function InterfaceClient(): Response
     {
         return $this->render('../front/home/index.html.twig');
-    }
+    }*/
 
 }

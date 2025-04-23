@@ -1,4 +1,3 @@
-
 {% extends 'base.html.twig' %}
 
 {% block title %}Connexion{% endblock %}
@@ -11,10 +10,10 @@
 {% block body %}
 <div class="login-box">
     <h2>Connexion</h2>
-    <form method="POST" action="/login">
+    <form method="POST" action="{{ path('app_login') }}">
         <div class="input-group">
-            <label for="email">Adresse Email</label>
-            <input type="email" id="email" name="email" required />
+            <label for="cin">CIN</label>
+            <input type="text" id="cin" name="cin" required />
         </div>
         <div class="input-group">
             <label for="password">Mot de passe</label>

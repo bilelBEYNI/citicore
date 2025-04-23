@@ -1,0 +1,22 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block body %}
+<div class="container mt-5">
+    <!-- Carte de détails de l'événement -->
+    <div class="card mx-auto" style="max-width: 700px;">
+        <div class="card-header text-center">
+            <h4>Détails de l'Événement</h4>
+        </div>
+        <div class="card-body text-center">
+            <ul class="list-unstyled text-start">
+                <li><strong>Nom :</strong> {{ evenement.nomevenement }}</li>
+                <li><strong>Date :</strong> {{ evenement.dateevenement ? evenement.dateevenement|date('d/m/Y H:i') : 'Non définie' }}</li>
+                <li><strong>Lieu :</strong> {{ evenement.lieuevenement }}</li>
+                
+                
+            </ul>
+            <a href="{{ path('app_evenement_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

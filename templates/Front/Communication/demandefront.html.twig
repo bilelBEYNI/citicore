@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Demandes{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="text-center my-4">Liste des Demandes Acceptées</h1>
+
+        <div class="text-end mb-4">
+            <a href="{{ path('app_demande_add_front') }}" class="btn btn-success">Ajouter une Demande</a>
+        </div>
+
+        <div class="row">
+            {% for demande in demandes %}
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Demande #{{ demande.Demande_id }}</h5>
+                            <p class="card-text">{{ demande.contenu }}</p>
+                            <p class="card-text"><strong>Statut :</strong> {{ demande.statut }}</p>
+                            <p class="card-text"><strong>Date de la demande :</strong> {{ demande.getFormattedDateDemande() }}</p>
+                        </div>
+                        <div class="card-footer text-end">
+                            <a href="{{ path('app_demande_avis', {'id': demande.Demande_id}) }}" class="btn btn-info btn-sm">Voir les Avis</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

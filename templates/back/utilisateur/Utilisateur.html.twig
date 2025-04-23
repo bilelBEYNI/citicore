@@ -10,24 +10,32 @@
                 <li class="breadcrumb-item active">Dashboard</li>
             </ol>
             <div class="row">
+              
+                <!-- Carte des participants -->
                 <div class="col-xl-3 col-md-6">
                     <div class="card bg-primary text-white mb-4">
-                        <div class="card-body">Primary Card</div>
+                        <div class="card-body">
+                            Nombre total des Participants: {{ participantCount }}
+                        </div>
                         <div class="card-footer d-flex align-items-center justify-content-between">
                             <a class="small text-white stretched-link" href="#">View Details</a>
                             <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
                 </div>
+        
                 <div class="col-xl-3 col-md-6">
                     <div class="card bg-warning text-white mb-4">
-                        <div class="card-body">Warning Card</div>
+                        <div class="card-body">
+                            Nombre total des organisateurs: {{ organisateurCount }}
+                        </div>
                         <div class="card-footer d-flex align-items-center justify-content-between">
                             <a class="small text-white stretched-link" href="#">View Details</a>
                             <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
                 </div>
+                
                 <div class="col-xl-3 col-md-6">
                     <div class="card bg-success text-white mb-4">
                         <div class="card-body">Success Card</div>
@@ -67,72 +75,87 @@
                     </div>
                 </div>
             </div>
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-table me-1"></i>
-                    DataTable Example
-                </div>
-                <div class="card-body">
-                    <table id="datatablesSimple">
-                        <thead>
+
+
+            <div class="container mt-4">
+                <h1 class="mb-4">Liste des Utilisateurs</h1>
+            
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
                             <tr>
-                                <th>Name</th>
-                                <th>Position</th>
-                                <th>Office</th>
-                                <th>Age</th>
-                                <th>Start date</th>
-                                <th>Salary</th>
+                                <th scope="col">Photo</th>
+                                <th scope="col">CIN</th>
+                                <th scope="col">Nom complet</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Numéro_de_téléphone</th>
+                                <th scope="col">Rôle</th>
+                                <th scope="col">Détails</th>
+                                <th scope="col">Modifier</th>
+                                <th scope="col">Supprimer</th>
                             </tr>
                         </thead>
-                        <tfoot>
-                            <tr>
-                                <th>Name</th>
-                                <th>Position</th>
-                                <th>Office</th>
-                                <th>Age</th>
-                                <th>Start date</th>
-                                <th>Salary</th>
-                            </tr>
-                        </tfoot>
                         <tbody>
+
+                        {% for utilisateur in utilisateurs %}
                             <tr>
-                                <td>Tiger Nixon</td>
-                                <td>System Architect</td>
-                                <td>Edinburgh</td>
-                                <td>61</td>
-                                <td>2011/04/25</td>
-                                <td>$320,800</td>
+                                <td>
+                                    {% if utilisateur.PhotoUtilisateur %}
+                                        <div class="image-preview">
+                                            <img src="http://localhost/images/{{ utilisateur.PhotoUtilisateur }}" alt="User Image" class="img-fluid rounded-circle" width="50">
+                                        </div>
+                                    {% else %}
+                                        <p class="text-muted">Aucune image</p>
+                                    {% endif %}
+                                </td>
+                                <td>{{ utilisateur.Cin }}</td>
+                                <td>{{ utilisateur.Nom }} {{ utilisateur.Prenom }}</td>
+                                <td>{{ utilisateur.Email }}</td>
+                                <td>{{ utilisateur.NumTel }}</td>
+                                <td>
+                                    <span class="badge bg-primary">
+                                        {{ utilisateur.Role }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ path('app_user_show', {'CIN': utilisateur.Cin}) }}" 
+                                           class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="{{ path('app_user_edit', {'CIN': utilisateur.Cin}) }}" class="btn btn-warning">Modifier</a>
+                                </td>
+                                <td>
+                                    {% if utilisateur.Role != 'Admin' %}
+                                        <a href="{{ path('app_user_delete', {'CIN': utilisateur.Cin}) }}" 
+                                           class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
+                                    {% endif %}
+                                </td>
                             </tr>
+                        {% else %}
                             <tr>
-                                <td>Garrett Winters</td>
-                                <td>Accountant</td>
-                                <td>Tokyo</td>
-                                <td>63</td>
-                                <td>2011/07/25</td>
-                                <td>$170,750</td>
+                                <td colspan="8" class="text-center text-muted">
+                                    Aucun utilisateur trouvé
+                                </td>
                             </tr>
-                            <tr>
-                                <td>Ashton Cox</td>
-                                <td>Junior Technical Auth   or</td>
-                                <td>San Francisco</td>
-                                <td>66</td>
-                                <td>2009/01/12</td>
-                                <td>$86,000</td>
-                            </tr>
-                            <tr>
-                                <td>Cedric Kelly</td>
-                                <td>Senior Javascript Developer</td>
-                                <td>Edinburgh</td>
-                                <td>22</td>
-                                <td>2012/03/29</td>
-                                <td>$433,060</td>
-                            </tr>
-                            
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>
+            
+                <a href="{{ path('app_user_new') }}">Ajouter un utilisateur</a>
+                
             </div>
-        </div>
+            
+            
+        
+
+
     </main>
 </div>
 {% endblock %}
