@@ -9,6 +9,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\ProjetDonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\AssociationRepository;
+use App\Service\PayPalClient;
+use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 final class FrontProjetController extends AbstractController
 {
@@ -78,5 +81,66 @@ public function chatbot(): Response
 }
 
 
+#[Route('/front/projet/{id}/payer', name: 'app_projet_payer')]
+public function payerAvecPaypal(int $id, ProjetDonRepository $projetDonRepository, PayPalClient $paypalClient, Request $request): RedirectResponse
+{
+    $projet = $projetDonRepository->find($id);
+    if (!$projet) {
+        throw $this->createNotFoundException('Projet non trouvé.');
+    }
+
+    // Get the donation amount from the form submission
+    $montant = $request->request->get('montant');
+    
+    // Ensure montant is valid before proceeding
+    if ($montant <= 0) {
+        throw $this->createNotFoundException('Montant invalide.');
+    }
+
+    // Create a PayPal payment request
+    $request = new OrdersCreateRequest();
+    $request->prefer('return=representation');
+    $request->body = [
+        "intent" => "CAPTURE",
+        "purchase_units" => [[
+            "amount" => [
+                "currency_code" => "USD",
+                "value" => number_format($montant, 2) // Use the donation amount
+            ]
+        ]],
+        "application_context" => [
+            "cancel_url" => $this->generateUrl('app_paiement_cancel', [], 0),
+            "return_url" => $this->generateUrl('app_paiement_success', ['id' => $id], 0)
+        ]
+    ];
+
+    $response = $paypalClient->getClient()->execute($request);
+
+    foreach ($response->result->links as $link) {
+        if ($link->rel === 'approve') {
+            return new RedirectResponse($link->href);
+        }
+    }
+
+    throw new \Exception('Lien d’approbation PayPal introuvable.');
+}
+
+#[Route('/paiement/success/{id}', name: 'app_paiement_success')]
+public function paiementSuccess(int $id): Response
+{
+    // Here you can capture the payment if needed, or just show a thank you page.
+    $this->addFlash('success', 'Paiement réussi via PayPal !');
+    return $this->redirectToRoute('app_front_projet');
+}
+
+#[Route('/paiement/cancel', name: 'app_paiement_cancel')]
+public function paiementCancel(): Response
+{
+    $this->addFlash('error', 'Paiement annulé.');
+    return $this->redirectToRoute('app_front_projet');
+}
+
+
 
 }
+

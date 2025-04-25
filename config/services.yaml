@@ -7,8 +7,9 @@ parameters:
     env(WKHTMLTOPDF_PATH): ''
     env(WKHTMLTOIMAGE_PATH): ''
     uploads_directory: '%kernel.project_dir%/public/uploads'
-    stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
-    stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    paymee.api_key: '%env(PAYMEE_API_KEY)%'
+    paymee.api_url: '%env(PAYMEE_API_URL)%'
+    paymee.sandbox: '%env(bool:PAYMEE_SANDBOX)%'
     knp_snappy.pdf.binary: '%env(WKHTMLTOPDF_PATH)%'
 
 services:
@@ -25,7 +26,11 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-
+    App\Service\PayPalClient:
+        arguments:
+            $clientId: '%env(PAYMEE_API_KEY)%'    # Reference the environment variable for the PayPal Client ID
+            $clientSecret: '%env(PAYMEE_API_SECRET)%'  #
+            
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     App\Entity\CartService:
