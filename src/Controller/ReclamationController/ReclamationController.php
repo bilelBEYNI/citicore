@@ -10,15 +10,52 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/reclamation')]
-final class ReclamationController extends AbstractController
+class ReclamationController extends AbstractController
 {
     #[Route(name: 'app_reclamation_index', methods: ['GET'])]
-    public function index(ReclamationRepository $reclamationRepository): Response
+    public function index(Request $request, ReclamationRepository $reclamationRepository, PaginatorInterface $paginator): Response
     {
+        $qb = $reclamationRepository->createQueryBuilder('r');
+
+        // Filtrage par type de réclamation
+        if ($request->query->get('type')) {
+            $qb->andWhere('r.Type_Reclamation = :type')
+               ->setParameter('type', $request->query->get('type'));
+        }
+
+        // Recherche par sujet
+        if ($request->query->get('q')) {
+            $qb->andWhere('r.Sujet LIKE :q')
+               ->setParameter('q', '%'.$request->query->get('q').'%');
+        }
+
+        // Tri dynamique
+        $sort = $request->query->get('sort', 'r.ID_Reclamation');
+        $direction = $request->query->get('direction', 'asc');
+        $qb->orderBy($sort, $direction);
+
+        $pagination = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            10,
+            [
+                'pageParameterName' => 'page',
+                'sortFieldParameterName' => 'sort',
+                'sortDirectionParameterName' => 'direction',
+                'defaultSortFieldName' => 'r.ID_Reclamation',
+                'defaultSortDirection' => 'asc',
+            ]
+        );
+
         return $this->render('back/Reclamation/Reclamation/index.html.twig', [
-            'reclamations' => $reclamationRepository->findAll(),
+            'reclamations' => $pagination,
+            'currentType' => $request->query->get('type'),
+            'currentQuery' => $request->query->get('q'),
+            'currentSort' => $sort,
+            'currentDirection' => $direction,
         ]);
     }
 
@@ -29,16 +66,22 @@ final class ReclamationController extends AbstractController
         $form = $this->createForm(ReclamationType::class, $reclamation);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($reclamation);
-            $entityManager->flush();
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $entityManager->persist($reclamation);
+                $entityManager->flush();
+                $this->addFlash('success', 'Réclamation créée avec succès.');
 
-            return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
+            } 
+            else {
+                $this->addFlash('error', 'Le formulaire contient des erreurs, veuillez vérifier vos saisies.');
+            }
         }
 
         return $this->render('back/Reclamation/Reclamation/new.html.twig', [
             'reclamation' => $reclamation,
-            'form' => $form,
+            'form' =>  $form->createView(),
         ]);
     }
 
@@ -56,10 +99,16 @@ final class ReclamationController extends AbstractController
         $form = $this->createForm(ReclamationType::class, $reclamation);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $entityManager->flush();
+                $this->addFlash('success', 'Réclamation modifiée avec succès.');
 
-            return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
+            } 
+            else {
+                $this->addFlash('error', 'Le formulaire contient des erreurs, veuillez vérifier vos modifications.');
+            }
         }
 
         return $this->render('back/Reclamation/Reclamation/edit.html.twig', [
@@ -74,8 +123,15 @@ final class ReclamationController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$reclamation->getID_Reclamation(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($reclamation);
             $entityManager->flush();
+            $this->addFlash('success', 'Réclamation supprimée avec succès.');
+        }
+        else {
+            $this->addFlash('error', 'Jeton CSRF invalide, suppression annulée.');
         }
 
         return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
     }
 }
+
+
+

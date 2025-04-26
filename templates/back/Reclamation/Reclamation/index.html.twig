@@ -2,36 +2,57 @@
 
 {% block title %}Réclamations{% endblock %}
 
-
 {% block body %}
 <div class="container my-5" style="margin-left: 300px; padding-bottom: 50px;">
+    {# Affichage des flash messages #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
     <h2 class="mb-4 text-center">📋 Mes Réclamations</h2>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <a href="{{ path('app_reclamation_new') }}" class="btn btn-success">
-            ➕ Ajouter une réclamation
-        </a>
-        <div class="d-flex gap-2">
-            <input type="text" id="filterInput" class="form-control" placeholder="🔍 Filtrer par sujet...">
-            <select id="statusFilter" class="form-select">
-                <option value="">📂 Tous les statuts</option>
-                <option value="repondu">✅ Répondu</option>
-                <option value="en_attente">⏳ En attente</option>
+        <a href="{{ path('app_reclamation_new') }}" class="btn btn-success">➕ Ajouter une Réclamation</a>
+
+        <form method="get" class="d-flex gap-2">
+            <input type="text" name="q" value="{{ currentQuery }}" class="form-control" placeholder="🔍 Recherche sujet...">
+            <select name="type" class="form-select">
+                <option value="">📂 Tous les types</option>
+                <option value="Marketplace" {{ currentType == 'Marketplace' ? 'selected' }}>Marketplace</option>
+                <option value="Demande" {{ currentType == 'Demande' ? 'selected' }}>Demande</option>
+                <option value="Evenement" {{ currentType == 'Evenement' ? 'selected' }}>Événement</option>
+                <option value="ProjetDons" {{ currentType == 'ProjetDons' ? 'selected' }}>ProjetDons</option>
             </select>
-        </div>
+            <button type="submit" class="btn btn-primary">Filtrer</button>
+        </form>
     </div>
 
-    <table class="table table-bordered table-hover shadow-sm" id="reclamationsTable">
+    <table class="table table-bordered table-hover shadow-sm">
         <thead class="table-dark">
             <tr>
-                <th>Sujet</th>
+                <th>
+                    <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({ 'sort': 'r.Sujet', 'direction': currentSort == 'r.Sujet' and currentDirection == 'asc' ? 'desc' : 'asc' })) }}">
+                        Sujet
+                        {% if currentSort == 'r.Sujet' %}
+                            <i class="bi bi-chevron-{{ currentDirection == 'asc' ? 'down' : 'up' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
                 <th>Description</th>
-                <th>Date de création</th>
-                <th>Date de résolution</th>
-                <th>Type</th>
+                <th>Date_Creation</th>
+                <th>Date résolution</th>
+                <th>
+                    <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({ 'sort': 'r.Type_Reclamation', 'direction': currentSort == 'r.Type_Reclamation' and currentDirection == 'asc' ? 'desc' : 'asc' })) }}">
+                        Type
+                        {% if currentSort == 'r.Type_Reclamation' %}
+                            <i class="bi bi-chevron-{{ currentDirection == 'asc' ? 'down' : 'up' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
                 <th>Statut</th>
                 <th>Actions</th>
-               
             </tr>
         </thead>
         <tbody>
@@ -61,33 +82,9 @@
         {% endfor %}
         </tbody>
     </table>
+
+    <div class="mt-4">
+        {{ knp_pagination_render(reclamations) }}
+    </div>
 </div>
-
-<script>
-    document.getElementById('filterInput').addEventListener('keyup', function () {
-        let filter = this.value.toLowerCase();
-        let rows = document.querySelectorAll('#reclamationsTable tbody tr');
-        rows.forEach(row => {
-            let sujet = row.children[0].textContent.toLowerCase();
-            row.style.display = sujet.includes(filter) ? '' : 'none';
-        });
-    });
-
-    document.getElementById('statusFilter').addEventListener('change', function () {
-        let status = this.value;
-        let rows = document.querySelectorAll('#reclamationsTable tbody tr');
-        rows.forEach(row => {
-            let badge = row.querySelector('.badge');
-            let currentStatus = badge.classList.contains('bg-success') ? 'repondu' : 'en_attente';
-            let match = (status === '') || (status === currentStatus);
-
-            // On garde aussi le filtre texte actif
-            let sujet = row.children[0].textContent.toLowerCase();
-            let searchTerm = document.getElementById('filterInput').value.toLowerCase();
-            let matchesSearch = sujet.includes(searchTerm);
-
-            row.style.display = match && matchesSearch ? '' : 'none';
-        });
-    });
-</script>
 {% endblock %}

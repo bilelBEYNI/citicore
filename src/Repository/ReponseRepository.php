@@ -16,28 +16,24 @@ class ReponseRepository extends ServiceEntityRepository
         parent::__construct($registry, Reponse::class);
     }
 
-    //    /**
-    //     * @return Reponse[] Returns an array of Reponse objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
 
-    //    public function findOneBySomeField($value): ?Reponse
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function countByType(): array
+    {
+        return $this->createQueryBuilder('r')
+            ->select('rec.Type_Reclamation AS type, COUNT(r.ID_Reponse) AS count')
+            ->join('r.reclamation', 'rec')
+            ->groupBy('rec.Type_Reclamation')
+            ->getQuery()
+            ->getResult();
+    }
+    
+    public function countByStatus(): array
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r.Statut AS statut, COUNT(r.ID_Reponse) AS count')
+            ->groupBy('r.Statut')
+            ->getQuery()
+            ->getResult();
+    }
+    
 }

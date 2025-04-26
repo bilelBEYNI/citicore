@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\ReponseRepository;
+use App\Entity\Reclamation;
 
 #[ORM\Entity(repositoryClass: ReponseRepository::class)]
 #[ORM\Table(name: 'reponse')]
@@ -16,7 +17,7 @@ class Reponse
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(name: 'ID_Reponse', type: 'integer')]
     private ?int $ID_Reponse = null;
 
     public function getID_Reponse(): ?int
@@ -46,13 +47,12 @@ class Reponse
         return $this;
     }
 
-    #[ORM\Column(type: 'text', nullable: false)]
-    #[Assert\NotBlank(message: "Le contenu de la réponse ne peut pas être vide.")]
+    #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'La contenu ne doit pas être vide.')]
     #[Assert\Length(
-        min: 5,
-        minMessage: "Le contenu doit contenir au moins {{ limit }} caractères."
+        min: 10,
+        minMessage: 'La contenudoit contenir au moins {{ limit }} caractères.'
     )]
-
     private ?string $Contenu = null;
 
     public function getContenu(): ?string
@@ -67,7 +67,12 @@ class Reponse
     }
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    #[Assert\Type("\DateTimeInterface")]
+    #[Assert\NotNull(message: 'La date de réponse est requise.')]
+    #[Assert\Type(type: "DateTimeInterface", message: 'La date de réponse doit être une date valide.')]
+    #[Assert\LessThanOrEqual(
+        'now',
+        message: 'La date de réponse ne peut pas être dans le futur.'
+    )]
     private ?\DateTimeInterface $DateReponse = null;
 
     public function getDateReponse(): ?\DateTimeInterface
@@ -81,10 +86,10 @@ class Reponse
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\Choice(
         choices: ['Traitée', 'En Cours', 'Rejetée'],
-        message: "Le statut doit être 'Traité', 'En attente' ou 'Refusé'."
+        message: "Le statut doit être 'Traitée', 'En Cours' ou 'Rejeteé'."
     )]
     private ?string $Statut = null;
 

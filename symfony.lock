@@ -1,4 +1,7 @@
 {
+    "cmen/google-charts-bundle": {
+        "version": "7.0.0"
+    },
     "doctrine/doctrine-bundle": {
         "version": "2.14",
         "recipe": {
@@ -37,6 +40,9 @@
             "./config/packages/doctrine_migrations.yaml",
             "./migrations/.gitignore"
         ]
+    },
+    "knplabs/knp-paginator-bundle": {
+        "version": "v6.8.0"
     },
     "knplabs/knp-snappy-bundle": {
         "version": "1.10",

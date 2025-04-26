@@ -4,68 +4,79 @@
 
 {% block body %}
 <div class="container my-5" style="margin-left: 300px; padding-bottom: 50px;">
+    {# Flash messages #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
 
-    {% if app.session.flashbag.has('success') %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ app.session.flashbag.get('success')[0] }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endif %}
+    <h2 class="mb-4 text-center">📋 Mes Réponses</h2>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-center">📋 Mes Réponses</h2>
+        <div class="d-flex align-items-center">
+            <select id="reclamationSelect" class="form-select me-2">
+                <option value="">🔽 Choisir un sujet</option>
+                {% for reclamation in reclamations %}
+                    <option value="{{ reclamation.ID_Reclamation }}" {{ reclamation.ID_Reclamation == currentRec ? 'selected' }}>
+                        📝 {{ reclamation.Sujet }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="button" id="addResponseBtn" class="btn btn-success">Ajouter une réponse</button>
+        </div>
 
-        <form id="selectReclamationForm" class="d-flex" method="get" onsubmit="return redirectToReponseNew();">
-            <div class="mb-4">
-               
-                <select id="reclamationSujetSelect" class="form-select border-info shadow-sm" name="reclamation_id" required>
-                    <option value="" disabled selected>🔽 Choisir un sujet</option>
-                    {% for reclamation in reclamations %}
-                        <option value="{{ reclamation.ID_Reclamation }}">
-                            📝 {{ reclamation.sujet }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <button type="submit" class="btn btn-success" aria-label="Ajouter une réponse">Ajouter une réponse</button>
+        <form method="get" class="d-flex gap-2">
+            <input type="text" name="q" value="{{ currentQuery }}" class="form-control" placeholder="🔍 Recherche...">
+            <select name="statut" class="form-select">
+                <option value="">🔍 Tous statuts</option>
+                <option value="En Cours" {{ currentStatus == 'En Cours' ? 'selected' : '' }}>🕒 En Cours</option>
+                <option value="Traitée" {{ currentStatus == 'Traitée' ? 'selected' : '' }}>✅ Traitée</option>
+                <option value="Rejetée" {{ currentStatus == 'Rejetée' ? 'selected' : '' }}>❌ Rejetée</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Filtrer</button>
         </form>
     </div>
-
-    <div class="row g-3 mb-3">
-        <div class="col-md-6 mb-3 position-relative">
-            <input type="text" id="filterInput" class="form-control ps-5 shadow-sm border-info" placeholder="🔍 Filtrer par sujet...">
-            <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-info">
-                <i class="bi bi-search"></i> 
-            </span>
-        </div>
-
-       <div class="col-md-4">
-            <select id="statusFilter" class="form-select status-select">
-              <option value="">🔍 Tous</option>
-              <option value="en cours">🕒 En Cours</option>
-              <option value="traitée">✅ Traitée</option>
-              <option value="rejetée">❌ Rejetée</option>
-            </select>
-        </div>
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ path('app_reponse_stats') }}" class="btn btn-info">
+            📊 Statistiques des Réponses
+        </a>
     </div>
 
-    <table class="table table-hover" id="reponsesTable">
+
+    <table class="table table-bordered table-hover shadow-sm">
         <thead class="table-dark">
             <tr>
-                <th>Sujet</th>
+                <th>
+                    <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({ 'sort': 'rec.Sujet', 'direction': currentSort == 'rec.Sujet' and currentDirection == 'asc' ? 'desc' : 'asc' })) }}">
+                        Sujet
+                        {% if currentSort == 'rec.Sujet' %}
+                            <i class="bi bi-chevron-{{ currentDirection == 'asc' ? 'down' : 'up' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
                 <th>Contenu</th>
-                <th>Date Réponse</th>
-                <th>Statut</th>
+                <th> Date Réponse </th>
+                <th>
+                    <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({ 'sort': 'r.Statut', 'direction': currentSort == 'r.Statut' and currentDirection == 'asc' ? 'desc' : 'asc' })) }}">
+                        Statut
+                        {% if currentSort == 'r.Statut' %}
+                            <i class="bi bi-chevron-{{ currentDirection == 'asc' ? 'down' : 'up' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
                 <th>Actions</th>
-                
             </tr>
         </thead>
         <tbody>
             {% for reponse in reponses %}
                 <tr>
-                    <td>{{ reponse.reclamation.sujet }}</td>
+                    <td>{{ reponse.reclamation.Sujet }}</td>
                     <td>{{ reponse.Contenu }}</td>
-                    <td>{{ reponse.DateReponse ? reponse.DateReponse|date('Y-m-d H:i:s') : '' }}</td>
+                    <td>{{ reponse.DateReponse ? reponse.DateReponse|date('Y-m-d H:i') : '-' }}</td>
                     <td>{{ reponse.Statut }}</td>
                     <td>
                         <a href="{{ path('app_reponse_show', {'id': reponse.ID_Reponse}) }}" class="btn btn-sm btn-primary">👁 Voir</a>
@@ -74,115 +85,24 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="5" class="text-center">Aucune réponse trouvée.</td>
+                    <td colspan="5" class="text-center text-muted">Aucune réponse trouvée.</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <div class="mt-4">
+        {{ knp_pagination_render(reponses) }}
+    </div>
 </div>
 
-
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const filterInput   = document.getElementById('filterInput');
-    const statusFilter  = document.getElementById('statusFilter');
-    const tableBody     = document.querySelector('#reponsesTable tbody');
-
-    // On génère ici l’URL de redirection une seule fois
-    const reponseNewUrlTemplate = "{{ path('app_reponse_new', {'id': 'REPLACE_ID'}) }}";
-
-    function applyFilters() {
-        const sujetFilter   = filterInput.value.trim().toLowerCase();
-        const selectedStatut = statusFilter.value.trim().toLowerCase();
-
-        // On recalcule les lignes à chaque filtre, pour prendre en compte un éventuel reload
-        const rows = tableBody.querySelectorAll('tr');
-        rows.forEach(row => {
-            // Attention à bien pointer la bonne cellule : ici 0 = sujet, 3 = statut
-            const sujet  = row.cells[0].textContent.trim().toLowerCase();
-            const statut = row.cells[3].textContent.trim().toLowerCase();
-
-            const matchSujet   = sujet.includes(sujetFilter);
-            const matchStatut  = !selectedStatut || statut === selectedStatut;
-
-            row.style.display = (matchSujet && matchStatut) ? '' : 'none';
-        });
-    }
-
-    // Attache sur input et change
-    filterInput.addEventListener('input', applyFilters);
-    statusFilter.addEventListener('change', applyFilters);
-
-    // Fonction de redirection
-    window.redirectToReponseNew = () => {
-        const select     = document.getElementById('reclamationSujetSelect');
-        const selectedId = select.value;
-        if (selectedId) {
-            const url = reponseNewUrlTemplate.replace('REPLACE_ID', selectedId);
+    document.getElementById('addResponseBtn').addEventListener('click', () => {
+        const id = document.getElementById('reclamationSelect').value;
+        if (id) {
+            const url = "{{ path('app_reponse_new', {'id': 'REPLACE'}) }}".replace('REPLACE', id);
             window.location.href = url;
         }
-        return false;
-    };
-});
+    });
 </script>
-
-
-<style>
-    table.table-hover tbody tr:hover {
-        background-color: #f2f2f2;
-        transition: background-color 0.3s ease;
-    }
-    .status-select {
-  padding: 10px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  background-color: #f9f9f9;
-  transition: all 0.3s ease;
-}
-
-.status-select:hover {
-  border-color: #999;
-}
-
-.status-select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0,123,255,0.5);
-}
-
-label.form-label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-.form-select {
-    border-radius: 10px;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.form-select:focus {
-    border-color: #17a2b8;
-    box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
-}
-#filterInput {
-    border-radius: 10px;
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
-}
-
-#filterInput:focus {
-    border-color: #17a2b8;
-    box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
-}
-
-.position-absolute i {
-    font-size: 1.1rem;
-}
-
-
-</style>
-
-
 {% endblock %}
-

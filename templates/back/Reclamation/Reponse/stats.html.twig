@@ -1,0 +1,18 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}Statistiques des Réponses{% endblock %}
+
+{% block body %}
+<div class="container my-5" style="margin-left:300px;">
+
+  <h2 class="mb-4">📊 Réponses par Type de Réclamation</h2>
+  <div id="chartByTypeDiv" style="height: 500px; width: 900px;"></div>
+
+  <h2 class="mb-4 pt-5">📈 Réponses par Statut</h2>
+  <div id="chartByStatusDiv" style="height: 500px; width: 900px;"></div>
+
+</div>
+{% endblock %}
+
+
+

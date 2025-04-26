@@ -27,30 +27,14 @@ class ReponseType extends AbstractType
             'required' => true,
         ])
 
-        ->add('contenu', TextareaType::class, [
-            'label' => 'Contenu de la réponse',
-                'required' => true,
-                'constraints' => [
-                    new Assert\NotBlank([
-                        'message' => 'Le contenu ne peut pas être vide.',
-                    ]),
-                    new Assert\Length([
-                        'min' => 5,
-                        'minMessage' => 'Le contenu doit contenir au moins {{ limit }} caractères.',
-                    ])
-                ],
-                'attr' => [
-                    'placeholder' => 'Écrivez votre réponse ici...',
-                    'rows' => 5,
-                ],
-            ])
+        ->add('contenu')
 
-            ->add('DateReponse', DateTimeType::class, [
-               'label' => 'Date de réponse',
-                'required' => false,
-                'widget' => 'single_text',
-                'html5' => true,
-            ])
+        ->add('DateReponse', DateTimeType::class, [
+           'label' => 'Date de réponse',
+            'required' => false,
+            'widget' => 'single_text',
+            'html5' => true,
+        ])
             
             ->add('Statut', ChoiceType::class, [
                 'label' => 'Statut de la réponse',
