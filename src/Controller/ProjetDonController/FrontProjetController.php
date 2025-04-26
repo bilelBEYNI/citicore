@@ -12,20 +12,35 @@ use App\Repository\AssociationRepository;
 use App\Service\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use PayPalCheckoutSdk\Orders\OrdersCaptureRequest;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+
+
 
 final class FrontProjetController extends AbstractController
 {
+   
     #[Route('/front/projet', name: 'app_front_projet')]
     public function index(Request $request, ProjetDonRepository $projetDonRepository): Response
     {
         $search = $request->query->get('search');  // Get the search query from the URL
+        $filter = $request->query->get('filter', 'all');  // Default to 'all' if no filter is selected
 
         if ($search) {
-            // If a search query is provided, filter projects by name (or other criteria)
-            $projets = $projetDonRepository->findByName($search);
+            // If a search query is provided, filter projects by name and availability
+            if ($filter == 'available') {
+                $projets = $projetDonRepository->findByNameAndAvailable($search);
+            } else {
+                $projets = $projetDonRepository->findByName($search);
+            }
         } else {
-            // If no search query is provided, return all projects
-            $projets = $projetDonRepository->findAll();
+            // If no search query is provided, handle filtering based on selected filter
+            if ($filter == 'available') {
+                $projets = $projetDonRepository->findAvailableProjects();
+            } else {
+                $projets = $projetDonRepository->findAll();
+            }
         }
 
         return $this->render('Front/ProjetDon/index.html.twig', [
@@ -46,6 +61,7 @@ public function donner(Request $request, ProjetDonRepository $projetDonRepositor
         if ($montant > 0) {
             $projet->setMontantRecu($projet->getMontantRecu() + $montant);
             $em->flush();
+            
 
             $this->addFlash('success', 'Merci pour votre don !');
             return $this->redirectToRoute('app_projet_donner', ['id' => $id]);
@@ -105,13 +121,13 @@ public function payerAvecPaypal(int $id, ProjetDonRepository $projetDonRepositor
         "purchase_units" => [[
             "amount" => [
                 "currency_code" => "USD",
-                "value" => number_format($montant, 2) // Use the donation amount
+                "value" => (string)number_format($montant, 2, '.', '')
             ]
         ]],
         "application_context" => [
-            "cancel_url" => $this->generateUrl('app_paiement_cancel', [], 0),
-            "return_url" => $this->generateUrl('app_paiement_success', ['id' => $id], 0)
-        ]
+    "cancel_url" => $this->generateUrl('app_paiement_cancel', [], UrlGeneratorInterface::ABSOLUTE_URL),
+    "return_url" => $this->generateUrl('app_paiement_success', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL)
+]
     ];
 
     $response = $paypalClient->getClient()->execute($request);
@@ -126,11 +142,24 @@ public function payerAvecPaypal(int $id, ProjetDonRepository $projetDonRepositor
 }
 
 #[Route('/paiement/success/{id}', name: 'app_paiement_success')]
-public function paiementSuccess(int $id): Response
+public function paiementSuccess(int $id, Request $request, PayPalClient $paypalClient, ProjetDonRepository $projetDonRepository): Response
 {
-    // Here you can capture the payment if needed, or just show a thank you page.
-    $this->addFlash('success', 'Paiement réussi via PayPal !');
-    return $this->redirectToRoute('app_front_projet');
+    $token = $request->query->get('token');
+    if (!$token) {
+        throw $this->createNotFoundException('Token manquant.');
+    }
+
+    try {
+        $capture = new OrdersCaptureRequest($token);
+        $capture->prefer('return=representation');
+        $paypalClient->getClient()->execute($capture);
+
+        $this->addFlash('success', 'Paiement réussi via PayPal !');
+        return $this->redirectToRoute('app_front_projet');
+    } catch (\Throwable $e) {
+        $this->addFlash('error', 'Erreur lors du paiement : ' . $e->getMessage());
+        return $this->redirectToRoute('app_front_projet');
+    }
 }
 
 #[Route('/paiement/cancel', name: 'app_paiement_cancel')]

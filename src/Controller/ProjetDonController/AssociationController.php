@@ -15,12 +15,21 @@ use Symfony\Component\Routing\Attribute\Route;
 final class AssociationController extends AbstractController
 {
     #[Route(name: 'app_association_index', methods: ['GET'])]
-    public function index(AssociationRepository $associationRepository): Response
-    {
-        return $this->render('back/ProjetDon/Association/index.html.twig', [
-            'associations' => $associationRepository->findAll(),
-        ]);
+public function index(Request $request, AssociationRepository $associationRepository): Response
+{
+    $searchQuery = $request->query->get('search');
+
+    if ($searchQuery) {
+        $associations = $associationRepository->searchByNom($searchQuery);
+    } else {
+        $associations = $associationRepository->findAll();
     }
+
+    return $this->render('back/ProjetDon/Association/index.html.twig', [
+        'associations' => $associations,
+    ]);
+}
+
 
     #[Route('/new', name: 'app_association_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
