@@ -11,6 +11,8 @@ parameters:
     paymee.api_url: '%env(PAYMEE_API_URL)%'
     paymee.sandbox: '%env(bool:PAYMEE_SANDBOX)%'
     knp_snappy.pdf.binary: '%env(WKHTMLTOPDF_PATH)%'
+    infobip.api_key: '49fa567f0a5c890d708b36da646084d6-642d55de-4c24-4759-a9b7-45ef30af4ff4'
+    infobip.sender_number: '+44 7491 163443'
 
 services:
     # default configuration for services in *this* file
@@ -30,6 +32,11 @@ services:
         arguments:
             $clientId: '%env(PAYMEE_API_KEY)%'    # Reference the environment variable for the PayPal Client ID
             $clientSecret: '%env(PAYMEE_API_SECRET)%'  #
+
+    App\Service\SmsService:
+        arguments:
+            $apiKey: '%infobip.api_key%'
+            $senderNumber: '%infobip.sender_number%'        
 
          
             

@@ -14,12 +14,19 @@ use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use PayPalCheckoutSdk\Orders\OrdersCaptureRequest;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use App\Service\SmsService;
 
 
 
 
 final class FrontProjetController extends AbstractController
 {
+    private $smsService;
+
+    public function __construct(SmsService $smsService)
+    {
+        $this->smsService = $smsService;
+    }
    
     #[Route('/front/projet', name: 'app_front_projet')]
     public function index(Request $request, ProjetDonRepository $projetDonRepository): Response
@@ -59,12 +66,17 @@ public function donner(Request $request, ProjetDonRepository $projetDonRepositor
     if ($request->isMethod('POST')) {
         $montant = floatval($request->request->get('montant'));
         if ($montant > 0) {
+            // Update the donation amount
             $projet->setMontantRecu($projet->getMontantRecu() + $montant);
             $em->flush();
-            
+
+            // Send the SMS
+            $message = "Merci pour votre visite.";
+            $this->smsService->sendSms('+21658764679', $message);  // Sending SMS to the correct number with country code
 
             $this->addFlash('success', 'Merci pour votre don !');
-            return $this->redirectToRoute('app_projet_donner', ['id' => $id]);
+            // Redirect to the PayPal payment page
+            return $this->redirectToRoute('app_projet_payer', ['id' => $id]);
         }
     }
 
@@ -72,6 +84,7 @@ public function donner(Request $request, ProjetDonRepository $projetDonRepositor
         'projet' => $projet
     ]);
 }
+
 #[Route('/front/projet/nosassociation', name: 'front_projet_nosassociation', methods: ['GET'])]
     public function nosAssociations(Request $request, AssociationRepository $associationRepository): Response
     {
@@ -98,25 +111,33 @@ public function chatbot(): Response
 
 
 #[Route('/front/projet/{id}/payer', name: 'app_projet_payer')]
-public function payerAvecPaypal(int $id, ProjetDonRepository $projetDonRepository, PayPalClient $paypalClient, Request $request): RedirectResponse
-{
+public function payerAvecPaypal(
+    int $id,
+    ProjetDonRepository $projetDonRepository,
+    PayPalClient $paypalClient,
+    Request $request
+): RedirectResponse {
     $projet = $projetDonRepository->find($id);
     if (!$projet) {
         throw $this->createNotFoundException('Projet non trouvé.');
     }
 
-    // Get the donation amount from the form submission
     $montant = $request->request->get('montant');
-    
-    // Ensure montant is valid before proceeding
     if ($montant <= 0) {
         throw $this->createNotFoundException('Montant invalide.');
     }
 
+    
+    $isSmsEnabled = false; 
+
+if ($isSmsEnabled) {
+    $this->smsService->sendSms('+21658764679', 'Merci pour votre visite.');
+}
+
     // Create a PayPal payment request
-    $request = new OrdersCreateRequest();
-    $request->prefer('return=representation');
-    $request->body = [
+    $paypalRequest = new OrdersCreateRequest();
+    $paypalRequest->prefer('return=representation');
+    $paypalRequest->body = [
         "intent" => "CAPTURE",
         "purchase_units" => [[
             "amount" => [
@@ -125,12 +146,12 @@ public function payerAvecPaypal(int $id, ProjetDonRepository $projetDonRepositor
             ]
         ]],
         "application_context" => [
-    "cancel_url" => $this->generateUrl('app_paiement_cancel', [], UrlGeneratorInterface::ABSOLUTE_URL),
-    "return_url" => $this->generateUrl('app_paiement_success', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL)
-]
+            "cancel_url" => $this->generateUrl('app_paiement_cancel', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            "return_url" => $this->generateUrl('app_paiement_success', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL)
+        ]
     ];
 
-    $response = $paypalClient->getClient()->execute($request);
+    $response = $paypalClient->getClient()->execute($paypalRequest);
 
     foreach ($response->result->links as $link) {
         if ($link->rel === 'approve') {
@@ -167,6 +188,12 @@ public function paiementCancel(): Response
 {
     $this->addFlash('error', 'Paiement annulé.');
     return $this->redirectToRoute('app_front_projet');
+}
+#[Route('/test/sms', name: 'test_sms')]
+public function testSms(): Response
+{
+    $this->smsService->sendSms('+21658764679', 'Test message from Symfony');
+    return new Response('SMS sent');
 }
 
 
