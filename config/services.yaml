@@ -10,6 +10,9 @@ parameters:
     stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
     stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
     knp_snappy.pdf.binary: '%env(WKHTMLTOPDF_PATH)%'
+    twilio.sid:   '%env(TWILIO_SID)%'
+    twilio.token: '%env(TWILIO_TOKEN)%'
+    twilio.from:  '%env(TWILIO_FROM)%'
 
 services:
     # default configuration for services in *this* file
@@ -39,4 +42,12 @@ services:
             
     App\Controller\CommuniactionController\DemandeController:
         tags: ['controller.service_arguments']
+
+
+    App\Service\SMSRecService:
+        arguments:
+            $sid:   '%twilio.sid%'
+            $token: '%twilio.token%'
+            $from:  '%twilio.from%'
+    
         

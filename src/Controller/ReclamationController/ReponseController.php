@@ -5,6 +5,8 @@ namespace App\Controller\ReclamationController;
 use App\Entity\Reponse;
 use App\Entity\Reclamation;
 use App\Form\ReponseType;
+use App\Service\SMSRecService;
+use App\Service\MailRecService;
 use App\Repository\ReponseRepository;
 use App\Repository\ReclamationRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -121,10 +123,9 @@ final class ReponseController extends AbstractController
     }
 
     #[Route('/reponses/new/{id}', name: 'app_reponse_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, Reclamation $reclamation, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, Reclamation $reclamation, EntityManagerInterface $entityManager, SMSRecService $sms, MailRecService $mailService): Response
     {
         $reponse = new Reponse();
-        // On lie la réclamation (qui contient le sujet) à la réponse
         $reponse->setReclamation($reclamation);
         $reponse->setDateReponse(new \DateTime());
 
@@ -135,12 +136,52 @@ final class ReponseController extends AbstractController
             if ($form->isValid()) {
                 $entityManager->persist($reponse);
                 $entityManager->flush();
-                $this->addFlash('success', 'Réponse ajoutée avec succès.');
 
-                return $this->redirectToRoute('app_reponse_index');
-            } 
+                // 2) Préparation du SMS
+                $sujet  = $reclamation->getSujet();
+                $status = $reponse->getStatut(); 
+                $message = sprintf(
+                    'Votre réclamation « %s » a reçu une réponse (statut : %s).',
+                    $sujet,
+                    $status
+                );
+
+                // Envoie le SMS
+                $smsSent = $sms->sendSms('+21692581168', $message); 
+
+                if ($smsSent) {
+                    $this->addFlash('success', 'Réponse créée et SMS envoyé avec succès.');
+                } 
+                else {
+                    $this->addFlash('warning', 'Réponse créée, mais échec de l\'envoi du SMS.');
+                }
+               
+
+                // Au moment de planifier le rappel :
+                if ($status === 'En Cours') {
+                    $adminEmail  = 'medinishyheb11@gmail.com';
+                    $mailSubject = sprintf('Rappel : gérer la réponse à « %s »', $sujet);
+                    $mailText    = sprintf(
+                        'La réponse à la réclamation « %s » est toujours En Cours. Merci de la traiter.',
+                        $sujet
+                    );
+                
+                    // scheduleReminder() renvoie true ou false
+                    $scheduled = $mailService->scheduleReminder($adminEmail, $mailSubject, $mailText, 10);
+                
+                    if ($scheduled) {
+                        $this->addFlash('success', 'Rappel email planifié avec succès pour l’admin.');
+                    } 
+                    else{
+                        $this->addFlash('warning', 'Impossible de planifier le rappel email pour l’admin.');
+                    }
+                }
+
+
+                return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
+            }
             else {
-                $this->addFlash('error', 'Le formulaire contient des erreurs.');
+                $this->addFlash('error', 'Le formulaire contient des erreurs , veuillez vérifier vos saisies.');
             }
         }
 
