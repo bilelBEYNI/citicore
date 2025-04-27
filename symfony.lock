@@ -1,4 +1,7 @@
 {
+    "cmen/google-charts-bundle": {
+        "version": "7.0.0"
+    },
     "doctrine/doctrine-bundle": {
         "version": "2.14",
         "recipe": {
@@ -38,6 +41,7 @@
             "./migrations/.gitignore"
         ]
     },
+<<<<<<< HEAD
     "excelwebzone/recaptcha-bundle": {
         "version": "1.5",
         "recipe": {
@@ -58,6 +62,10 @@
         "files": [
             "./config/packages/google_recaptcha.yaml"
         ]
+=======
+    "knplabs/knp-paginator-bundle": {
+        "version": "v6.8.0"
+>>>>>>> 76ae414bd8a1d38b6b1c42c5fd2ccf5fe92c91ef
     },
     "knplabs/knp-snappy-bundle": {
         "version": "1.10",

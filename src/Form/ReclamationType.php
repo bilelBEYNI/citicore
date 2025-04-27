@@ -30,7 +30,7 @@ class ReclamationType extends AbstractType
                 'Marketplace' => 'Marketplace',
                 'Demande' => 'Demande',
                 'Evenement' => 'Evenement',
-                'Projetdon' => 'Projetdon',
+                'ProjetDons' => 'ProjetDons',
             ],
             'placeholder' => 'Choisissez un type',
         ])

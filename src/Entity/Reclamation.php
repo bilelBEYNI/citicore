@@ -20,7 +20,7 @@ class Reclamation
     #[ORM\Column(name: 'ID_Reclamation', type: 'integer')]
     private ?int $ID_Reclamation = null;
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank(message: 'Le sujet ne doit pas être vide.')]
     #[Assert\Length(
         min: 5,
@@ -30,7 +30,7 @@ class Reclamation
     )]
     private ?string $Sujet = null;
 
-    #[ORM\Column(type: 'text', nullable: false)]
+    #[ORM\Column(type: 'text')]
     #[Assert\NotBlank(message: 'La description ne doit pas être vide.')]
     #[Assert\Length(
         min: 10,
@@ -39,15 +39,26 @@ class Reclamation
     private ?string $Description = null;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Assert\NotNull(message: 'La date de création est requise.')]
+    #[Assert\Type(type: "DateTimeInterface", message: 'La date de création doit être une date valide.')]
+    #[Assert\LessThanOrEqual(
+        'now',
+        message: 'La date de création ne peut pas être dans le futur.'
+    )]
     private ?\DateTimeInterface $Date_Creation = null;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Assert\Type(type: "DateTimeInterface", message: 'La date de résolution doit être une date valide.')]
+    #[Assert\GreaterThan(
+        propertyPath: 'Date_Creation',
+        message: 'La date de résolution doit être postérieure à la date de création.'
+    )]
     private ?\DateTimeInterface $Date_Resolution = null;
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\Choice(
-        choices: ['Marketplace', 'Demande', 'Evenement', 'Projetdon'],
-        message: 'Le type de réclamation doit être : Marketplace, Demande, Evenement ou Projetdon.'
+        choices: ['Marketplace', 'Demande', 'Evenement', 'ProjetDons'],
+        message: 'Le type de réclamation doit être : Marketplace, Demande, Evenement ou ProjetDons.'
     )]
     private ?string $Type_Reclamation = null;
 

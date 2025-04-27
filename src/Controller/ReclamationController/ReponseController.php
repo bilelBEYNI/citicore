@@ -8,20 +8,115 @@ use App\Form\ReponseType;
 use App\Repository\ReponseRepository;
 use App\Repository\ReclamationRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use CMEN\GoogleChartsBundle\GoogleCharts\Charts\PieChart;
+use CMEN\GoogleChartsBundle\GoogleCharts\Charts\ColumnChart;
 
 #[Route('/reponse')]
 final class ReponseController extends AbstractController
 {
     #[Route(name: 'app_reponse_index', methods: ['GET'])]
-    public function index(ReponseRepository $reponseRepository,ReclamationRepository $reclamationRepository): Response
+    public function index(Request $request, ReponseRepository $reponseRepository,ReclamationRepository $reclamationRepository,PaginatorInterface $paginator): Response
     {
+        $qb = $reponseRepository->createQueryBuilder('r')
+            ->join('r.reclamation', 'rec')
+            ->addSelect('rec');
+
+      // Filtrage par réclamation
+        if ($recId = $request->query->get('reclamation_id')) {
+            $qb->andWhere('rec.ID_Reclamation = :recId')
+               ->setParameter('recId', $recId);
+        }
+
+        // Filtrage par statut
+        if ($statut = $request->query->get('statut')) {
+            $qb->andWhere('r.Statut = :statut')
+               ->setParameter('statut', $statut);
+        }
+        
+        // Recherche par contenu ou sujet
+        if ($q = $request->query->get('q')) {
+            $qb->andWhere('r.Contenu LIKE :q OR rec.Sujet LIKE :q')
+               ->setParameter('q', '%'.$q.'%');
+        }
+
+        // Tri dynamique
+        $sort = $request->query->get('sort', 'r.DateReponse');
+        $direction = $request->query->get('direction', 'desc');
+        $qb->orderBy($sort, $direction);
+
+        // Pagination
+        $pagination = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            10,
+            [
+                'pageParameterName' => 'page',
+                'sortFieldParameterName' => 'sort',
+                'sortDirectionParameterName' => 'direction',
+                'defaultSortFieldName' => 'r.DateReponse',
+                'defaultSortDirection' => 'desc',
+            ]
+
+        );
+
         return $this->render('back/Reclamation/Reponse/index.html.twig', [
-            'reponses' => $reponseRepository->findAll(),
-            'reclamations' => $reclamationRepository->findAll(),
+            'reponses'      => $pagination,
+            'reclamations'  => $reclamationRepository->findAll(),
+            'currentRec'    => $recId,
+            'currentQuery'  => $q,
+            'currentStatus' => $statut,
+            'currentSort'   => $sort,
+            'currentDirection' => $direction,
+        ]);
+    }
+    
+    #[Route('/reponses/stats', name: 'app_reponse_stats', methods: ['GET'])]
+    public function stats(ReponseRepository $repo, Request $request): Response
+    {
+        // Récupérer les données de type et de statut
+        $byType = $repo->countByType();
+        $byStatus = $repo->countByStatus();
+    
+        // Traitement pour rediriger quand un type ou un statut est sélectionné
+        $typeFilter = $request->query->get('Type');
+        $statusFilter = $request->query->get('status');
+    
+        // Si un type ou statut est sélectionné, filtrez les résultats
+        if ($typeFilter) {
+            $reclamations = $repo->findByType($typeFilter);
+        } elseif ($statusFilter) {
+            $reclamations = $repo->findByStatus($statusFilter);
+        } else {
+            $reclamations = []; // Ou toutes les réclamations, selon ce que vous souhaitez afficher par défaut
+        }
+    
+        // Créez les graphiques
+        $chartByType = new PieChart();
+        $chartByType->getData()->setArrayToDataTable(
+            array_merge([['Type', 'Nombre']], array_map(fn($row) => [$row['type'], (int) $row['count']], $byType))
+        );
+        $chartByType->getOptions()->setTitle('Réponses par Type de Réclamation');
+        $chartByType->getOptions()->getLegend()->setPosition('bottom');
+    
+        $chartByStatus = new ColumnChart();
+        $chartByStatus->getData()->setArrayToDataTable(
+            array_merge([['Statut', 'Nombre']], array_map(fn($row) => [$row['statut'], (int) $row['count']], $byStatus))
+        );
+        $chartByStatus->getOptions()->setTitle('Réponses par Statut');
+        $chartByStatus->getOptions()->getHAxis()->setTitle('Statut');
+        $chartByStatus->getOptions()->getVAxis()->setTitle('Nombre');
+    
+        return $this->render('back/Reclamation/Reponse/stats.html.twig', [
+            'chartByType'   => $chartByType,
+            'chartByStatus' => $chartByStatus,
+            'reclamations'  => $reclamations,  // Passer les réclamations filtrées
+            'typeFilter'    => $typeFilter,    // Passer le type filtré pour afficher dans la vue
+            'statusFilter'  => $statusFilter,  // Passer le statut filtré pour afficher dans la vue
         ]);
     }
 
@@ -36,11 +131,17 @@ final class ReponseController extends AbstractController
         $form = $this->createForm(ReponseType::class, $reponse);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($reponse);
-            $entityManager->flush();
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $entityManager->persist($reponse);
+                $entityManager->flush();
+                $this->addFlash('success', 'Réponse ajoutée avec succès.');
 
-            return $this->redirectToRoute('app_reponse_index');
+                return $this->redirectToRoute('app_reponse_index');
+            } 
+            else {
+                $this->addFlash('error', 'Le formulaire contient des erreurs.');
+            }
         }
 
         return $this->render('back/Reclamation/Reponse/new.html.twig', [
@@ -64,10 +165,16 @@ final class ReponseController extends AbstractController
         $form = $this->createForm(ReponseType::class, $reponse);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $entityManager->flush();
+                $this->addFlash('success', 'Réponse modifiée avec succès.');
 
-            return $this->redirectToRoute('app_reponse_index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_reponse_index');
+            } 
+            else {
+                $this->addFlash('error', 'Le formulaire contient des erreurs.');
+            }
         }
 
         return $this->render('back/Reclamation/Reponse/edit.html.twig', [
@@ -83,6 +190,10 @@ final class ReponseController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$reponse->getID_Reponse(), $request->request->get('_token'))) {
             $entityManager->remove($reponse);
             $entityManager->flush();
+            $this->addFlash('success', 'Réponse supprimée avec succès.');
+        } 
+        else {
+            $this->addFlash('error', 'Jeton CSRF invalide, suppression annulée.');
         }
 
         return $this->redirectToRoute('app_reponse_index', [], Response::HTTP_SEE_OTHER);
