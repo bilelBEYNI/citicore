@@ -130,11 +130,6 @@
 								<div class="main-menu">
 									<nav class="navigation">
 										<ul class="nav menu">
-											<li class="active"><a href="#">Home <i class="icofont-rounded-down"></i></a>
-												<ul class="dropdown">
-													<li><a href="index.html">Home Page 1</a></li>
-												</ul>
-											</li>
 											
 											<li><a href="#">Evenement </a></li>
 											<li><a href="#">Market Place </a></li>
@@ -142,7 +137,6 @@
 											<li><a href="#">Reclamation </a></li>
 											<li><a href="contact.html">Contact Us</a></li>
 											<!--<li><a href="#">Reclamation </a></li>
-											
 											<li><a href="#">Pages <i class="icofont-rounded-down"></i></a>
 												<ul class="dropdown">
 													<li><a href="404.html">404 Error</a></li>
@@ -156,10 +150,24 @@
 								<!--/ End Main Menu -->
 							</div>
 							<div class="col-lg-2 col-12">
-								<div class="get-quote">
-									<a href="{{path ('login')}}" class="btn">Se Connecter</a>
+								<div class="get-quote" 
+									 style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
+								  {% if app.user and is_granted('ROLE_PARTICIPANT') %}
+									<img
+									  src="{{ asset('http://localhost/images/' ~ app.user.photoUtilisateur) }}"
+									  alt="Avatar de {{ app.user.prenom }} {{ app.user.nom }}"
+									  class="rounded-circle"
+									  style="width:50px; height:50px; object-fit:cover;"
+									/>
+									<a href="{{ path('app_logout') }}" class="btn">Se déconnecter</a>
+								  {% else %}
+									<a href="{{ path('login') }}" class="btn">Se connecter</a>
+								  {% endif %}
 								</div>
-							</div>
+							  </div>
+							  
+							  
+							
 						</div>
 					</div>
 				</div>
@@ -299,6 +307,6 @@
 <script src="{{ asset('styles/js/bootstrap.min.js') }}"></script>
 <!-- Main JS -->
 <script src="{{ asset('styles/js/main.js') }}"></script>
-
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
     </body>
 </html>

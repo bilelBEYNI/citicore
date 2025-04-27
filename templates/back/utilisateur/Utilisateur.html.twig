@@ -72,7 +72,22 @@
             <!-- Liste des utilisateurs -->
             <div class="container mt-4">
                 <h1 class="mb-4">Liste des Utilisateurs</h1>
-            
+                <div class="row mb-3">
+                    <a href="{{ path('app_user_new')}}" class="btn btn-success">Ajouter</a>
+                    <div class="col-md-6">
+                        <input type="text" id="searchCin" class="form-control" placeholder="Rechercher par CIN">
+                    </div>
+                    <div class="col-md-6">
+                        <select id="roleFilter" class="form-control">
+                            <option value="">-- Filtrer par rôle --</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Organisateur">Organisateur</option>
+                            <option value="Participant">Participant</option>
+                        </select>
+                    </div>
+                    
+                </div>
+                
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead class="table-dark">
@@ -138,7 +153,7 @@
                     </table>
                 </div>
             
-                <a href="{{ path('app_user_new') }}">Ajouter un utilisateur</a>
+                
             </div>
         </div>
     </main>
@@ -192,6 +207,57 @@
                 }
             });
         });
+
+        // recherche par CIN
+        document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchCin');
+        const rows = document.querySelectorAll('table tbody tr');
+
+        searchInput.addEventListener('keyup', function () {
+            const searchValue = this.value.trim().toLowerCase();
+
+            rows.forEach(row => {
+                const cinCell = row.querySelector('td:nth-child(2)');
+                const cinValue = cinCell ? cinCell.textContent.trim().toLowerCase() : '';
+
+                if (cinValue.includes(searchValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+
+
+    //filtre par rôle
+    document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchCin');
+    const roleSelect = document.getElementById('roleFilter');
+    const rows = document.querySelectorAll('table tbody tr');
+
+    function filterRows() {
+        const searchValue = searchInput.value.trim().toLowerCase();
+        const selectedRole = roleSelect.value;
+
+        rows.forEach(row => {
+            const cinCell = row.querySelector('td:nth-child(2)');
+            const roleCell = row.querySelector('td:nth-child(6) span');
+            
+            const cinValue = cinCell ? cinCell.textContent.trim().toLowerCase() : '';
+            const roleValue = roleCell ? roleCell.textContent.trim() : '';
+
+            const matchesCin = cinValue.includes(searchValue);
+            const matchesRole = selectedRole === '' || roleValue === selectedRole;
+
+            row.style.display = (matchesCin && matchesRole) ? '' : 'none';
+        });
+    }
+
+    searchInput.addEventListener('keyup', filterRows);
+    roleSelect.addEventListener('change', filterRows);
+});
+
     </script>
 {% endblock %}
 {% endblock %}

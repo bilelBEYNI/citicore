@@ -33,9 +33,7 @@
                                 <td>{{ demande.statut }}</td>
                                 
                                 <td>
-                                    <a href="{{ path('demande_avis', { id: demande.id }) }}" class="btn btn-info">
-                                        <i class="fas fa-eye"></i> Voir Avis
-                                    </a>
+                                
                                 </td>
                                 <td>
                                     <form method="post" action="{{ path('app_demande_update_status', {'id': demande.Demande_id}) }}">

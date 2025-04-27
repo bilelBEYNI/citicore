@@ -1,5 +1,4 @@
 <?php
-// src/Form/LoginFormType.php
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
@@ -8,6 +7,8 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use ReCaptcha\ReCaptchaBundle\Form\Type\ReCaptchaType; // Assurez-vous d'utiliser la bonne classe ici
+use EWZ\Bundle\RecaptchaBundle\Form\Type\EWZRecaptchaType;
 
 class LoginFormType extends AbstractType
 {
@@ -25,7 +26,12 @@ class LoginFormType extends AbstractType
                 'constraints' => [
                     new NotBlank(['message' => 'Le mot de passe est obligatoire.']),
                 ],
-            ]);
+            ])
+           
+            
+            
+            
+           ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -37,6 +43,6 @@ class LoginFormType extends AbstractType
 
     public function getBlockPrefix(): string
     {
-        return '';
+        return ''; // Cela peut être utile de le laisser vide si vous ne voulez pas de préfixe
     }
 }

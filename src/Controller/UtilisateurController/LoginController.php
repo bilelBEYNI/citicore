@@ -1,85 +1,117 @@
 <?php
 
+
 namespace App\Controller\UtilisateurController;
 
 use App\Form\LoginFormType;
+use App\Form\RegistrationType;
+use App\Repository\UtilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
-use App\Repository\UtilisateurRepository;
-use App\Entity\Feedback;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Entity\Utilisateur;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class LoginController extends AbstractController
 {
-    #[Route('/login', name: 'login')]
-    public function login(AuthenticationUtils $authenticationUtils, MailerInterface $mailer): Response
-    {
-        // Si l'utilisateur est déjà connecté, envoyez un email et redirigez-le
-        if ($this->getUser()) {
-            $user = $this->getUser(); // Récupère l'utilisateur connecté
+    private HttpClientInterface $httpClient;
+    private string $recaptchaSecret;
 
-            // Envoyer un email à l'utilisateur connecté
-            $email = (new Email())
-                ->from('achrefkachai023@gmail.com') // Adresse de l'expéditeur
-                ->to($user->getEmail()) // Adresse de l'utilisateur connecté
-                ->subject('Connexion réussie')
-                ->text(sprintf('Bonjour %s, vous vous êtes connecté avec succès à votre compte.', $user->getCin()));
-            $mailer->send($email);
-            // Redirigez l'utilisateur en fonction de son rôle
-            return $this->redirectBasedOnRole($user);
+    public function __construct(HttpClientInterface $httpClient)
+    {
+        $this->httpClient = $httpClient;
+        $this->recaptchaSecret = $_ENV['GOOGLE_RECAPTCHA_SECRET'];
+    }
+    #[Route('/login', name: 'login')]
+    public function login(
+        Request $request,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher
+    ): Response {
+        // 1) Si déjà connecté → redirection
+        if ($this->getUser()) {
+            return $this->redirectBasedOnRole($this->getUser());
         }
 
-        // Récupérer l'erreur de connexion s'il y en a une
-        $error = $authenticationUtils->getLastAuthenticationError();
-        $lastCin = $authenticationUtils->getLastUsername();
+        // 2) ReCAPTCHA
+        if ($request->isMethod('POST')) {
+            $recaptchaResponse = $request->request->get('g-recaptcha-response', '');
+            if (empty($recaptchaResponse) || !$this->verifyRecaptcha($recaptchaResponse)) {
+                $this->addFlash('error', 'Veuillez valider le reCAPTCHA.');
+                return $this->redirectToRoute('login');
+            }
+        }
 
-        // Créer le formulaire
-        $form = $this->createForm(LoginFormType::class, [
-            'cin' => $lastCin, // Pré-remplir le champ CIN avec la dernière valeur saisie
-        ]);
+        // 3) Créer et traiter le formulaire
+        $form = $this->createForm(LoginFormType::class);
+        $form->handleRequest($request);
 
+        // 4) Si soumis et valide → tentative d’authentification
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            // 4.a) Cherche l'utilisateur par CIN
+            /** @var Utilisateur|null $user */
+            $user = $em
+                ->getRepository(Utilisateur::class)
+                ->findOneBy(['cin' => $data['cin']]);
+
+            if (!$user) {
+                $form->addError(new FormError('CIN ou mot de passe invalide.'));
+            } else {
+                // 4.b) Vérifie le mot de passe
+                if ($passwordHasher->isPasswordValid($user, $data['password'])) {
+                    // 5) Authentifie la session
+                    $token = new UsernamePasswordToken(
+                        $user,
+                        'main',          // fire­wall name (security.yaml)
+                        $user->getRoles()
+                    );
+                    $this->container
+                         ->get('security.token_storage')
+                         ->setToken($token);
+                    $request->getSession()
+                         ->set('_security_main', serialize($token));
+
+                    // 6) Redirection selon rôle
+                    return $this->redirectBasedOnRole($user);
+                } else {
+                    $form->addError(new FormError('CIN ou mot de passe invalide.'));
+                }
+            }
+        }
+
+        // Affichage du form (GET ou échec)
         return $this->render('security/login.html.twig', [
-            'form' => $form->createView(),
-            'error' => $error,
+            'form'                     => $form->createView(),
+            'google_recaptcha_site_key'=> $_ENV['GOOGLE_RECAPTCHA_SITE_KEY'],
         ]);
     }
 
-    #[Route('/admin/dashboard', name: 'admin_dashboard')]
-    public function adminDashboard(): Response
+    private function verifyRecaptcha(string $captchaResponse): bool
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN'); // Vérifie que l'utilisateur a le rôle ROLE_ADMIN
-        $user = $this->getUser();
-        $cin = $user->getCin(); // Récupère le CIN de l'utilisateur connecté
-        return $this->render('back/dashboard.html.twig', [
-            'controller_name' => 'Admin Dashboard',
+        // Effectuer la vérification du reCAPTCHA via l'API de Google
+        $response = $this->httpClient->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [
+            'body' => [
+                'secret' => $this->recaptchaSecret,
+                'response' => $captchaResponse,
+            ],
         ]);
-    }
+        $data = $response->toArray();
 
-    #[Route('/participant/dashboard', name: 'participant_dashboard')]
-    public function participantDashboard(UtilisateurRepository $utilisateurRepository ): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_PARTICIPANT'); // Vérifie que l'utilisateur a le rôle ROLE_PARTICIPANT
-
-        $organisateurs = $utilisateurRepository->findBy(['Role' => 'Organisateur']);
-
-        $user = $this->getUser(); // Récupère l'utilisateur connecté
-        $cin = $user->getCin(); // Récupère le CIN de l'utilisateur connecté
-
-
-        return $this->render('front/utilisateur/participant.html.twig', [
-        'organisateurs' => $organisateurs,
-      ]);
-
+        return isset($data['success']) && $data['success'] === true;
     }
 
     private function redirectBasedOnRole($user): Response
     {
-        $roles = $user->getRoles(); // Récupère les rôles de l'utilisateur
-        dump($roles); // Debug : affiche les rôles dans la barre de débogage Symfony
+        $roles = $user->getRoles();
 
+        // Redirection en fonction du rôle
         if (in_array('ROLE_ADMIN', $roles, true)) {
             return $this->redirectToRoute('admin_dashboard');
         }
@@ -89,5 +121,99 @@ class LoginController extends AbstractController
         }
 
         return $this->redirectToRoute('home');
+    }
+
+    #[Route('/admin/dashboard', name: 'admin_dashboard')]
+    public function adminDashboard(): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('back/dashboard.html.twig', [
+            'controller_name' => 'Admin Dashboard',
+        ]);
+    }
+
+    #[Route('/participant/dashboard', name: 'participant_dashboard')]
+    public function participantDashboard(UtilisateurRepository $utilisateurRepository): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_PARTICIPANT');
+
+        // Récupère les organisateurs pour afficher sur le dashboard du participant
+        $organisateurs = $utilisateurRepository->findBy(['Role' => 'Organisateur']);
+
+        return $this->render('front/utilisateur/participant.html.twig', [
+            'organisateurs' => $organisateurs,
+        ]);
+    }
+
+    #[Route("/register", name: "app_register")]
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $user = new User();
+        $form = $this->createForm(RegistrationType::class, $user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $password = $form->get('mot_de_passe')->getData();
+            $encodedPassword = $passwordEncoder->encodePassword($user, $password);
+            $user->setMotDePasse($encodedPassword);
+            $user->setRoles(['ROLE_PARTICIPANT']);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->render('registration/register.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/SignUp', name: 'SignUp')]
+    public function signup(
+        Request $request,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher,
+        SluggerInterface $slugger
+    ): Response {
+        $user = new Utilisateur();
+        $form = $this->createForm(RegistrationType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $photoFile */
+            $photoFile = $form->get('photo_utilisateur')->getData();
+            if ($photoFile) {
+                $safeName    = $slugger->slug(pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME));
+                $newFilename = $safeName.'-'.uniqid().'.'.$photoFile->guessExtension();
+                $photoFile->move(
+                    $this->getParameter('uploads_directory'),
+                    $newFilename
+                );
+                $user->setPhotoUtilisateur($newFilename);
+            }
+
+            // **Récupérer et hasher le mot de passe « plainPassword »**
+            $plainPassword = $form->get('plainPassword')->getData();
+            $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
+            $user->setMotDePasse($hashedPassword);
+
+            // **Rôle par défaut**
+            $user->setRole('PARTICIPANT');
+
+            // Persistance
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'Inscription réussie ! Vous pouvez maintenant vous connecter.');
+            return $this->redirectToRoute('login');
+        }
+
+        return $this->render('Front/utilisateur/SignUp.html.twig', [
+            'registrationForm' => $form->createView(),
+        ]);
     }
 }

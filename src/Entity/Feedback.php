@@ -12,7 +12,7 @@ class Feedback
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "id_FeedBack", type: "integer")]
     private int $id_FeedBack;
     
 

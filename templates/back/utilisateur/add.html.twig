@@ -5,42 +5,44 @@
     <div class="w-50">
         <h1 class="text-center mb-4">Ajouter un utilisateur</h1>
 
-        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'return validateForm()'}}) }}
+        {{ form_start(form, {
+            attr: {
+                novalidate: 'novalidate',
+                onsubmit: 'return validateForm()'
+            }
+        }) }}
             <div class="form-group">
-                {{ form_label(form.Cin) }}
-                {{ form_widget(form.Cin, {'attr': {'class': 'form-control'}}) }}
+                {{ form_label(form.cin) }}
+                {{ form_widget(form.cin, {'attr': {'class': 'form-control'}}) }}
             </div>
             <div class="form-group">
-                {{ form_label(form.Nom) }}
-                {{ form_widget(form.Nom, {'attr': {'class': 'form-control'}}) }}
+                {{ form_label(form.nom) }}
+                {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
             </div>
             <div class="form-group">
-                {{ form_label(form.Prenom) }}
-                {{ form_widget(form.Prenom, {'attr': {'class': 'form-control'}}) }}
+                {{ form_label(form.prenom) }}
+                {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
             </div>
             <div class="form-group">
-                {{ form_label(form.Num_Tel) }}
-                {{ form_widget(form.Num_Tel, {'attr': {'class': 'form-control'}}) }}
+                {{ form_label(form.numTel) }}
+                {{ form_widget(form.numTel, {'attr': {'class': 'form-control'}}) }}
             </div>
             <div class="form-group">
-                {{ form_label(form.Email) }}
-                {{ form_widget(form.Email, {'attr': {'class': 'form-control'}}) }}
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
             </div>
             <div class="form-group">
-                {{ form_label(form.Genre) }}
-                {{ form_widget(form.Genre, {'attr': {'class': 'form-control'}}) }}
+                {{ form_label(form.genre) }}
+                {{ form_widget(form.genre, {'attr': {'class': 'form-control'}}) }}
             </div>
             <div class="form-group">
-                {{ form_label(form.Role) }}
-                {{ form_widget(form.Role, {'attr': {'class': 'form-control'}}) }}
+                {{ form_label(form.role) }}
+                {{ form_widget(form.role, {'attr': {'class': 'form-control'}}) }}
             </div>
+            {# Champ Mot_De_Passe supprimé #}
             <div class="form-group">
-                {{ form_label(form.Mot_De_Passe) }}
-                {{ form_widget(form.Mot_De_Passe, {'attr': {'class': 'form-control'}}) }}
-            </div>
-            <div class="form-group">
-                {{ form_label(form.Photo_Utilisateur) }}
-                {{ form_widget(form.Photo_Utilisateur, {'attr': {'class': 'form-control'}}) }}
+                {{ form_label(form.photoUtilisateur) }}
+                {{ form_widget(form.photoUtilisateur, {'attr': {'class': 'form-control'}}) }}
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">Ajouter</button>
@@ -50,73 +52,57 @@
 </div>
 
 <script>
-    function validateForm() {
-        // Vérification du champ CIN (8 chiffres)
-        const cin = document.getElementById("utilisateur_Cin").value;
-        const cinPattern = /^[0-9]{8}$/; // Vérifie si c'est un nombre de 8 chiffres
-        if (!cinPattern.test(cin)) {
-            alert("Le CIN doit être un nombre de 8 chiffres.");
-            return false; // Empêche l'envoi du formulaire
-        }
+function validateForm() {
+    // CIN : exactement 8 chiffres
+    const cin = document.getElementById("utilisateur_cin").value;
+    if (!/^[0-9]{8}$/.test(cin)) {
+        alert("Le CIN doit être un nombre de 8 chiffres.");
+        return false;
+    }
 
-        // Vérification du champ Nom (doit être une chaîne non vide)
-        const nom = document.getElementById("utilisateur_Nom").value;
-        if (nom.trim() === "") {
-            alert("Le nom ne peut pas être vide.");
+    // Nom & Prénom non vides
+    for (let field of ["nom", "prenom"]) {
+        const value = document.getElementById(`utilisateur_${field}`).value.trim();
+        if (!value) {
+            alert(`Le ${field} ne peut pas être vide.`);
             return false;
         }
+    }
 
-        // Vérification du champ Prénom (doit être une chaîne non vide)
-        const prenom = document.getElementById("utilisateur_Prenom").value;
-        if (prenom.trim() === "") {
-            alert("Le prénom ne peut pas être vide.");
-            return false;
-        }
+    // Téléphone : 8 chiffres
+    const tel = document.getElementById("utilisateur_num_tel").value;
+    if (!/^[0-9]{8}$/.test(tel)) {
+        alert("Le numéro de téléphone doit être composé de 8 chiffres.");
+        return false;
+    }
 
-        // Vérification du champ Numéro de téléphone (max 8 chiffres)
-        const numTel = document.getElementById("utilisateur_Num_Tel").value;
-        if (numTel.trim() === "" || numTel.length !== 8 || isNaN(numTel)) {
-            alert("Le numéro de téléphone doit être composé de 8 chiffres.");
-            return false;
-        }
+    // Email valide
+    const email = document.getElementById("utilisateur_email").value;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        alert("Veuillez entrer une adresse e-mail valide.");
+        return false;
+    }
 
-        // Vérification du champ Email (doit être une adresse valide)
-        const email = document.getElementById("utilisateur_Email").value;
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailPattern.test(email)) {
-            alert("Veuillez entrer une adresse e-mail valide.");
-            return false;
-        }
-
-        // Vérification du champ Mot de passe (minimum 6 caractères)
-        const motDePasse = document.getElementById("utilisateur_Mot_De_Passe").value;
-        if (motDePasse.trim() === "" || motDePasse.length < 6) {
-            alert("Le mot de passe doit comporter au moins 6 caractères.");
-            return false;
-        }
-
-        // Vérification du champ Photo_Utilisateur (si nécessaire)
-        const photo = document.getElementById("utilisateur_Photo_Utilisateur").files[0];
-        if (photo && !['image/jpeg', 'image/png'].includes(photo.type)) {
+    // Photo (optionnelle) : JPEG ou PNG
+    const photoInput = document.getElementById("utilisateur_photo_utilisateur");
+    if (photoInput.files.length) {
+        const type = photoInput.files[0].type;
+        if (!["image/jpeg", "image/png"].includes(type)) {
             alert("La photo doit être une image JPEG ou PNG.");
             return false;
         }
-
-        // Vérification du champ Genre (doit être sélectionné)
-        const genre = document.getElementById("utilisateur_Genre").value;
-        if (genre === "") {
-            alert("Veuillez sélectionner un genre.");
-            return false;
-        }
-
-        // Vérification du champ Role (doit être sélectionné)
-        const role = document.getElementById("utilisateur_Role").value;
-        if (role === "") {
-            alert("Veuillez sélectionner un rôle.");
-            return false;
-        }
-
-        return true; // Si toutes les vérifications passent, soumettre le formulaire
     }
+
+    // Genre & Role sélectionnés
+    for (let sel of ["genre", "role"]) {
+        if (!document.getElementById(`utilisateur_${sel}`).value) {
+            alert(`Veuillez sélectionner un ${sel}.`);
+            return false;
+        }
+    }
+
+    return true;
+}
 </script>
 {% endblock %}
