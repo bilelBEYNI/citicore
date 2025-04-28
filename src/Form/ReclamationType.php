@@ -34,7 +34,7 @@ class ReclamationType extends AbstractType
             ],
             'placeholder' => 'Choisissez un type',
         ])
-        ->add('Cin_utilisateur');
+        ;
         
     }
 
