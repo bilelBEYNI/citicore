@@ -216,4 +216,13 @@ class LoginController extends AbstractController
             'registrationForm' => $form->createView(),
         ]);
     }
+
+
+
+    #[Route('/forgot-password', name: 'app_forgot_password')]
+    public function forgotPassword(Request $request): Response
+    {
+        return $this->render('security/forgot_password.html.twig');
+    }
+
 }

@@ -54,14 +54,13 @@ final class HomeController extends AbstractController
     #[Route('/front/reclamations', name: 'Reclamation')]
     public function indexReclamation(Request $request, ReclamationRepository $reclamationRepository): Response
     {
-        // Récupère le CIN stocké en session
-        $cin = $request->getSession()->get('Cin_Utilisateu');
-        if (!$cin) {
-            throw $this->createAccessDeniedException('Vous devez être connecté pour voir vos réclamations.');
-        }
+        dump($this->getUser());
+        $this->denyAccessUnlessGranted('ROLE_PARTICIPANT');
+        $user = $this->getUser();
+        $cin = $user->getCin();
 
         // Filtre les réclamations par CIN
-        $reclamations = $reclamationRepository->findBy(['Cin_Utilisateu' => $cin]);
+        $reclamations = $reclamationRepository->findBy(['Cin_Utilisateur' => $cin]);
 
         return $this->render('Front/Reclamation/Reclamation/index.html.twig', [
             'reclamations' => $reclamations,
