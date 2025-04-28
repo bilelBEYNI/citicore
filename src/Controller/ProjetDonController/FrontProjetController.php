@@ -127,12 +127,14 @@ public function payerAvecPaypal(
         throw $this->createNotFoundException('Montant invalide.');
     }
 
-    
+    // hedhy teb33aaa l smssssss
     $isSmsEnabled = false; 
 
 if ($isSmsEnabled) {
     $this->smsService->sendSms('+21658764679', 'Merci pour votre visite.');
 }
+    //!!!! 
+
 
     // Create a PayPal payment request
     $paypalRequest = new OrdersCreateRequest();

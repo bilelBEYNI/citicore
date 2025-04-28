@@ -1,9 +1,9 @@
 <?php
+
 namespace App\Service;
 
 use PayPalCheckoutSdk\Core\PayPalHttpClient;
 use PayPalCheckoutSdk\Core\SandboxEnvironment;
-
 
 class PayPalClient
 {
