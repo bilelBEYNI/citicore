@@ -20,25 +20,13 @@ class ReclamationController extends AbstractController
     #[Route(name: 'app_reclamation_index', methods: ['GET'])]
     public function index(Request $request, ReclamationRepository $reclamationRepository, PaginatorInterface $paginator): Response
     {
-        $qb = $reclamationRepository->createQueryBuilder('r');
-
-        // Filtrage par type de réclamation
-        if ($request->query->get('type')) {
-            $qb->andWhere('r.Type_Reclamation = :type')
-               ->setParameter('type', $request->query->get('type'));
-        }
-
-        // Recherche par sujet
-        if ($request->query->get('q')) {
-            $qb->andWhere('r.Sujet LIKE :q')
-               ->setParameter('q', '%'.$request->query->get('q').'%');
-        }
-
-        // Tri dynamique
+        $type = $request->query->get('type');
+        $query = $request->query->get('q');
         $sort = $request->query->get('sort', 'r.ID_Reclamation');
         $direction = $request->query->get('direction', 'asc');
-        $qb->orderBy($sort, $direction);
-
+    
+        $qb = $reclamationRepository->findFilteredReclamations($type, $query, $sort, $direction);
+    
         $pagination = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
@@ -51,11 +39,11 @@ class ReclamationController extends AbstractController
                 'defaultSortDirection' => 'asc',
             ]
         );
-
+    
         return $this->render('back/Reclamation/Reclamation/index.html.twig', [
             'reclamations' => $pagination,
-            'currentType' => $request->query->get('type'),
-            'currentQuery' => $request->query->get('q'),
+            'currentType' => $type,
+            'currentQuery' => $query,
             'currentSort' => $sort,
             'currentDirection' => $direction,
         ]);

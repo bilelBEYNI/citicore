@@ -18,40 +18,21 @@ use Symfony\Component\Routing\Attribute\Route;
 use CMEN\GoogleChartsBundle\GoogleCharts\Charts\PieChart;
 use CMEN\GoogleChartsBundle\GoogleCharts\Charts\ColumnChart;
 
+
 #[Route('/reponse')]
 final class ReponseController extends AbstractController
 {
     #[Route(name: 'app_reponse_index', methods: ['GET'])]
-    public function index(Request $request, ReponseRepository $reponseRepository,ReclamationRepository $reclamationRepository,PaginatorInterface $paginator): Response
+    public function index(Request $request, ReponseRepository $reponseRepository, ReclamationRepository $reclamationRepository, PaginatorInterface $paginator): Response
     {
-        $qb = $reponseRepository->createQueryBuilder('r')
-            ->join('r.reclamation', 'rec')
-            ->addSelect('rec');
-
-      // Filtrage par réclamation
-        if ($recId = $request->query->get('reclamation_id')) {
-            $qb->andWhere('rec.ID_Reclamation = :recId')
-               ->setParameter('recId', $recId);
-        }
-
-        // Filtrage par statut
-        if ($statut = $request->query->get('statut')) {
-            $qb->andWhere('r.Statut = :statut')
-               ->setParameter('statut', $statut);
-        }
-        
-        // Recherche par contenu ou sujet
-        if ($q = $request->query->get('q')) {
-            $qb->andWhere('r.Contenu LIKE :q OR rec.Sujet LIKE :q')
-               ->setParameter('q', '%'.$q.'%');
-        }
-
-        // Tri dynamique
+        $recId = $request->query->get('reclamation_id');
+        $statut = $request->query->get('statut');
+        $q = $request->query->get('q');
         $sort = $request->query->get('sort', 'r.DateReponse');
         $direction = $request->query->get('direction', 'desc');
-        $qb->orderBy($sort, $direction);
-
-        // Pagination
+    
+        $qb = $reponseRepository->findFilteredReponses($recId, $statut, $q, $sort, $direction);
+    
         $pagination = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
@@ -63,9 +44,8 @@ final class ReponseController extends AbstractController
                 'defaultSortFieldName' => 'r.DateReponse',
                 'defaultSortDirection' => 'desc',
             ]
-
         );
-
+    
         return $this->render('back/Reclamation/Reponse/index.html.twig', [
             'reponses'      => $pagination,
             'reclamations'  => $reclamationRepository->findAll(),
@@ -77,48 +57,63 @@ final class ReponseController extends AbstractController
         ]);
     }
     
+    
     #[Route('/reponses/stats', name: 'app_reponse_stats', methods: ['GET'])]
-    public function stats(ReponseRepository $repo, Request $request): Response
+    public function stats(ReponseRepository $repo, ReclamationRepository $reclamationRepo ,Request $request): Response
     {
-        // Récupérer les données de type et de statut
-        $byType = $repo->countByType();
-        $byStatus = $repo->countByStatus();
-    
-        // Traitement pour rediriger quand un type ou un statut est sélectionné
-        $typeFilter = $request->query->get('Type');
+        // Récupérer et nettoyer les données
+        $byType   = array_filter($repo->countByType(), fn($row) => !empty($row['type']));
+        $byStatus = array_filter($repo->countByStatus(), fn($row) => !empty($row['statut']));
+
+        // Récupérer les filtres
+        $typeFilter   = $request->query->get('Type');
         $statusFilter = $request->query->get('status');
-    
-        // Si un type ou statut est sélectionné, filtrez les résultats
+
+        // Listes filtrées
+        $reclamations = [];
         if ($typeFilter) {
-            $reclamations = $repo->findByType($typeFilter);
-        } elseif ($statusFilter) {
-            $reclamations = $repo->findByStatus($statusFilter);
-        } else {
-            $reclamations = []; // Ou toutes les réclamations, selon ce que vous souhaitez afficher par défaut
+            $reclamations = $reclamationRepo->findByType($typeFilter);
         }
-    
-        // Créez les graphiques
+
+        $responses = [];
+        if ($statusFilter) {
+            $responses = $repo->findFilteredReponses(null, $statusFilter, null)
+                               ->getQuery()
+                               ->getResult();
+        }
+
+        // Création du Pie Chart pour Type
         $chartByType = new PieChart();
         $chartByType->getData()->setArrayToDataTable(
-            array_merge([['Type', 'Nombre']], array_map(fn($row) => [$row['type'], (int) $row['count']], $byType))
+            array_merge(
+                [['Type', 'Nombre']],
+                array_map(fn($row) => [$row['type'], (int) $row['count']], $byType)
+            )
         );
+        
         $chartByType->getOptions()->setTitle('Réponses par Type de Réclamation');
         $chartByType->getOptions()->getLegend()->setPosition('bottom');
-    
+
+        // Création du Column Chart pour Statut
         $chartByStatus = new ColumnChart();
         $chartByStatus->getData()->setArrayToDataTable(
-            array_merge([['Statut', 'Nombre']], array_map(fn($row) => [$row['statut'], (int) $row['count']], $byStatus))
+            array_merge(
+                [['Statut', 'Nombre']],
+                array_map(fn($row) => [$row['statut'], (int) $row['count']], $byStatus)
+            )
         );
+
         $chartByStatus->getOptions()->setTitle('Réponses par Statut');
         $chartByStatus->getOptions()->getHAxis()->setTitle('Statut');
         $chartByStatus->getOptions()->getVAxis()->setTitle('Nombre');
-    
+
         return $this->render('back/Reclamation/Reponse/stats.html.twig', [
             'chartByType'   => $chartByType,
             'chartByStatus' => $chartByStatus,
-            'reclamations'  => $reclamations,  // Passer les réclamations filtrées
-            'typeFilter'    => $typeFilter,    // Passer le type filtré pour afficher dans la vue
-            'statusFilter'  => $statusFilter,  // Passer le statut filtré pour afficher dans la vue
+            'reclamations'  => $reclamations,
+            'responses'     => $responses,
+            'typeFilter'    => $typeFilter,
+            'statusFilter'  => $statusFilter,
         ]);
     }
 
