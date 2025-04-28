@@ -2,7 +2,6 @@
 
 namespace App\Controller\ReclamationController;
 
-use App\Entity\Utilisateur;
 use App\Entity\Reclamation;
 use App\Form\ReclamationType;
 use App\Repository\ReclamationRepository;
@@ -22,9 +21,6 @@ class FrontReclamationController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_PARTICIPANT');
         $user = $this->getUser();
         $cin = $user->getCin();
-        if (!$cin) {
-            throw $this->denyAccessUnlessGranted('ROLE_PARTICIPANT');
-        }
         
         // Filtre les réclamations par CIN
         $reclamations = $reclamationRepository->findBy(['Cin_Utilisateur' => $cin]);
