@@ -14,6 +14,10 @@ use App\Form\FeedbackType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Repository\FeedbackRepository;
 use App\Entity\Feedback;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;  // ← ici
+use Symfony\Component\Mailer\MailerInterface; 
+use Symfony\Component\String\Slugger\SluggerInterface;    
+use Symfony\Component\Mime\Email;    
 
 class UtilisateurController extends AbstractController
 { 
@@ -180,35 +184,75 @@ public function AjouterFeedBack(int $Cin, Request $request, EntityManagerInterfa
  
 
     #[Route('/dashboard/utilisateur/ajouter', name: 'app_user_new')]
-public function add(Request $request, EntityManagerInterface $em): Response
-{
-    $utilisateur = new Utilisateur();
-    $form = $this->createForm(UtilisateurType::class, $utilisateur);
-    
-    // ✅ Ajouter le bouton AVANT handleRequest
-    $form->add('ajouter', SubmitType::class);
+    public function newUser(
+        Request $request,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher,
+        MailerInterface $mailer,
+        SluggerInterface $slugger
+    ): Response {
+        $user = new Utilisateur();
+        $form = $this->createForm(UtilisateurType::class, $user);
+        $form->handleRequest($request);
 
-    $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // 1) upload de la photo, si présente
+            /** @var UploadedFile $photoFile */
+            $photoFile = $form->get('photoUtilisateur')->getData();
+            if ($photoFile) {
+                $safeName    = $slugger->slug(pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME));
+                $newFilename = $safeName.'-'.uniqid().'.'.$photoFile->guessExtension();
+                $photoFile->move(
+                    $this->getParameter('uploads_directory'),
+                    $newFilename
+                );
+                $user->setPhotoUtilisateur($newFilename);
+            }
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        $em->persist($utilisateur);
-        $em->flush();
+            // 2) génération aléatoire du mot de passe (8 caractères)
+            $plainPassword = substr(str_shuffle(
+                'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+            ), 0, 8);
 
-        $this->addFlash('success', 'Utilisateur ajouté avec succès.');
-        return $this->redirectToRoute('app_user_index');
+            // 3) hash du mot de passe
+            $hashed = $passwordHasher->hashPassword($user, $plainPassword);
+            $user->setMotDePasse($hashed);
+
+            // 4) persistance
+            $em->persist($user);
+            $em->flush();
+
+            // 5) envoi de l'email
+            $email = (new Email())
+                ->from('achrefkachai023@gmail.com')
+                ->to($user->getEmail())
+                ->subject('Création de votre compte CitiCore')
+                ->text(
+                    "Bonjour {$user->getPrenom()},\n\n".
+                    "Votre compte a été créé. Votre mot de passe temporaire est : $plainPassword\n\n".
+                    "Pensez à le changer dès votre première connexion."
+                )
+            ;
+            $mailer->send($email);
+
+            $this->addFlash('success', 'Utilisateur ajouté et mail envoyé avec son mot de passe.');
+            
+        }
+
+        return $this->render('back/utilisateur/add.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
-    return $this->render('back/utilisateur/add.html.twig', [
-        'form' => $form->createView(),
-    ]);
-}
+
+//-------------------------------------feedback-------------------------------------//
 #[Route('/dashboard/feedback', name: 'app_feedback_index')]
 public function showFeedbacks(FeedbackRepository $feedbackRepository): Response
 {
     
     $feedbacks = $feedbackRepository->findAll();
 
-    return $this->render('user/feedbacks.html.twig', [
+    return $this->render('back/utilisateur/FeedBack.html.twig', [
         'feedbacks' => $feedbacks
     ]);
 }

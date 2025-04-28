@@ -178,7 +178,7 @@ final class ReponseController extends AbstractController
                 }
 
 
-                return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_reponse_index', [], Response::HTTP_SEE_OTHER);
             }
             else {
                 $this->addFlash('error', 'Le formulaire contient des erreurs , veuillez vérifier vos saisies.');

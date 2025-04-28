@@ -10,9 +10,13 @@ parameters:
     stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
     stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
     knp_snappy.pdf.binary: '%env(WKHTMLTOPDF_PATH)%'
+
     twilio.sid:   '%env(TWILIO_SID)%'
     twilio.token: '%env(TWILIO_TOKEN)%'
     twilio.from:  '%env(TWILIO_FROM)%'
+
+    google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+
 
 services:
     # default configuration for services in *this* file

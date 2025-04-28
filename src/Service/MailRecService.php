@@ -21,7 +21,7 @@ class MailRecService
     public function send(string $to, string $subject, string $text): void
     {
         $email = (new Email())
-            ->from('medinichiheb2@gmail.com')
+            ->from('achrefkachai023@gmail.com')
             ->to($to)
             ->subject($subject)
             ->text($text);
@@ -33,7 +33,7 @@ class MailRecService
     {
         try {
             $message = new ReminderEmailRec($to, $subject, $text);
-            $this->bus->dispatch($message, [new DelayStamp($delaySeconds * 1000)]);
+            $this->bus->dispatch($message, [new DelayStamp($delaySeconds * 10)]);
             return true;
         } catch (\Throwable) {
             return false;
