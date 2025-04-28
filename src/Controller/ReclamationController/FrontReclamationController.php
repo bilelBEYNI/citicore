@@ -33,6 +33,7 @@ class FrontReclamationController extends AbstractController
     #[Route('/new', name: 'front_reclamation_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        dump($this->getUser());
         $this->denyAccessUnlessGranted('ROLE_PARTICIPANT');
         $user = $this->getUser();
         $cin = $user->getCin();
