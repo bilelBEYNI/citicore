@@ -165,20 +165,42 @@ if ($isSmsEnabled) {
 }
 
 #[Route('/paiement/success/{id}', name: 'app_paiement_success')]
-public function paiementSuccess(int $id, Request $request, PayPalClient $paypalClient, ProjetDonRepository $projetDonRepository): Response
-{
+public function paiementSuccess(
+    int $id,
+    Request $request,
+    PayPalClient $paypalClient,
+    ProjetDonRepository $projetDonRepository,
+    EntityManagerInterface $em
+): Response {
     $token = $request->query->get('token');
     if (!$token) {
         throw $this->createNotFoundException('Token manquant.');
     }
 
     try {
+        // Capture the payment on PayPal
         $capture = new OrdersCaptureRequest($token);
         $capture->prefer('return=representation');
-        $paypalClient->getClient()->execute($capture);
+        $response = $paypalClient->getClient()->execute($capture);
 
-        $this->addFlash('success', 'Paiement réussi via PayPal !');
+        // Retrieve the paid amount from PayPal capture response
+        $amountPaid = $response->result->purchase_units[0]->payments->captures[0]->amount->value;
+
+        // Fetch the project
+        $projet = $projetDonRepository->find($id);
+        if (!$projet) {
+            throw $this->createNotFoundException('Projet non trouvé.');
+        }
+
+        // Update the montant_recu
+        $projet->setMontantRecu($projet->getMontantRecu() + (float) $amountPaid);
+
+        // Persist changes
+        $em->flush();
+
+        $this->addFlash('success', 'Paiement réussi via PayPal ! Montant ajouté au projet.');
         return $this->redirectToRoute('app_front_projet');
+
     } catch (\Throwable $e) {
         $this->addFlash('error', 'Erreur lors du paiement : ' . $e->getMessage());
         return $this->redirectToRoute('app_front_projet');
