@@ -30,4 +30,5 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/participant, roles: ROLE_PARTICIPANT }
         - { path: ^/login, roles: PUBLIC_ACCESS }
-        
+        - { path: ^/front/reclamations, roles: ROLE_PARTICIPANT }
+
