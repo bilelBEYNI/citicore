@@ -75,7 +75,7 @@ class ProjetDonRepository extends ServiceEntityRepository
     $qb = $this->createQueryBuilder('p');
 
     if ($searchQuery) {
-        $qb->where('p.name LIKE :searchQuery OR p.description LIKE :searchQuery') // Assuming you search by name or description
+        $qb->where('p.nom LIKE :searchQuery OR p.description LIKE :searchQuery') // Assuming you search by name or description
             ->setParameter('searchQuery', '%' . $searchQuery . '%');
     }
 

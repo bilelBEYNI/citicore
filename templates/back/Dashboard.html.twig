@@ -132,10 +132,23 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                             Gestion marketplace
                         </a>
-                        <a class="nav-link" href="{{path ('app_user_index')}}">
-                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                            Gestion Projet don
+                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
+                            Gestion Projets Don
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
+                        <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="{{path ('app_projet_don_index')}}">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    Liste des Projets Don
+                                </a>
+                                <a class="nav-link" href="{{path ('app_association_index')}}">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    Liste des Associations
+                                </a>
+                                
+                            </nav>
+                        </div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
                             Gestion Reclamation
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
