@@ -1,25 +1,41 @@
 {% extends 'back/Dashboard.html.twig' %}
 
-{% block title %}New Reponse{% endblock %}
+{% block title %}Ajouter une Réponse{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <div class="card shadow">
+<div class="container my-5" style="margin-left: 300px; padding-bottom: 50px;">
+    <div class="card shadow-lg border-0 rounded-4">
 
-        <div class="card-header bg-info text-white">
-            <h4 class="mb-0">➕ Ajouter une réponse à : <em> {{ reclamation.ID_Reclamation }} </em></h4>
+        <div class="card-header bg-info text-white rounded-top-4">
+            <h4 class="mb-0">
+                💬 Ajouter une réponse à la réclamation 
+                <span class="badge bg-light text-dark">{{ reclamation.ID_Reclamation }}</span>
+            </h4>
         </div>
-        
-        <div class="card-body">
+
+        <div class="card-body px-5 py-4">
             {{ form_start(form) }}
-                {{ form_widget(form) }}
-                
-                <div class="d-flex justify-content-between mt-4">
-                    <button type="submit" class="btn btn-info">💬 Répondre</button>
-                    <a href="{{ path('app_reponse_index') }}" class="btn btn-secondary">⬅ Retour</a>
+            
+                {{ form_widget(form, {'attr': {'class': 'form-control mb-3'}}) }}
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-info px-4 py-2 fw-bold shadow-sm">
+                        ➕ Répondre
+                    </button>
                 </div>
-            {{ form_end(form) }}    
+
+            {{ form_end(form) }}
         </div>
     </div>
 </div>
+
+<style>
+.btn-info:hover {
+    background-color: #17a2b8 !important;
+    box-shadow: 0 0 10px rgba(23, 162, 184, 0.5);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+</style>
+
 {% endblock %}

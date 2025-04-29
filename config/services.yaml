@@ -14,6 +14,13 @@ parameters:
     infobip.api_key: '49fa567f0a5c890d708b36da646084d6-642d55de-4c24-4759-a9b7-45ef30af4ff4'
     infobip.sender_number: '+44 7491 163443'
 
+    twilio.sid:   '%env(TWILIO_SID)%'
+    twilio.token: '%env(TWILIO_TOKEN)%'
+    twilio.from:  '%env(TWILIO_FROM)%'
+
+    google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -51,3 +58,15 @@ services:
         class: Knp\Snappy\Pdf
         arguments:
             - '%knp_snappy.pdf.binary%'    
+            
+    App\Controller\CommuniactionController\DemandeController:
+        tags: ['controller.service_arguments']
+
+
+    App\Service\SMSRecService:
+        arguments:
+            $sid:   '%twilio.sid%'
+            $token: '%twilio.token%'
+            $from:  '%twilio.from%'
+    
+        

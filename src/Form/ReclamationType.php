@@ -30,11 +30,11 @@ class ReclamationType extends AbstractType
                 'Marketplace' => 'Marketplace',
                 'Demande' => 'Demande',
                 'Evenement' => 'Evenement',
-                'Projetdon' => 'Projetdon',
+                'ProjetDons' => 'ProjetDons',
             ],
             'placeholder' => 'Choisissez un type',
         ])
-        ->add('Cin_utilisateur');
+        ->add('Cin_Utilisateur');
         
     }
 

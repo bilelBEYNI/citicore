@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Réclamations{% endblock %}
+
+{% block body %}
+
+<div class="container my-5">
+    {# Affichage des flash messages #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    <h2 class="text-center mb-4">📋 Mes Réclamations</h2>
+    <a href="{{ path('front_reclamation_new') }}" class="btn btn-success mb-3">➕ Ajouter une réclamation</a>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Sujet</th>
+                <th>Description</th>
+                <th>Date Création</th>
+                <th>Type Reclamation</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for rec in reclamations %}
+            <tr>
+                <td>{{ rec.sujet }}</td>
+                <td>{{ rec.description }}</td>
+                <td>{{ rec.date_Creation|date('d/m/Y H:i') }}</td>
+                <td>{{ rec.type_Reclamation }}</td>
+                
+                <td>
+                    <a href="{{ path('front_reclamation_show', {ID_Reclamation: rec.ID_Reclamation}) }}" class="btn btn-sm btn-primary">👁 Voir</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="6" class="text-center text-muted">Aucune réclamation trouvée</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    
+</div>
+{% endblock %}

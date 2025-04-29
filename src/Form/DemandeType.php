@@ -9,34 +9,25 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class DemandeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('Utilisateur_id', TextType::class, [
-                'label' => 'ID Utilisateur'
-            ])
-            ->add('contenu', TextType::class, [
-                'label' => 'Contenu'
+            ->add('contenu', TextareaType::class, [
+                'label' => 'Contenu de la demande',
+                'attr' => ['class' => 'form-control'],
             ])
             ->add('date_demande', DateType::class, [
-                'widget' => 'single_text',
-                'label' => 'Date de la demande'
+                'label' => 'Date de la demande',
+                'widget' => 'single_text', // Utilise un champ HTML5 pour la date
+                'attr' => ['class' => 'form-control'],
             ])
-            ->add('statut', ChoiceType::class, [
-                'choices' => [
-                    'En attente' => 'en_attente',
-                    'Traitée' => 'traitee',
-                    'Rejetée' => 'rejetee',
-                ],
-                'label' => 'Statut'
-            ])
-            ->add('ajouter', SubmitType::class, [
-                'label' => 'Ajouter la demande'
+            ->add('statut', TextType::class, [
+                'label' => 'Statut',
+                'attr' => ['class' => 'form-control'],
             ]);
     }
 

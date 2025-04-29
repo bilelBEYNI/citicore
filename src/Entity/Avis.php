@@ -4,12 +4,11 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-
 #[ORM\Entity]
 class Avis
 {
-
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
     private int $avis_id;
 
@@ -22,56 +21,62 @@ class Avis
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $date_avis;
 
-    #[ORM\Column(type: "integer")]
-    private int $Demande_id;
+    #[ORM\ManyToOne(targetEntity: Demande::class, inversedBy: "avis")]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Demande $demande = null;
 
-    public function getAvis_id()
+    public function getAvis_id(): int
     {
         return $this->avis_id;
     }
 
-    public function setAvis_id($value)
+    public function setAvis_id(int $avis_id): self
     {
-        $this->avis_id = $value;
+        $this->avis_id = $avis_id;
+        return $this;
     }
 
-    public function getUtilisateur_id()
+    public function getUtilisateur_id(): int
     {
         return $this->Utilisateur_id;
     }
 
-    public function setUtilisateur_id($value)
+    public function setUtilisateur_id(int $Utilisateur_id): self
     {
-        $this->Utilisateur_id = $value;
+        $this->Utilisateur_id = $Utilisateur_id;
+        return $this;
     }
 
-    public function getCommentaire()
+    public function getCommentaire(): string
     {
         return $this->commentaire;
     }
 
-    public function setCommentaire($value)
+    public function setCommentaire(string $commentaire): self
     {
-        $this->commentaire = $value;
+        $this->commentaire = $commentaire;
+        return $this;
     }
 
-    public function getDate_avis()
+    public function getDate_avis(): \DateTimeInterface
     {
         return $this->date_avis;
     }
 
-    public function setDate_avis($value)
+    public function setDate_avis(\DateTimeInterface $date_avis): self
     {
-        $this->date_avis = $value;
+        $this->date_avis = $date_avis;
+        return $this;
     }
 
-    public function getDemande_id()
+    public function getDemande(): ?Demande
     {
-        return $this->Demande_id;
+        return $this->demande;
     }
 
-    public function setDemande_id($value)
+    public function setDemande(?Demande $demande): self
     {
-        $this->Demande_id = $value;
+        $this->demande = $demande;
+        return $this;
     }
 }

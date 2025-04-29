@@ -115,6 +115,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getIsbanned(): bool { return $this->is_banned; }
     public function setIsbanned(bool $value): void { $this->is_banned = $value; }
+   
 
     public function getRoles(): array
     {

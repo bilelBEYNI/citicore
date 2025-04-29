@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface; 
 use App\Entity\Utilisateur;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Repository\ReclamationRepository;
 
 final class HomeController extends AbstractController
 {
@@ -50,6 +51,22 @@ final class HomeController extends AbstractController
         ]);
     }
 
+    #[Route('/front/reclamations', name: 'Reclamation')]
+    public function indexReclamation(Request $request, ReclamationRepository $reclamationRepository): Response
+    {
+        dump($this->getUser());
+        $this->denyAccessUnlessGranted('ROLE_PARTICIPANT');
+        $user = $this->getUser();
+        $cin = $user->getCin();
+
+        // Filtre les réclamations par CIN
+        $reclamations = $reclamationRepository->findBy(['Cin_Utilisateur' => $cin]);
+
+        return $this->render('Front/Reclamation/Reclamation/index.html.twig', [
+            'reclamations' => $reclamations,
+        ]);
+    }
+    
     #[Route('/logout', name: 'logout')]
     public function logout(): void
     {

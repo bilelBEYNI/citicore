@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Ajouter un Feedback pour {{ organisateur.nom }} {{ organisateur.prenom }}</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            {{ form_start(form) }}
+                {{ form_row(form.contenu) }}
+                <button type="submit" class="btn btn-success w-100">Envoyer</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

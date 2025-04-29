@@ -4,7 +4,7 @@
 
 {% block body %}
 
-<div class="container mt-5">
+<div class="container my-5" style="margin-left: 300px; padding-bottom: 50px;">
     <div class="card shadow">
 
         <div class="card-header bg-success text-white">
@@ -15,9 +15,7 @@
             
             {{ include('back/Reclamation/Reclamation/_form.html.twig') }} 
 
-            <div class="d-flex justify-content-between">
-                <a href="{{ path('app_reclamation_index') }}" class="btn btn-secondary">↩️ Annuler</a>
-            </div> 
+            
             
         </div>
     </div>

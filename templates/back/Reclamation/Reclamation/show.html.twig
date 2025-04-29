@@ -3,7 +3,7 @@
 {% block title %}Détail Réclamation{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
+<div class="container my-5" style="margin-left: 300px; padding-bottom: 50px;">
     <div class="card shadow-lg border-0">
         <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center">
             <h4 class="mb-0">📌 Sujet : {{ reclamation.Sujet }}</h4>
@@ -42,10 +42,5 @@
         {% endif %}
     </div>
 
-    <div class="mt-4 text-center">
-        <a href="{{ path('app_reclamation_index') }}" class="btn btn-outline-primary px-4">
-            ⬅ Retour à la liste des réclamations
-        </a>
-    </div>
 </div>
 {% endblock %}

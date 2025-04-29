@@ -14,83 +14,36 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class UtilisateurType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-           ->add('Cin', TextType::class, [
-        'constraints' => [
-            new Assert\NotBlank(),
-            new Assert\Length(['min' => 8, 'max' => 8]),
-            new Assert\Type('numeric'),
-        ]
-    ])
-            ->add('Nom', TextType::class, [
-                'constraints' => [
-                    new Assert\NotBlank(),
-                    new Assert\Type("string")
-                ]
+            ->add('cin',      IntegerType::class, ['label' => 'CIN'])
+            ->add('nom',      TextType::class)
+            ->add('prenom',   TextType::class)
+            ->add('numTel',   TextType::class, ['label' => 'Numéro de téléphone'])
+            ->add('email',    EmailType::class)
+            ->add('genre',    ChoiceType::class, [
+                'choices' => ['Homme' => 'Homme','Femme' => 'Femme']
             ])
-            ->add('Prenom', TextType::class, [
-                'constraints' => [
-                    new Assert\NotBlank(),
-                    new Assert\Type("string")
-                ]
-            ])
-            ->add('Num_Tel', NumberType::class, [
-                'constraints' => [
-                    new Assert\NotBlank(),
-                    new Assert\Length(['max' => 8]),
-                    new Assert\Type("numeric")
-                ]
-            ])
-            ->add('Email', EmailType::class, [
-                'constraints' => [
-                    new Assert\NotBlank(),
-                    new Assert\Email()
-                ]
-            ])
-            ->add('Genre', ChoiceType::class, [
+            ->add('role',     ChoiceType::class, [
                 'choices' => [
-                    'Homme' => 'Homme',
-                    'Femme' => 'Femme',
-                ],
-                'constraints' => [
-                    new Assert\NotBlank()
+                    'Admin'         => 'Admin',
+                    'Organisateur'  => 'Organisateur',
+                    'Participant'   => 'Participant',
                 ]
             ])
-            ->add('Role', ChoiceType::class, [
-                'choices' => [
-                    'Admin' => 'Admin',
-                    'Organisateur' => 'Organisateur',
-                    'Participant' => 'Participant',
-                ],
-                'constraints' => [
-                    new Assert\NotBlank()
-                ]
+            ->add('photoUtilisateur', FileType::class, [
+                'mapped' => false, 'required' => false
             ])
-            ->add('Mot_De_Passe', PasswordType::class, [
-                'constraints' => [
-                    new Assert\NotBlank(),
-                    new Assert\Length(['min' => 6])
-                ]
-            ])
-            ->add('Photo_Utilisateur', FileType::class, [
-                'label' => 'Photo de l\'utilisateur',
-                'required' => false,
-                'constraints' => [
-                    new Assert\File([
-                        'mimeTypes' => ['image/jpeg', 'image/png'],
-                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPEG ou PNG)',
-                    ])
-                ],
-                'data_class' => null,  // Add this line to prevent expecting a "File" object in the entity
-            ]);
+            ->add('submit',   SubmitType::class, ['label' => 'Ajouter'])
+        ;
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => Utilisateur::class,

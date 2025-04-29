@@ -16,6 +16,21 @@ class UtilisateurRepository extends ServiceEntityRepository
         parent::__construct($registry, Utilisateur::class);
     }
 
+    public function findByCin(?string $cin): array
+{
+    $qb = $this->createQueryBuilder('u');
+
+    if ($cin) {
+        $qb->andWhere('u.Cin = :cin')
+           ->setParameter('cin', $cin);
+    }
+
+    return $qb
+        ->orderBy('u.Nom', 'ASC')
+        ->getQuery()
+        ->getResult();
+}
+
     //    /**
     //     * @return Utilisateur[] Returns an array of Utilisateur objects
     //     */
