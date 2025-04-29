@@ -21,20 +21,20 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/participant/dashboard', name: 'participant_dashboard')]
-public function afficherOrganisateurs(UtilisateurRepository $utilisateurRepository, FeedbackRepository $feedbackRepository): Response
-{
-    // Récupérer les organisateurs
-    $organisateurs = $utilisateurRepository->findBy(['Role' => 'Organisateur']);
-
-    // Récupérer les feedbacks pour chaque organisateur
-    foreach ($organisateurs as $organisateur) {
-        $organisateur->feedbacks = $feedbackRepository->findBy(['Cin_Organisateur' => $organisateur->getCin()]);
+    public function afficherOrganisateurs(UtilisateurRepository $utilisateurRepository, FeedbackRepository $feedbackRepository): Response
+    {
+        // Récupérer les organisateurs
+        $organisateurs = $utilisateurRepository->findBy(['Role' => 'Organisateur']);
+    
+        // Récupérer les feedbacks pour chaque organisateur
+        foreach ($organisateurs as $organisateur) {
+            $organisateur->feedbacks = $feedbackRepository->findBy(['Cin_Organisateur' => $organisateur->getCin()]);
+        }
+    
+        return $this->render('front/utilisateur/participant.html.twig', [
+            'organisateurs' => $organisateurs,
+        ]);
     }
-
-    return $this->render('front/utilisateur/participant.html.twig', [
-        'organisateurs' => $organisateurs,
-    ]);
-}
 
 
     #[Route('/redirect-after-login', name: 'redirect_after_login')]

@@ -108,8 +108,8 @@ final class ReponseController extends AbstractController
         $chartByStatus->getOptions()->getVAxis()->setTitle('Nombre');
 
         return $this->render('back/Reclamation/Reponse/stats.html.twig', [
-            'chartByType'   => $chartByType,
-            'chartByStatus' => $chartByStatus,
+            'chartByTypeData'   => $byType,
+            'chartByStatusData' => $byStatus,
             'reclamations'  => $reclamations,
             'responses'     => $responses,
             'typeFilter'    => $typeFilter,
