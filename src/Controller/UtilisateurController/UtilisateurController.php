@@ -62,42 +62,7 @@ public function utilisateurindex(UtilisateurRepository $utilisateurRepository, E
 
     
 
-#[Route('/dashboard/utilisateur/ajouter/{Cin}', name: 'feedback_add')]
-public function AjouterFeedBack(int $Cin, Request $request, EntityManagerInterface $em, UtilisateurRepository $utilisateurRepository): Response
-{
-    
-    $organisateur = $utilisateurRepository->findOneBy(['Cin' => $Cin]);
 
-    if (!$organisateur) {
-        throw $this->createNotFoundException('Organisateur non trouvé.');
-    }
-    
-    
-    $feedback = new Feedback();
-    $feedback->setCin_Organisateur($Cin); 
-    $user = $this->getUser();
-    if ($user) {
-        $feedback->setCin_Participant($user->getCin()); 
-    } else {
-        throw $this->createAccessDeniedException('Vous devez être connecté pour ajouter un feedback.');
-    }
-    $form = $this->createForm(FeedbackType::class, $feedback);
-
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-        $em->persist($feedback);
-        $em->flush();
-
-        $this->addFlash('success', 'Feedback ajouté avec succès.');
-        return $this->redirectToRoute('participant_dashboard');
-    }
-
-    return $this->render('back/utilisateur/addfeedback.html.twig', [
-        'form' => $form->createView(),
-        'organisateur' => $organisateur,
-    ]);
-}
 
     #[Route('/dashboard/utilisateur/show/{CIN}', name: 'app_user_show')]
     public function show(int $CIN, UtilisateurRepository $utilisateurRepository): Response
@@ -182,7 +147,37 @@ public function AjouterFeedBack(int $Cin, Request $request, EntityManagerInterfa
     
 
  
+    #[Route('/profil/editer', name: 'app_user_edit')]
+    public function editProfile(Request $request, EntityManagerInterface $em): Response {
+      // Assurez-vous que l'utilisateur est connecté avant de procéder
+      $user = $this->getUser();
+        
+      if (!$user) {
+          return $this->redirectToRoute('app_login');
+      }
 
+      // Création du formulaire pour l'utilisateur
+      $form = $this->createForm(UtilisateurType::class, $user);
+      $form->handleRequest($request);
+
+      // Vérification si le formulaire est soumis et valide
+      if ($form->isSubmitted() && $form->isValid()) {
+          // Enregistrer les modifications
+          $em->flush();
+
+          // Message flash pour informer l'utilisateur que la mise à jour a réussi
+          $this->addFlash('success', 'Votre profil a été mis à jour avec succès.');
+
+          // Redirection après la mise à jour
+          return $this->redirectToRoute('edit_profile');
+      }
+
+      return $this->render('Front/utilisateur/edit.html.twig', [
+          'form' => $form->createView(),
+      ]);
+    }
+
+    
     #[Route('/dashboard/utilisateur/ajouter', name: 'app_user_new')]
     public function newUser(
         Request $request,
@@ -246,6 +241,7 @@ public function AjouterFeedBack(int $Cin, Request $request, EntityManagerInterfa
 
 
 //-------------------------------------feedback-------------------------------------//
+
 #[Route('/dashboard/feedback', name: 'app_feedback_index')]
 public function showFeedbacks(FeedbackRepository $feedbackRepository): Response
 {
@@ -256,5 +252,62 @@ public function showFeedbacks(FeedbackRepository $feedbackRepository): Response
         'feedbacks' => $feedbacks
     ]);
 }
+
+#[Route('/dashboard/utilisateur/ajouter/{Cin}', name: 'feedback_add')]
+public function AjouterFeedBack(int $Cin, Request $request, EntityManagerInterface $em, UtilisateurRepository $utilisateurRepository): Response
+{
+    
+    $organisateur = $utilisateurRepository->findOneBy(['Cin' => $Cin]);
+
+    if (!$organisateur) {
+        throw $this->createNotFoundException('Organisateur non trouvé.');
+    }
+    
+    
+    $feedback = new Feedback();
+    $feedback->setCin_Organisateur($Cin); 
+    $user = $this->getUser();
+    if ($user) {
+        $feedback->setCin_Participant($user->getCin()); 
+    } else {
+        throw $this->createAccessDeniedException('Vous devez être connecté pour ajouter un feedback.');
+    }
+    $form = $this->createForm(FeedbackType::class, $feedback);
+
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $em->persist($feedback);
+        $em->flush();
+
+        $this->addFlash('success', 'Feedback ajouté avec succès.');
+        return $this->redirectToRoute('participant_dashboard');
+    }
+
+    return $this->render('back/utilisateur/addfeedback.html.twig', [
+        'form' => $form->createView(),
+        'organisateur' => $organisateur,
+    ]);
+}
+
+#[Route('/dashboard/utilisateur/feedbacks/{Cin}', name: 'feedback_view')]
+public function voirFeedbacks(int $Cin, FeedbackRepository $feedbackRepo, UtilisateurRepository $utilisateurRepo): Response
+{
+    $organisateur = $utilisateurRepo->findOneBy(['Cin' => $Cin]);
+
+    if (!$organisateur) {
+        throw $this->createNotFoundException('Organisateur non trouvé.');
+    }
+
+    $feedbacks = $feedbackRepo->findBy(['Cin_Organisateur' => $Cin]);
+
+    return $this->render('Front/utilisateur/feedback_by_organisateur.html.twig', [
+        'organisateur' => $organisateur,
+        'feedbacks' => $feedbacks,
+    ]);
+}
+
+
+
 
 }

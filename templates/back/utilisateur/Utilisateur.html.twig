@@ -14,8 +14,34 @@
             <!-- Cartes de statistiques -->
             <div class="row">
                 <!-- Carte des participants -->
+                
+                
                 <div class="col-xl-3 col-md-6">
-                    <div class="card bg-primary text-white mb-4">
+                    <div class="card bg-mauve text-white mb-4">
+                        <div class="card-body">
+                            Nombre total des Hommes: {{ genderData.homme }}
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
+                            <a class="small text-white stretched-link" href="#">View Details</a>
+                            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Carte des femmes -->
+                <div class="col-xl-3 col-md-6">
+                    <div class="card bg-mauve-dark text-white mb-4">
+                        <div class="card-body">
+                            Nombre total des Femmes: {{ genderData.femme }}
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
+                            <a class="small text-white stretched-link" href="#">View Details</a>
+                            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card bg-mauve text-white mb-4">
                         <div class="card-body">
                             Nombre total des Participants: {{ participantCount }}
                         </div>
@@ -25,12 +51,12 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Carte des organisateurs -->
+                
+                <!-- Carte des femmes -->
                 <div class="col-xl-3 col-md-6">
-                    <div class="card bg-warning text-white mb-4">
+                    <div class="card bg-mauve-dark text-white mb-4">
                         <div class="card-body">
-                            Nombre total des organisateurs: {{ organisateurCount }}
+                            Nombre total des organisateurs:{{ organisateurCount }}
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between">
                             <a class="small text-white stretched-link" href="#">View Details</a>
@@ -159,6 +185,20 @@
     </main>
 </div>
 
+{% block stylesheets %}
+<style>
+    .bg-mauve {
+        background-color: #9b59b6 !important;
+        color: white !important;
+    }
+    .bg-mauve-dark {
+        background-color: #6f42c1 !important;
+        color: white !important;
+    }
+</style>
+{% endblock %}
+
+
 {% block javascripts %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -176,7 +216,7 @@
                     datasets: [{
                         label: 'Répartition des utilisateurs par genre',
                         data: [hommes, femmes],
-                        backgroundColor: ['#4e73df', '#1cc88a'],
+                        backgroundColor: ['#6f42c1', '#9b59b6'],
                         hoverOffset: 4
                     }]
                 },

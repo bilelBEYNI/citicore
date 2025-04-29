@@ -7,42 +7,47 @@
 
         {{ form_start(form, {
             attr: {
-                novalidate: 'novalidate',
-                onsubmit: 'return validateForm()'
-            }
+                novalidate: 'novalidate'           }
         }) }}
             <div class="form-group">
                 {{ form_label(form.cin) }}
                 {{ form_widget(form.cin, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.cin) }}
             </div>
             <div class="form-group">
                 {{ form_label(form.nom) }}
                 {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.nom) }}
             </div>
             <div class="form-group">
                 {{ form_label(form.prenom) }}
                 {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.prenom) }}
             </div>
             <div class="form-group">
                 {{ form_label(form.numTel) }}
                 {{ form_widget(form.numTel, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.numTel) }}
             </div>
             <div class="form-group">
                 {{ form_label(form.email) }}
                 {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.email) }}
             </div>
             <div class="form-group">
                 {{ form_label(form.genre) }}
                 {{ form_widget(form.genre, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.genre) }}
             </div>
             <div class="form-group">
                 {{ form_label(form.role) }}
                 {{ form_widget(form.role, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.role) }}
             </div>
-            {# Champ Mot_De_Passe supprimé #}
             <div class="form-group">
                 {{ form_label(form.photoUtilisateur) }}
                 {{ form_widget(form.photoUtilisateur, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.photoUtilisateur) }}
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">Ajouter</button>
@@ -50,59 +55,4 @@
         {{ form_end(form) }}
     </div>
 </div>
-
-<script>
-function validateForm() {
-    // CIN : exactement 8 chiffres
-    const cin = document.getElementById("utilisateur_cin").value;
-    if (!/^[0-9]{8}$/.test(cin)) {
-        alert("Le CIN doit être un nombre de 8 chiffres.");
-        return false;
-    }
-
-    // Nom & Prénom non vides
-    for (let field of ["nom", "prenom"]) {
-        const value = document.getElementById(`utilisateur_${field}`).value.trim();
-        if (!value) {
-            alert(`Le ${field} ne peut pas être vide.`);
-            return false;
-        }
-    }
-
-    // Téléphone : 8 chiffres
-    const tel = document.getElementById("utilisateur_num_tel").value;
-    if (!/^[0-9]{8}$/.test(tel)) {
-        alert("Le numéro de téléphone doit être composé de 8 chiffres.");
-        return false;
-    }
-
-    // Email valide
-    const email = document.getElementById("utilisateur_email").value;
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-        alert("Veuillez entrer une adresse e-mail valide.");
-        return false;
-    }
-
-    // Photo (optionnelle) : JPEG ou PNG
-    const photoInput = document.getElementById("utilisateur_photo_utilisateur");
-    if (photoInput.files.length) {
-        const type = photoInput.files[0].type;
-        if (!["image/jpeg", "image/png"].includes(type)) {
-            alert("La photo doit être une image JPEG ou PNG.");
-            return false;
-        }
-    }
-
-    // Genre & Role sélectionnés
-    for (let sel of ["genre", "role"]) {
-        if (!document.getElementById(`utilisateur_${sel}`).value) {
-            alert(`Veuillez sélectionner un ${sel}.`);
-            return false;
-        }
-    }
-
-    return true;
-}
-</script>
 {% endblock %}
