@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+    body.signup-body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .signup-wrapper {
+        background: #ffffff;
+        padding: 20px 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        margin: auto;
+    }
+
+    .signup-wrapper h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #9b59b6;
+    }
+
+    .signup-group {
+        margin-bottom: 15px;
+    }
+
+    .signup-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #9b59b6;
+    }
+
+    .signup-group input,
+    .signup-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .signup-group input:focus,
+    .signup-group select:focus {
+        border-color: #D5B2D6;
+        outline: none;
+    }
+
+    .signup-button {
+        width: 100%;
+        padding: 10px;
+        background-color: #D5B2D6;
+        color: #ffffff;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .signup-button:hover {
+        background-color: #9b59b6;
+    }
+
+    .signup-footer {
+        text-align: center;
+        margin-top: 15px;
+        color: #555555;
+    }
+
+    .signup-footer a {
+        color: #9b59b6;
+        text-decoration: none;
+    }
+
+    .signup-footer a:hover {
+        text-decoration: underline;
+    }
+
+    html, body.signup-body {
+        height: 100%;
+    }
+
+    main.signup-main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 200px);
+    }
+    </style>
+</head>
+<body>
+    <div class="signup-wrapper">
+        <h1>Créer un compte</h1>
+        <form action="" method="post" enctype="multipart/form-data">
+            <div class="signup-group">
+                <label for="cin">CIN:</label>
+                <input type="number" id="cin" name="cin" required>
+            </div>
+            <div class="signup-group">
+                <label for="nom">Nom:</label>
+                <input type="text" id="nom" name="nom" required>
+            </div>
+            <div class="signup-group">
+                <label for="prenom">Prénom:</label>
+                <input type="text" id="prenom" name="prenom" required>
+            </div>
+            <div class="signup-group">
+                <label for="num_tel">Numéro de Téléphone:</label>
+                <input type="text" id="num_tel" name="num_tel" required>
+            </div>
+            <div class="signup-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="signup-group">
+                <label for="genre">Genre:</label>
+                <select id="genre" name="genre" required>
+                    <option value="Homme">Homme</option>
+                    <option value="Femme">Femme</option>
+                </select>
+            </div>
+            <div class="signup-group">
+                <label for="photo_utilisateur">Photo de Profil:</label>
+                <input type="file" id="photo_utilisateur" name="photo_utilisateur" accept="image/*">
+            </div>
+            <div class="signup-group">
+                <label for="mot_de_passe">Mot de Passe:</label>
+                <input type="password" id="mot_de_passe" name="mot_de_passe" required>
+            </div>
+            <div class="signup-group">
+                <label for="confirm_mot_de_passe">Confirmer le Mot de Passe:</label>
+                <input type="password" id="confirm_mot_de_passe" name="confirm_mot_de_passe" required>
+            </div>
+            <button type="submit" class="signup-button">S'inscrire</button>
+        </form>
+        <p class="signup-footer">Vous avez déjà un compte ? <a href="">Se connecter</a></p>
+    </div>
+</body>
+</html>
+{% endblock %}

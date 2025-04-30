@@ -3,59 +3,89 @@
 namespace App\Form;
 
 use App\Entity\Evenement;
+use App\Entity\Categorie;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class EvenementType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        // Liste des régions de la Tunisie
-        $regionsTunisie = [
-            "Tunis", "Sousse", "Sfax", "Ariana", "Ben Arous", "Bizerte", "Gabès", "Gafsa", "Kairouan",
-            "Kasserine", "Kébili", "Mahdia", "Manouba", "Medenine", "Monastir", "Nabeul", "Sidi Bouzid",
-            "Siliana", "Tataouine", "Tozeur", "Zaghouan"
-        ];
-
         $builder
             ->add('nom_evenement', TextType::class, [
+                'label' => 'Nom de l\'événement',
+                'required' => true,
+                'attr' => [
+                    'class' => 'form-control',
+                    'minlength' => '3'
+                ],
                 'constraints' => [
-                    new Assert\NotBlank([
-                        'message' => 'Le nom de l\'événement est requis.'
+                    new NotBlank([
+                        'message' => 'Le nom de l\'événement est requis'
                     ]),
-                    new Assert\Type([
-                        'type' => 'string',
-                        'message' => 'Le nom de l\'événement doit être une chaîne de caractères valide.'
+                    new Length([
+                        'min' => 3,
+                        'minMessage' => 'Le nom doit contenir au moins {{ limit }} caractères'
                     ])
                 ]
             ])
-            ->add('date_evenement', DateType::class, [
+            ->add('date_evenement', DateTimeType::class, [
+                'label' => 'Date et heure',
+                'required' => true,
                 'widget' => 'single_text',
+                'attr' => [
+                    'class' => 'form-control'
+                ],
                 'constraints' => [
-                    new Assert\NotBlank([
-                        'message' => 'La date de l\'événement est requise.'
-                    ]),
-                    new Assert\Date([
-                        'message' => 'La date de l\'événement doit être valide.'
+                    new NotBlank([
+                        'message' => 'La date est requise'
                     ])
                 ]
             ])
             ->add('lieu_evenement', TextType::class, [
+                'label' => 'Lieu',
+                'required' => true,
+                'attr' => [
+                    'class' => 'form-control',
+                    'minlength' => '3'
+                ],
                 'constraints' => [
-                    new Assert\NotBlank([
-                        'message' => 'Le lieu de l\'événement est requis.'
+                    new NotBlank([
+                        'message' => 'Le lieu est requis'
                     ]),
-                    new Assert\Choice([
-                        'choices' => $regionsTunisie,
-                        'message' => 'Le lieu de l\'événement doit être une région valide de la Tunisie.',
+                    new Length([
+                        'min' => 3,
+                        'minMessage' => 'Le lieu doit contenir au moins {{ limit }} caractères'
                     ])
                 ]
+            ])
+            ->add('categorie', EntityType::class, [
+                'class' => Categorie::class,
+                'choice_label' => 'nomCategorie',
+                'label' => 'Catégorie',
+                'required' => true,
+                'attr' => [
+                    'class' => 'form-select'
+                ],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'La catégorie est requise'
+                    ])
+                ]
+            ])
+            ->add('image', FileType::class, [
+                'label' => 'Image',
+                'required' => false,
+                'mapped' => false,
+                'attr' => ['class' => 'form-control']
             ]);
     }
 
@@ -63,6 +93,10 @@ class EvenementType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Evenement::class,
+            'attr' => [
+                'novalidate' => 'novalidate',
+                'class' => 'needs-validation'
+            ]
         ]);
     }
 }

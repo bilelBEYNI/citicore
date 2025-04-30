@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\EvenementController;
+namespace App\Controller\EvenementController;   
 
 use App\Entity\Evenement;
 use App\Repository\EvenementRepository;
@@ -9,23 +9,63 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Form\EvenementType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\Repository\CategorieRepository;
+use Knp\Component\Pager\PaginatorInterface;
+use App\Service\NotificationService;
 
 class EvenementController extends AbstractController
 { 
-    
-
-    
     #[Route('/dashboard/evenement', name: 'app_evenement_index')]
-    public function utilisateurindex(EvenementRepository $evenementRepository, EntityManagerInterface $entityManager): Response
-    {
-   
-        $evenements = $evenementRepository->findAll();
-    
+    public function utilisateurindex(
+        Request $request,
+        EvenementRepository $evenementRepository,
+        CategorieRepository $categorieRepository,
+        PaginatorInterface $paginator
+    ): Response {
+        // Récupérer les paramètres de recherche, tri et pagination
+        $query = $request->query->get('q', ''); // Recherche par nom
+        $lieu = $request->query->get('lieu', ''); // Filtrer par lieu
+        $sort = $request->query->get('sort', 'e.id_evenement'); // Champ de tri par défaut
+        $direction = $request->query->get('direction', 'asc'); // Direction de tri par défaut
+
+        // Construire la requête avec les filtres
+        $qb = $evenementRepository->createQueryBuilder('e');
+
+        if (!empty($query)) {
+            $qb->andWhere('e.nom_evenement LIKE :query')
+               ->setParameter('query', '%' . $query . '%');
+        }
+
+        if (!empty($lieu)) {
+            $qb->andWhere('e.lieu_evenement LIKE :lieu')
+               ->setParameter('lieu', '%' . $lieu . '%');
+        }
+
+        $qb->orderBy($sort, $direction);
+
+        // Paginer les résultats
+        $pagination = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1), // Page actuelle
+            10 // Nombre d'éléments par page
+        );
+
+        // Calculer les statistiques
+        $totalEvenements = $evenementRepository->count([]);
+        $totalCategories = $categorieRepository->count([]);
+
         // Passer les données à la vue
         return $this->render('back/Evenement/Evenement.html.twig', [
-            'evenements' => $evenements
+            'evenements' => $pagination,
+            'totalEvenements' => $totalEvenements,
+            'totalCategories' => $totalCategories,
+            'currentQuery' => $query,
+            'currentLieu' => $lieu,
+            'currentSort' => $sort,
+            'currentDirection' => $direction,
         ]);
     }
 
@@ -42,6 +82,7 @@ class EvenementController extends AbstractController
             'evenement' => $evenement,
         ]);
     }
+
     #[Route('/dashboard/evenement/delete/{id}', name: 'app_evenement_delete')]
     public function delete(int $id, EvenementRepository $evenementRepository, EntityManagerInterface $em): Response
     {
@@ -51,7 +92,7 @@ class EvenementController extends AbstractController
         // Si l'événement n'existe pas, afficher une erreur
         if (!$evenement) {
             $this->addFlash('error', 'Événement introuvable.');
-            return $this->redirectToRoute('app_evenement_index'); // à adapter selon ta route de liste
+            return $this->redirectToRoute('app_evenement_index');
         }
     
         // Suppression de l'événement
@@ -62,21 +103,27 @@ class EvenementController extends AbstractController
         $this->addFlash('success', 'Événement supprimé avec succès.');
     
         // Redirection vers la liste des événements
-        return $this->redirectToRoute('app_evenement_index'); // à adapter si ton nom de route est différent
+        return $this->redirectToRoute('app_evenement_index');
     }
 
     #[Route('/dashboard/evenement/ajouter', name: 'app_evenement_new')]
-    public function add(Request $request, EntityManagerInterface $em): Response
+    public function add(Request $request, EntityManagerInterface $em, NotificationService $notificationService): Response
     {
         $evenement = new Evenement();
         $form = $this->createForm(EvenementType::class, $evenement);
-        $form->add('ajouter', SubmitType::class);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($evenement);
             $em->flush();
+
+            // Send push notification
+            $notificationService->sendNewEventNotification(
+                $evenement->getNomEvenement(),
+                $evenement->getDateEvenement() ? $evenement->getDateEvenement()->format('Y-m-d H:i:s') : 'Date non définie',
+                $evenement->getLieuEvenement()
+            );
 
             $this->addFlash('success', 'Événement ajouté avec succès.');
             return $this->redirectToRoute('app_evenement_index');
@@ -88,7 +135,7 @@ class EvenementController extends AbstractController
     }
     
     #[Route('/dashboard/evenement/edit/{id}', name: 'app_evenement_edit')]
-    public function edit($id, EvenementRepository $evenementRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function edit(int $id, EvenementRepository $evenementRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
         // Récupérer l'événement par son ID
         $evenement = $evenementRepository->find($id);
@@ -100,10 +147,6 @@ class EvenementController extends AbstractController
     
         // Créer le formulaire
         $form = $this->createForm(EvenementType::class, $evenement);
-        $form->add('Modifier', SubmitType::class, [
-            'label' => 'Modifier',
-            'attr' => ['class' => 'btn btn-primary']
-        ]);
     
         // Traiter la requête
         $form->handleRequest($request);
@@ -122,6 +165,4 @@ class EvenementController extends AbstractController
             'evenement' => $evenement,
         ]);
     }
-
-
 }

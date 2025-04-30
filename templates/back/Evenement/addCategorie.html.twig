@@ -1,0 +1,62 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}Ajouter une Catégorie{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4" style="margin-top: 150px;">
+    <div class="row justify-content-end align-items-center min-vh-50">
+        <div class="col-lg-8 col-xl-6 mb-5">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="text-center font-weight-bold my-4">
+                        <i class="fas fa-tags me-2"></i>Ajouter une Catégorie
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'return validateForm()', 'class': 'needs-validation'}}) }}
+                        <div class="form-floating mb-4">
+                            {{ form_widget(form.nomCategorie, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'id': 'categorie_nom_categorie',
+                                    'placeholder': 'Nom de la catégorie'
+                                }
+                            }) }}
+                            {{ form_label(form.nomCategorie, 'Nom de la catégorie') }}
+                            <div class="alert alert-danger d-none mt-1" id="nomCategorieError"></div>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            {{ form_widget(form.description, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'id': 'categorie_description',
+                                    'placeholder': 'Description',
+                                    'style': 'height: 100px'
+                                }
+                            }) }}
+                            {{ form_label(form.description, 'Description') }}
+                            <div class="alert alert-danger d-none mt-1" id="descriptionCategorieError"></div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            {{ form_widget(form.image_url, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'id': 'categorie_image_url'
+                                }
+                            }) }}
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary px-4 py-2">
+                                <i class="fas fa-save me-2"></i>Enregistrer
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

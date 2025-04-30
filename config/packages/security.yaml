@@ -1,4 +1,5 @@
 security:
+
     password_hashers:
         App\Entity\Utilisateur:
             algorithm: auto # Utilise le mot de passe en clair (non recommandé en production)
@@ -31,4 +32,3 @@ security:
         - { path: ^/participant, roles: ROLE_PARTICIPANT }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/front/reclamations, roles: ROLE_PARTICIPANT }
-

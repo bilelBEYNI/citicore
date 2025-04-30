@@ -1,21 +1,110 @@
 {% extends 'back/Dashboard.html.twig' %}
 
+{% block title %}Détails de l'événement{% endblock %}
+
 {% block body %}
-<div class="container mt-5">
-    <!-- Carte de détails de l'événement -->
-    <div class="card mx-auto" style="max-width: 700px;">
-        <div class="card-header text-center">
-            <h4>Détails de l'Événement</h4>
-        </div>
-        <div class="card-body text-center">
-            <ul class="list-unstyled text-start">
-                <li><strong>Nom :</strong> {{ evenement.nomevenement }}</li>
-                <li><strong>Date :</strong> {{ evenement.dateevenement ? evenement.dateevenement|date('d/m/Y H:i') : 'Non définie' }}</li>
-                <li><strong>Lieu :</strong> {{ evenement.lieuevenement }}</li>
-                
-                
-            </ul>
-            <a href="{{ path('app_evenement_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+<div class="container-fluid px-4" style="margin-top: 150px; margin-left: 100px;">
+    <div class="row justify-content-end">
+        <div class="col-10">
+            <div class="card shadow-lg border-0 rounded-lg mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="text-center font-weight-bold my-4">
+                        <i class="fas fa-calendar-day me-2"></i>Détails de l'événement
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Informations principales -->
+                        <div class="col-md-8">
+                            <div class="card mb-4">
+                                <div class="card-header bg-light">
+                                    <h4 class="mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>{{ evenement.nomEvenement }}
+                                    </h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <h5 class="text-muted mb-2">
+                                                    <i class="fas fa-clock me-2"></i>Date et heure
+                                                </h5>
+                                                <p class="lead">
+                                                    {% if evenement.dateEvenement %}
+                                                        {{ evenement.dateEvenement|date('d/m/Y à H:i') }}
+                                                    {% else %}
+                                                        Date non définie
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <h5 class="text-muted mb-2">
+                                                    <i class="fas fa-map-marker-alt me-2"></i>Lieu
+                                                </h5>
+                                                <p class="lead">
+                                                    {{ evenement.lieuEvenement ?: 'Lieu non défini' }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Catégorie -->
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-folder me-2"></i>Catégorie
+                                    </h5>
+                                </div>
+                                <div class="card-body text-center">
+                                    {% if evenement.categorie %}
+                                        <a href="{{ path('app_categorie_show', {'id': evenement.categorie.id}) }}" 
+                                           class="text-decoration-none">
+                                            <div class="mb-3">
+                                                {% if evenement.categorie.imageUrl %}
+                                                    <img src="{{ asset('uploads/images/' ~ evenement.categorie.imageUrl) }}" 
+                                                         alt="Image de {{ evenement.categorie.nomCategorie }}" 
+                                                         class="img-fluid rounded shadow-sm mb-2" 
+                                                         style="max-height: 100px;">
+                                                {% else %}
+                                                    <div class="bg-light rounded p-3 mb-2">
+                                                        <i class="fas fa-folder-open fa-3x text-muted"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <h5 class="mb-0">{{ evenement.categorie.nomCategorie }}</h5>
+                                        </a>
+                                    {% else %}
+                                        <p class="text-muted mb-0">Aucune catégorie associée</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <a href="{{ path('app_evenement_edit', {'id': evenement.id_evenement}) }}" class="btn btn-warning me-2">
+                                <i class="fas fa-edit me-2"></i>Modifier
+                            </a>
+                            <form method="post" action="{{ path('app_evenement_delete', {'id': evenement.id_evenement}) }}" 
+                                  style="display: inline-block;" 
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ evenement.id_evenement) }}">
+                                <button class="btn btn-danger">
+                                    <i class="fas fa-trash me-2"></i>Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

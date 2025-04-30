@@ -159,17 +159,7 @@ class LoginController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var UploadedFile $photoFile */
-            $photoFile = $form->get('photo_utilisateur')->getData();
-            if ($photoFile) {
-                $safeName    = $slugger->slug(pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME));
-                $newFilename = $safeName.'-'.uniqid().'.'.$photoFile->guessExtension();
-                $photoFile->move(
-                    $this->getParameter('uploads_directory'),
-                    $newFilename
-                );
-                $user->setPhotoUtilisateur($newFilename);
-            }
+        
 
             // **Récupérer et hasher le mot de passe « plainPassword »**
             $plainPassword = $form->get('plainPassword')->getData();

@@ -3,6 +3,7 @@
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+
 parameters:
     env(WKHTMLTOPDF_PATH): ''
     env(WKHTMLTOIMAGE_PATH): ''
@@ -19,22 +20,28 @@ parameters:
     twilio.from:  '%env(TWILIO_FROM)%'
 
     google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+    openai_api_key: '%env(OPENAI_API_KEY)%'
 
 
 services:
-    # default configuration for services in *this* file
+    # valeurs par défaut pour tous tes services
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        autowire: true
+        autoconfigure: true
+        public: false
+        # Si tu veux binder globalement toute variable $apiKey :
+        bind:
+            $apiKey: '%env(OPENAI_API_KEY)%'
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
+    # Enregistrement automatique de tout dans src/
+
     App\:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
     App\Service\PayPalClient:  # Correct class name: PayPalClient
         arguments:
             $clientId: '%env(PAYPAL_CLIENT_ID)%'
@@ -74,5 +81,12 @@ services:
             $sid:   '%twilio.sid%'
             $token: '%twilio.token%'
             $from:  '%twilio.from%'
-    
-        
+
+    # Mercure configuration
+    Symfony\Component\Mercure\HubInterface: '@mercure.hub.default'
+    Symfony\Component\Mercure\PublisherInterface: '@mercure.hub.default'
+
+    # Configuration explicite si tu veux isoler juste ce service :
+    App\Service\EventImageGenerator:
+        arguments:
+            $projectDir: '%kernel.project_dir%'

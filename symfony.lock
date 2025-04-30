@@ -1,7 +1,9 @@
 {
+
     "cmen/google-charts-bundle": {
         "version": "7.0.0"
     },
+
     "doctrine/doctrine-bundle": {
         "version": "2.14",
         "recipe": {
@@ -16,6 +18,7 @@
             "./src/Repository/.gitignore"
         ]
     },
+
     "doctrine/doctrine-fixtures-bundle": {
         "version": "4.1",
         "recipe": {
@@ -28,6 +31,7 @@
             "./src/DataFixtures/AppFixtures.php"
         ]
     },
+
     "doctrine/doctrine-migrations-bundle": {
         "version": "3.4",
         "recipe": {
@@ -41,6 +45,7 @@
             "./migrations/.gitignore"
         ]
     },
+
     "excelwebzone/recaptcha-bundle": {
         "version": "1.5",
         "recipe": {
@@ -75,6 +80,44 @@
         },
         "files": [
             "./config/packages/knp_snappy.yaml"
+        ]
+    },
+    "liip/imagine-bundle": {
+        "version": "2.13",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.8",
+            "ref": "d1227d002b70d1a1f941d91845fcd7ac7fbfc929"
+        },
+        "files": [
+            "./config/packages/liip_imagine.yaml",
+            "./config/routes/liip_imagine.yaml"
+        ]
+    },
+    "nelmio/cors-bundle": {
+        "version": "2.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "1.5",
+            "ref": "6bea22e6c564fba3a1391615cada1437d0bde39c"
+        },
+        "files": [
+            "./config/packages/nelmio_cors.yaml"
+        ]
+    },
+    "php-http/discovery": {
+        "version": "1.20",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "1.18",
+            "ref": "f45b5dd173a27873ab19f5e3180b2f661c21de02"
+        },
+        "files": [
+            "./config/packages/http_discovery.yaml"
+
         ]
     },
     "phpunit/phpunit": {
@@ -162,6 +205,7 @@
             "./src/Kernel.php"
         ]
     },
+
     "symfony/infobip-notifier": {
         "version": "6.4",
         "recipe": {
@@ -171,6 +215,7 @@
             "ref": "deed501bbf68e206601e68f4f03319c227278a0c"
         }
     },
+
     "symfony/mailer": {
         "version": "6.4",
         "recipe": {
@@ -192,6 +237,21 @@
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
     },
+
+
+    "symfony/mercure-bundle": {
+        "version": "0.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "0.3",
+            "ref": "528285147494380298f8f991ee8c47abebaf79db"
+        },
+        "files": [
+            "./config/packages/mercure.yaml"
+        ]
+    },
+
     "symfony/messenger": {
         "version": "6.4",
         "recipe": {
@@ -309,6 +369,7 @@
             "./templates/base.html.twig"
         ]
     },
+
     "symfony/twilio-notifier": {
         "version": "6.4",
         "recipe": {
@@ -321,6 +382,7 @@
     "symfony/ux-chartjs": {
         "version": "v2.24.0"
     },
+
     "symfony/ux-turbo": {
         "version": "2.24",
         "recipe": {
@@ -359,3 +421,4 @@
         "version": "v3.20.0"
     }
 }
+

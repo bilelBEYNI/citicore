@@ -1,0 +1,28 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block body %}
+<div class="container mt-5">
+    <!-- Card pour afficher les détails de l'utilisateur -->
+    <div class="card mx-auto" style="max-width: 600px; margin-top: 50px;margin-top: 50px;">
+        <div class="card-header text-center">
+            <h4>Détails de l'utilisateur</h4>
+        </div>
+        <div class="card-body text-center">
+            <!-- Affichage de l'image de l'utilisateur (si elle existe) -->
+            <div class="mb-4">
+                <img src="{{ asset('http://localhost/images/' ~ utilisateur.PhotoUtilisateur) }}" alt="Image de l'utilisateur" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+            </div>
+            <ul class="list-unstyled">
+                <li><strong>CIN :</strong> {{ utilisateur.cin }}</li>
+                <li><strong>Nom :</strong> {{ utilisateur.nom }}</li>
+                <li><strong>Prénom :</strong> {{ utilisateur.prenom }}</li>
+                <li><strong>Email :</strong> {{ utilisateur.email }}</li>
+                <li><strong>Téléphone :</strong> {{ utilisateur.NumTel }}</li>
+                <li><strong>Genre :</strong> {{ utilisateur.genre }}</li>
+                <li><strong>Rôle :</strong> {{ utilisateur.role }}</li>
+            </ul>
+            <a href="{{ path('app_user_index') }}" class="btn btn-secondary btn-block">Retour à la liste</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

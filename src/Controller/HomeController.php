@@ -11,6 +11,7 @@ use App\Entity\Utilisateur;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use App\Repository\ReclamationRepository;
 use App\Repository\DemandeRepository;
+
 final class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
@@ -31,7 +32,8 @@ final class HomeController extends AbstractController
 
     private $entityManager;
 
-    
+
+    // Injecter l'EntityManagerInterface dans le constructeur
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -85,5 +87,27 @@ final class HomeController extends AbstractController
         ]);
     }
 
-
+    /*#[Route('/se/login', name: 'app_login', methods: ['GET', 'POST'])]
+    public function login(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        if ($request->isMethod('POST')) {
+            $cin = $request->request->get('Cin');
+            $password = $request->request->get('password');
+    
+            $user = $entityManager->getRepository(Utilisateur::class)->findOneBy(['Cin' => $cin]);
+    
+            if ($user && $user->getMotDePasse() === $password) {
+                if (in_array('Admin', $user->getRoles())) {
+                    return $this->redirectToRoute('back/utilisateur/Utilisateur.html.twig');
+                } else {
+                    return $this->redirectToRoute('/');
+                }
+            }
+    
+            $this->addFlash('error', 'CIN ou mot de passe incorrect.');
+        }
+    
+        // Affiche la page login.html.twig
+        return $this->render('back/utilisateur/Utilisateur.html.twig');
+    */
 }

@@ -11,12 +11,14 @@
 		
 		<!-- Title -->
         <title>CitiCore</title>
+        <title>Mediplus - Free Medical and Doctor Directory HTML Template.</title>
 		
 		<!-- Favicon -->
         <link rel="icon" href="{{asset ('styles/img/favicon.png')}}">
 		
 		<!-- Google Fonts -->
 		<link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
+
 		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 		{% block css %}
@@ -26,9 +28,19 @@
 		<!-- Nice Select CSS -->
 		<link rel="stylesheet" href="{{asset ('styles/css/nice-select.css')}}">
 		<!-- Font Awesome CSS -->
-        <link rel="stylesheet" href="{{asset ('styles/css/font-awesome.min.css')}}">
+
+       <link rel="stylesheet" href="{{asset ('styles/css/font-awesome.min.css')}}">
 		<!-- icofont CSS -->
         <link rel="stylesheet" href="{{asset ('styles/css/icofont.css')}}">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+		<!-- Select2 CSS -->
+		<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+		<!-- Toastr CSS -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+		<!-- Font Awesome CSS (déjà inclus plus haut) -->
+        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
+
 		<!-- Slicknav -->
 		<link rel="stylesheet" href="{{asset ('styles/css/slicknav.min.css')}}">
 		<!-- Owl Carousel CSS -->
@@ -39,8 +51,12 @@
         <link rel="stylesheet" href="{{asset ('styles/css/animate.min.css')}}">
 		<!-- Magnific Popup CSS -->
         <link rel="stylesheet" href="{{asset ('styles/css/magnific-popup.css')}}">
+
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/icofont@1.0.0/dist/css/icofont.min.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+		
 
 		<!-- Medipro CSS -->
         <link rel="stylesheet" href="{{asset ('styles/css/normalize.css')}}">
@@ -50,7 +66,22 @@
 		
     </head>
     <body>
+
 	
+
+    <!-- Zone de notification -->
+    <div id="notification-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+    <style>
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
+
 		
         <div class="preloader">
             <div class="loader">
@@ -120,10 +151,15 @@
 							<div class="col-lg-3 col-md-3 col-12">
 								<!-- Start Logo -->
 								<div class="logo">
+
 									<a href="{{ path('app_home') }}" style="text-decoration: none; color: inherit;">
 										<h1>CitiCore</h1>
 									  </a>
 									  
+
+									
+									<h1>CitiCore</h1>
+
 								</div>
 								<!-- End Logo -->
 								<!-- Mobile Nav -->
@@ -135,13 +171,28 @@
 								<div class="main-menu">
 									<nav class="navigation">
 										<ul class="nav menu">
+
 											
-											<li><a href="#">Evenement </a></li>
-											<li><a href="#">Market Place </a></li>
+											<li><a href="{{ path('app_evenement_front') }}">Evenement </a></li>
+											<li><a href="{{ path('app_shop') }}">Market Place </a></li>
 											<li><a href="{{ path('app_front_projet') }}">Projet Dons </a></li>
 											<li><a href="{{ path('Reclamation') }}">Reclamation </a></li>
 											<li><a href="{{ path('app_demande_front') }}">Contact Us</a></li>
 											<!--<li><a href="#">Reclamation </a></li>
+
+											<li class="active"><a href="#">Home <i class="icofont-rounded-down"></i></a>
+												<ul class="dropdown">
+													<li><a href="index.html">Home Page 1</a></li>
+												</ul>
+											</li>
+											
+											<li><a href="#">Evenement </a></li>
+											<li><a href="#">Market Place </a></li>
+											<li><a href="#">Projet Dons </a></li>
+											<li><a href="contact.html">Contact Us</a></li>
+											<!--<li><a href="#">Reclamation </a></li>
+											
+
 											<li><a href="#">Pages <i class="icofont-rounded-down"></i></a>
 												<ul class="dropdown">
 													<li><a href="404.html">404 Error</a></li>
@@ -155,6 +206,7 @@
 								<!--/ End Main Menu -->
 							</div>
 							<div class="col-lg-2 col-12">
+
 								<div class="get-quote" 
 									 style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
 								  {% if app.user and is_granted('ROLE_PARTICIPANT') %}
@@ -174,6 +226,12 @@
 							  
 							  
 							
+
+								<div class="get-quote">
+									<a href="{{path ('se_connecter')}}" class="btn">Se Connecter</a>
+								</div>
+							</div>
+
 						</div>
 					</div>
 				</div>
@@ -182,7 +240,19 @@
 		</header>
 		<!-- End Header Area -->
 		
+
 		 {% block body %}
+
+		        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="flash-message" data-type="{{ type }}" style="display: none;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+        
+      
+
 		  
 		 {% endblock %} 
 		<!-- Footer Area -->
@@ -263,7 +333,11 @@
 					<div class="row">
 						<div class="col-lg-12 col-md-12 col-12">
 							<div class="copyright-content">
+
 								<p>© Copyright 2018  |  All Rights Reserved by <a href="https://www.wpthemesgrid.com" target="_blank">wpthemesgrid.com</a> </p>
+
+								<p>  Copyright 2018  |  All Rights Reserved by <a href="https://www.wpthemesgrid.com" target="_blank">wpthemesgrid.com</a> </p>
+
 							</div>
 						</div>
 					</div>
@@ -273,8 +347,25 @@
 		</footer>
 		<!--/ End Footer Area -->
 		
+
 <!-- jquery Min JS -->
 <script src="{{ asset('styles/js/jquery.min.js') }}"></script>
+
+<!-- jQuery et dépendances -->
+<script src="{{ asset('styles/js/jquery.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<!-- Notifications JS -->
+<script src="{{ asset('js/notifications.js') }}"></script>
+
+<!-- Notifications -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Les notifications sont supportées');
+        new NotificationManager();
+    });
+</script>
+
 <!-- jquery Migrate JS -->
 <script src="{{ asset('styles/js/jquery-migrate-3.0.0.js') }}"></script>
 <!-- jquery Ui JS -->
@@ -309,13 +400,22 @@
 <script src="{{ asset('styles/js/jquery.magnific-popup.min.js') }}"></script>
 <!-- Counter Up CDN JS -->
 <script src="http://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
+
+
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <!-- Bootstrap JS -->
 <script src="{{ asset('styles/js/bootstrap.min.js') }}"></script>
 <!-- Main JS -->
 <script src="{{ asset('styles/js/main.js') }}"></script>
+
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
  
 	
+
+
+
     </body>
 </html>

@@ -1,0 +1,103 @@
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}Détails de la catégorie{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4" style="margin-top: 150px; margin-left: 100px;">
+    <div class="row justify-content-end">
+        <div class="col-10">
+            <div class="card shadow-lg border-0 rounded-lg mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="text-center font-weight-bold my-4">
+                        <i class="fas fa-info-circle me-2"></i>Détails de la catégorie
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Image de la catégorie -->
+                        <div class="col-md-4 text-center mb-4">
+                            {% if categorie.imageUrl %}
+                                <img src="{{ asset('uploads/images/' ~ categorie.imageUrl) }}" 
+                                     alt="Image de {{ categorie.nomCategorie }}" 
+                                     class="img-fluid rounded shadow-sm" 
+                                     style="max-height: 200px;">
+                            {% else %}
+                                <div class="bg-light rounded p-4">
+                                    <i class="fas fa-image fa-4x text-muted"></i>
+                                    <p class="mt-2 text-muted">Pas d'image disponible</p>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Informations de la catégorie -->
+                        <div class="col-md-8">
+                            <div class="card mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-folder me-2"></i>{{ categorie.nomCategorie }}
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="lead">{{ categorie.description ?: 'Aucune description disponible.' }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Liste des événements de la catégorie -->
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-calendar-alt me-2"></i>Événements associés
+                                        <span class="badge bg-primary rounded-pill float-end">
+                                            {{ categorie.evenements|length }}
+                                        </span>
+                                    </h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="list-group list-group-flush">
+                                        {% for evenement in categorie.evenements %}
+                                            <a href="{{ path('app_evenement_show', {'id': evenement.id_evenement}) }}" 
+                                               class="list-group-item list-group-item-action">
+                                                <div class="d-flex w-100 justify-content-between">
+                                                    <h6 class="mb-1">{{ evenement.nomEvenement }}</h6>
+                                                    <small class="text-muted">
+                                                        {{ evenement.dateEvenement ? evenement.dateEvenement|date('d/m/Y H:i') : 'Date non définie' }}
+                                                    </small>
+                                                </div>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                                    {{ evenement.lieuEvenement ?: 'Lieu non défini' }}
+                                                </small>
+                                            </a>
+                                        {% else %}
+                                            <div class="list-group-item text-center text-muted">
+                                                <i class="fas fa-info-circle me-2"></i>Aucun événement dans cette catégorie
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <a href="{{ path('app_categorie_edit', {'id': categorie.id}) }}" class="btn btn-warning me-2">
+                                <i class="fas fa-edit me-2"></i>Modifier
+                            </a>
+                            <form method="post" action="{{ path('app_categorie_delete', {'id': categorie.id}) }}" 
+                                  style="display: inline-block;" 
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ categorie.id) }}">
+                                <button class="btn btn-danger">
+                                    <i class="fas fa-trash me-2"></i>Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

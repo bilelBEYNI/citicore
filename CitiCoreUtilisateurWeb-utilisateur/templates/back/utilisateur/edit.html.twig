@@ -1,0 +1,202 @@
+{% extends 'back/dashboard.html.twig' %}
+
+{% block title %}Modifier Utilisateur{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">Modifier utilisateur</h1>
+
+    <div class="card shadow-sm p-4 mx-auto" style="max-width: 800px;">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'return validateForm()'}}) }}
+
+        {% if not form.vars.valid %}
+            <div class="alert alert-danger">
+                {{ form_errors(form) }}
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_row(form.Cin) }}
+                {{ form_row(form.Nom) }}
+                {{ form_row(form.Prenom) }}
+                {{ form_row(form.Num_Tel) }}
+                {{ form_row(form.Email) }}
+                {{ form_row(form.Genre) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(form.Photo_Utilisateur) }}
+                {{ form_row(form.Mot_De_Passe) }}
+                {{ form_row(form.Role) }}
+            </div>
+        </div>
+
+        {{ form_end(form) }}
+
+        <div class="mt-4 text-center">
+            {% if utilisateur.PhotoUtilisateur %}
+                <div class="image-preview">
+                    <img src="http://localhost/images/{{ utilisateur.PhotoUtilisateur }}" alt="Image de {{ utilisateur.Nom }}" class="img-fluid rounded-circle" width="100">
+                    <p class="mt-2">Image actuelle</p>
+                </div>
+            {% else %}
+                <p class="text-muted">Aucune image ajoutée</p>
+            {% endif %}
+        </div>
+
+        <div class="mt-4 text-center">
+            <a href="{{ path('app_user_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validateForm() {
+        // Vérification du champ CIN (8 chiffres)
+        const cin = document.getElementById("utilisateur_Cin").value;
+        const cinPattern = /^[0-9]{8}$/; // Vérifie si c'est un nombre de 8 chiffres
+        if (!cinPattern.test(cin)) {
+            alert("Le CIN doit être un nombre de 8 chiffres.");
+            return false; // Empêche l'envoi du formulaire
+        }
+
+        // Vérification du champ Nom (doit être une chaîne non vide)
+        const nom = document.getElementById("utilisateur_Nom").value;
+        if (nom.trim() === "") {
+            alert("Le nom ne peut pas être vide.");
+            return false;
+        }
+
+        // Vérification du champ Prénom (doit être une chaîne non vide)
+        const prenom = document.getElementById("utilisateur_Prenom").value;
+        if (prenom.trim() === "") {
+            alert("Le prénom ne peut pas être vide.");
+            return false;
+        }
+
+        // Vérification du champ Numéro de téléphone (max 8 chiffres)
+        const numTel = document.getElementById("utilisateur_Num_Tel").value;
+        if (numTel.trim() === "" || numTel.length !== 8 || isNaN(numTel)) {
+            alert("Le numéro de téléphone doit être composé de 8 chiffres.");
+            return false;
+        }
+
+        // Vérification du champ Email (doit être une adresse valide)
+        const email = document.getElementById("utilisateur_Email").value;
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(email)) {
+            alert("Veuillez entrer une adresse e-mail valide.");
+            return false;
+        }
+
+        // Vérification du champ Mot de passe (minimum 6 caractères)
+        const motDePasse = document.getElementById("utilisateur_Mot_De_Passe").value;
+        if (motDePasse.trim() === "" || motDePasse.length < 6) {
+            alert("Le mot de passe doit comporter au moins 6 caractères.");
+            return false;
+        }
+
+        // Vérification du champ Photo_Utilisateur (si nécessaire)
+        const photo = document.getElementById("utilisateur_Photo_Utilisateur").files[0];
+        if (photo && !['image/jpeg', 'image/png'].includes(photo.type)) {
+            alert("La photo doit être une image JPEG ou PNG.");
+            return false;
+        }
+
+        // Vérification du champ Genre (doit être sélectionné)
+        const genre = document.getElementById("utilisateur_Genre").value;
+        if (genre === "") {
+            alert("Veuillez sélectionner un genre.");
+            return false;
+        }
+
+        // Vérification du champ Role (doit être sélectionné)
+        const role = document.getElementById("utilisateur_Role").value;
+        if (role === "") {
+            alert("Veuillez sélectionner un rôle.");
+            return false;
+        }
+
+        return true; // Si toutes les vérifications passent, soumettre le formulaire
+    }
+</script>
+
+<style>
+    .container {
+        max-width: 900px;
+        margin: 0 auto; /* This centers the container horizontally */
+    }
+
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-group, .form-row {
+        margin-bottom: 1rem;
+    }
+
+    label {
+        font-weight: 600;
+        color: #555;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="file"],
+    input[type="password"],
+    select {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px 15px;
+        width: 100%;
+        transition: border-color 0.3s ease;
+    }
+
+    input:focus,
+    select:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .form-error-message {
+        color: red;
+        font-size: 0.9rem;
+    }
+
+    .row > div {
+        padding-bottom: 1rem;
+    }
+
+    .toggle-password {
+        font-size: 1.5rem;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .image-preview {
+        text-align: center;
+    }
+
+    .image-preview img {
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    /* Center the button in the middle */
+    .text-center {
+        text-align: center;
+    }
+</style>
+{% endblock %}
