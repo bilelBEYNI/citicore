@@ -48,4 +48,13 @@ class AssociationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function searchByNom(string $query): array
+{
+    return $this->createQueryBuilder('a')
+        ->where('a.Nom LIKE :query')
+        ->setParameter('query', '%' . $query . '%')
+        ->getQuery()
+        ->getResult();
+}
+
 }

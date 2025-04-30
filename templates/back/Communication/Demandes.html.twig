@@ -1,101 +1,115 @@
 {% extends 'back/Dashboard.html.twig' %}
 
-{% block title %}Gestion des Demandes{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block body %}
 <div id="layoutSidenav_content">
     <main>
         <div class="container-fluid px-4">
-            <h1 class="mt-4">Liste des Demandes</h1>
+            <h1 class="mt-4">Dashboard</h1>
             <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item active">Demandes</li>
+                <li class="breadcrumb-item active">Dashboard</li>
             </ol>
+            
+           
+            
+            <!-- Graphiques pour les statistiques par genre -->
+            <div class="row">
+                <!-- Graphique des utilisateurs par genre -->
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-pie me-1"></i>
+                            Répartition des utilisateurs par genre
+                        </div>
+                        <div class="card-body">
+                            <canvas id="genderChart" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Graphique des utilisateurs par rôle -->
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-pie me-1"></i>
+                            Répartition des utilisateurs par rôle
+                        </div>
+                        <div class="card-body">
+                            <canvas id="roleChart" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste des demandes -->
             <div class="container mt-4">
-                <table class="table table-bordered mt-3">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>CIN</th>
-                            <th>contenu</th>
-                            <th>Statut</th>
-                            <th>Détails</th>
-                            <th>Modifier</th>
-                            <th>Supprimer</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for demande in demandes %}
+                <h1 class="mb-4">Liste des demandes</h1>
+             
+                
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
                             <tr>
-                                <td>{{ demande.Demande_id }}</td>
-                                <td>{{ demande.Utilisateur_id }}</td>
+                                <th>ID</th>
+                    <th>Contenu</th>
+                    <th>Date</th>
+                    <th>Statut</th>
+                    
+                    <th>Modifier</th>
+                    <th>Supprimer</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for demande in demandes %}
+                            <tr>
+                                <td>{{ demande.demandeId }}</td>
                                 <td>{{ demande.contenu }}</td>
+                                <td>{{ demande.dateDemande ? demande.dateDemande|date('Y-m-d') : 'Non spécifiée' }}</td>
                                 <td>{{ demande.statut }}</td>
                                 
                                 <td>
-                                
-                                </td>
-                                <td>
-                                    <form method="post" action="{{ path('app_demande_update_status', {'id': demande.Demande_id}) }}">
-                                        <select name="statut" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <form action="{{ path('app_demande_update_status', { id: demande.demandeId }) }}" method="post">
+                                        <select name="statut" class="form-select form-select-sm">
                                             <option value="En attente" {{ demande.statut == 'En attente' ? 'selected' : '' }}>En attente</option>
                                             <option value="Acceptée" {{ demande.statut == 'Acceptée' ? 'selected' : '' }}>Acceptée</option>
                                             <option value="Refusée" {{ demande.statut == 'Refusée' ? 'selected' : '' }}>Refusée</option>
                                         </select>
-                                        <input type="hidden" name="_token" value="{{ csrf_token('update_status' ~ demande.Demande_id) }}">
+                                        <button type="submit" class="btn btn-warning btn-sm mt-1">Modifier</button>
                                     </form>
                                 </td>
                                 <td>
-                                    <a href="{{ path('app_demande_delete', {'id': demande.Demande_id}) }}" class="btn btn-sm btn-danger">🗑️</a>
+                                    <a href="{{ path('app_demande_delete', { id: demande.demandeId }) }}" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
                                 </td>
                             </tr>
                         {% endfor %}
-                    </tbody>
-                </table>
+        
+                        </tbody>
+                    </table>
+                </div>
+            
+                
             </div>
         </div>
     </main>
 </div>
 
-<!-- Modal Bootstrap -->
-<div class="modal fade" id="avisModal" tabindex="-1" aria-labelledby="avisModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="avisModalLabel">Liste des Avis</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Contenu des avis chargé dynamiquement -->
-                <div id="avisContent">
-                    <p>Chargement des avis...</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    function loadAvis(demandeId) {
-        const avisContent = document.getElementById('avisContent');
-        avisContent.innerHTML = '<p>Chargement des avis...</p>';
-
-        fetch(`/demandes/${demandeId}/avis`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.length > 0) {
-                    avisContent.innerHTML = '<ul>' + data.map(avis => `<li>${avis.contenu}</li>`).join('') + '</ul>';
-                } else {
-                    avisContent.innerHTML = '<p>Aucun avis trouvé pour cette demande.</p>';
-                }
-            })
-            .catch(error => {
-                avisContent.innerHTML = '<p>Erreur lors du chargement des avis.</p>';
-                console.error('Erreur:', error);
-            });
+{% block stylesheets %}
+<style>
+    .bg-mauve {
+        background-color: #9b59b6 !important;
+        color: white !important;
     }
-</script>
+    .bg-mauve-dark {
+        background-color: #6f42c1 !important;
+        color: white !important;
+    }
+</style>
+{% endblock %}
+
+
+
 {% endblock %}

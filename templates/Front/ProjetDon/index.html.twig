@@ -3,12 +3,8 @@
 {% block title %}Nos Projets{% endblock %}
 
 {% block body %}
-    
-    
-    
    <div class="container mt-4 mb-4">
     <div class="d-flex justify-content-between align-items-center">
-        
         <!-- Left: Chatbot Button -->
         <div>
         <h5>
@@ -35,12 +31,15 @@
     </div>
 </div>
 
-
-        <!-- Search Bar -->
+        <!-- Filter Dropdown and Search Bar -->
     <div class="container my-5">
         <form method="get" action="{{ path('app_front_projet') }}">
             <div class="input-group mb-4">
                 <input type="text" class="form-control" name="search" placeholder="Rechercher un projet" value="{{ app.request.query.get('search') }}">
+                <select class="form-control" name="filter">
+                    <option value="all" {% if app.request.query.get('filter') == 'all' %} selected {% endif %}>Tous les projets</option>
+                    <option value="available" {% if app.request.query.get('filter') == 'available' %} selected {% endif %}>Disponibles</option>
+                </select>
                 <button class="btn btn-primary" type="submit">Rechercher 🔍</button>
             </div>
         </form>

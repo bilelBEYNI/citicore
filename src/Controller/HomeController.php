@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Utilisateur;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use App\Repository\ReclamationRepository;
-
+use App\Repository\DemandeRepository;
 final class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
@@ -60,7 +60,7 @@ final class HomeController extends AbstractController
         $cin = $user->getCin();
 
         // Filtre les réclamations par CIN
-        $reclamations = $reclamationRepository->findBy(['Cin_Utilisateur' => $cin]);
+        $reclamations = $reclamationRepository->findBy(['Utilisateur_id' => $cin]);
 
         return $this->render('Front/Reclamation/Reclamation/index.html.twig', [
             'reclamations' => $reclamations,
@@ -73,4 +73,17 @@ final class HomeController extends AbstractController
         
     }
     
+
+    #[Route('/demandes', name: 'app_demande_front')]
+    public function front(DemandeRepository $demandeRepository): Response
+    {
+        // Utiliser la méthode personnalisée pour récupérer les demandes acceptées
+        $demandes = $demandeRepository->findAcceptedDemandes();
+
+        return $this->render('Front/Communication/demandefront.html.twig', [
+            'demandes' => $demandes,
+        ]);
+    }
+
+
 }

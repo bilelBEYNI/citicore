@@ -3,55 +3,63 @@
 {% block title %}Association index{% endblock %}
 
 {% block body %}
-    
+<div class="container my-5" style="margin-left: 250px; padding-bottom: 50px;">
+
 
     <div class="container my-5" style="margin-left: 300px; padding-bottom: 50px;">
 
         <h1 class="text-center mb-4">Liste des Associations </h1>
         <div class="text-center mb-4">
+
         <h5>
-            <a href="{{ path('app_association_new') }}">
+            <a href="{{ path('app_association_new') }}" class="btn btn-success">
                 ✚ Ajouter une nouvelle association
             </a>
-            </h5>
-        </div>
+        </h5>
+    </div>
 
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark text-center">
-                    <tr>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>Telephone</th>
-                        <th>Description</th>
-                        <th>Adresse</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
+    <!-- Barre de recherche -->
+    <div class="d-flex justify-content-center align-items-center mb-4 gap-2">
+        <form method="get" action="{{ path('app_association_index') }}" class="d-flex">
+            <input type="text" name="search" value="{{ app.request.get('search') }}" class="form-control me-2" placeholder="Rechercher par nom...">
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+        </form>
+        <a href="{{ path('app_association_index') }}" class="btn btn-secondary">Tous les Associations</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Telephone</th>
+                    <th>Description</th>
+                    <th>Adresse</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
                 {% for association in associations %}
-                    <tr>
+                    <tr class="text-center">
                         <td>{{ association.Nom }}</td>
                         <td>{{ association.Email }}</td>
                         <td>{{ association.Telephone }}</td>
                         <td>{{ association.Description }}</td>
                         <td>{{ association.Adresse }}</td>
                         <td>
-                            <a href="{{ path('app_association_show', {'id_association': association.id}) }}" class="btn ">👁️</a> 
-                            <a href="{{ path('app_association_edit', {'id_association': association.id}) }}" class="btn ">✏️</a>
-                            
-                            
+                            <a href="{{ path('app_association_show', {'id_association': association.idAssociation}) }}" class="btn btn-info btn-sm">👁️</a> 
+                            <a href="{{ path('app_association_edit', {'id_association': association.idAssociation}) }}" class="btn btn-warning btn-sm">✏️</a>
                         </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="6">No records found</td>
+                        <td colspan="6" class="text-center">Aucune association trouvée.</td>
                     </tr>
                 {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        
+            </tbody>
+        </table>
     </div>
+
+</div>
 {% endblock %}

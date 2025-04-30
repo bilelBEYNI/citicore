@@ -22,6 +22,11 @@
                 {{ form_widget(form.statut, {'attr': {'class': 'form-control'}}) }}
                 {{ form_errors(form.statut) }}
             </div>
+            <div class="mb-3">
+                {{ form_label(form.Cin_Utilisateur) }}
+                {{ form_widget(form.Cin_Utilisateur, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.Cin_Utilisateur) }}
+            </div>
             <button type="submit" class="btn btn-primary">Ajouter</button>
         {{ form_end(form) }}
     </div>

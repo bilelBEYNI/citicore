@@ -5,29 +5,37 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 class Demande
 {
-
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
-    private int $Demande_id;
+    private int $demandeId;
+    
 
-    #[ORM\Column(type: "integer")]
-    private int $Utilisateur_id;
+    #[ORM\Column(name: 'Utilisateur_id' ,type: "integer")]
+    #[Assert\NotNull(message: 'Le numéro CIN de l’utilisateur est requis.')]
+    #[Assert\Positive(message: 'Le CIN doit être un nombre positif.')]
+    #[Assert\Length(
+        min: 8,
+        max: 8,
+        exactMessage: 'Le CIN doit contenir exactement {{ limit }} chiffres.'
+    )]
+    private int $cinUtilisateur;
 
     #[ORM\Column(type: "text")]
     private string $contenu;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $date_demande = null;
-
+    private ?\DateTimeInterface $dateDemande = null;
 
     #[ORM\Column(type: "string", length: 255)]
     private string $statut;
 
-    #[ORM\OneToMany(mappedBy: "demande", targetEntity: Avis::class)]
+    #[ORM\OneToMany(mappedBy: "demande", targetEntity: Avis::class, cascade: ["persist", "remove"])]
     private Collection $avis;
 
     public function __construct()
@@ -35,52 +43,53 @@ class Demande
         $this->avis = new ArrayCollection();
     }
 
-    public function getDemande_id()
+    public function getDemandeId(): int
     {
-        return $this->Demande_id;
+        return $this->demandeId;
     }
 
-    public function setDemande_id($value)
+    public function setDemandeId(int $value): void
     {
-        $this->Demande_id = $value;
+        $this->demandeId = $value;
     }
 
-    public function getUtilisateur_id()
+    public function getCinUtilisateur(): int
     {
-        return $this->Utilisateur_id;
+        return $this->cinUtilisateur;
     }
 
-    public function setUtilisateur_id($value)
+    public function setCinUtilisateur(int $value): void
     {
-        $this->Utilisateur_id = $value;
+        $this->cinUtilisateur = $value;
     }
 
-    public function getContenu()
+    public function getContenu(): string
     {
         return $this->contenu;
     }
 
-    public function setContenu($value)
+    public function setContenu(string $value): void
     {
         $this->contenu = $value;
     }
 
-    public function getDate_demande()
+    public function getDateDemande(): ?\DateTimeInterface
     {
-        return $this->date_demande;
+        return $this->dateDemande;
     }
 
-    public function setDate_demande($value)
+    public function setDateDemande(\DateTimeInterface $date): self
     {
-        $this->date_demande = $value;
+        $this->dateDemande = $date;
+        return $this;
     }
 
-    public function getStatut()
+    public function getStatut(): string
     {
         return $this->statut;
     }
 
-    public function setStatut($value)
+    public function setStatut(string $value): void
     {
         $this->statut = $value;
     }
@@ -92,6 +101,6 @@ class Demande
 
     public function getFormattedDateDemande(): string
     {
-        return $this->date_demande->format('Y-m-d'); // Format de la date (année-mois-jour)
+        return $this->dateDemande ? $this->dateDemande->format('Y-m-d') : '';
     }
 }

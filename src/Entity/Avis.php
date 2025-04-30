@@ -12,18 +12,19 @@ class Avis
     #[ORM\Column(type: "integer")]
     private int $avis_id;
 
-    #[ORM\Column(type: "integer")]
-    private int $Utilisateur_id;
-
     #[ORM\Column(type: "text")]
     private string $commentaire;
 
-    #[ORM\Column(type: "datetime")]
-    private \DateTimeInterface $date_avis;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $dateavis = null;
 
-    #[ORM\ManyToOne(targetEntity: Demande::class, inversedBy: "avis")]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Demande $demande = null;
+    #[ORM\Column(type: "integer", nullable: true)]
+    private ?int $demandeId = null;
+
+    public function __construct()
+    {
+        $this->dateavis = new \DateTime(); // Initialise avec la date actuelle
+    }
 
     public function getAvis_id(): int
     {
@@ -33,17 +34,6 @@ class Avis
     public function setAvis_id(int $avis_id): self
     {
         $this->avis_id = $avis_id;
-        return $this;
-    }
-
-    public function getUtilisateur_id(): int
-    {
-        return $this->Utilisateur_id;
-    }
-
-    public function setUtilisateur_id(int $Utilisateur_id): self
-    {
-        $this->Utilisateur_id = $Utilisateur_id;
         return $this;
     }
 
@@ -58,25 +48,25 @@ class Avis
         return $this;
     }
 
-    public function getDate_avis(): \DateTimeInterface
+    public function getDateavis(): ?\DateTimeInterface
     {
-        return $this->date_avis;
+        return $this->dateavis;
     }
 
-    public function setDate_avis(\DateTimeInterface $date_avis): self
+    public function setDateavis(?\DateTimeInterface $dateavis): self
     {
-        $this->date_avis = $date_avis;
+        $this->dateavis = $dateavis;
         return $this;
     }
 
-    public function getDemande(): ?Demande
+    public function getDemandeId(): ?int
     {
-        return $this->demande;
+        return $this->demandeId;
     }
 
-    public function setDemande(?Demande $demande): self
+    public function setDemandeId(?int $demandeId): self
     {
-        $this->demande = $demande;
+        $this->demandeId = $demandeId;
         return $this;
     }
 }

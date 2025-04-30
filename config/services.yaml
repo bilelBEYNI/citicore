@@ -7,10 +7,19 @@ parameters:
     env(WKHTMLTOPDF_PATH): ''
     env(WKHTMLTOIMAGE_PATH): ''
     uploads_directory: '%kernel.project_dir%/public/uploads'
-    stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
-    stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
+
+    paypal_client_id: '%env(PAYPAL_CLIENT_ID)%'
+    paypal_client_secret: '%env(PAYPAL_CLIENT_SECRET)%'
     knp_snappy.pdf.binary: '%env(WKHTMLTOPDF_PATH)%'
+    infobip.api_key: '49fa567f0a5c890d708b36da646084d6-642d55de-4c24-4759-a9b7-45ef30af4ff4'
+    infobip.sender_number: '+44 7491 163443'
+
+    twilio.sid:   '%env(TWILIO_SID)%'
+    twilio.token: '%env(TWILIO_TOKEN)%'
+    twilio.from:  '%env(TWILIO_FROM)%'
+
     google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+
 
 services:
     # default configuration for services in *this* file
@@ -26,7 +35,19 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    App\Service\PayPalClient:  # Correct class name: PayPalClient
+        arguments:
+            $clientId: '%env(PAYPAL_CLIENT_ID)%'
+            $clientSecret: '%env(PAYPAL_CLIENT_SECRET)%'
+    
 
+    App\Service\SmsService:
+        arguments:
+            $apiKey: '%infobip.api_key%'
+            $senderNumber: '%infobip.sender_number%'        
+
+         
+            
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     App\Entity\CartService:
@@ -38,6 +59,20 @@ services:
         arguments:
             - '%knp_snappy.pdf.binary%'    
             
-    App\Controller\CommuniactionController\DemandeController:
-        tags: ['controller.service_arguments']
+
+    App\Controller\CommunicationController\DemandeController:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+
+
+
+
+    App\Service\SMSRecService:
+        arguments:
+            $sid:   '%twilio.sid%'
+            $token: '%twilio.token%'
+            $from:  '%twilio.from%'
+    
         

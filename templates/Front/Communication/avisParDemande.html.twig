@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Avis pour la demande #{{ demandeId }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Avis pour la demande #{{ demande.DemandeId }}</h1>
+
+        {% if avis is empty %}
+            <p>Aucun avis trouvé pour cette demande.</p>
+        {% else %}
+            <ul>
+                {% for a in avis %}
+                    <li>
+                        <strong>Commentaire :</strong> {{ a.commentaire }}<br>
+                        <strong>Date :</strong> {{ a.dateavis|date('Y-m-d H:i') }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <a href="{{ path('app_demande_front') }}" class="btn btn-secondary mt-3">Retour à la liste des demandes</a>
+    </div>
+{% endblock %}

@@ -49,4 +49,39 @@ class ProjetDonRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    // Method to find available projects (those whose end date is not in the past)
+    public function findAvailableProjects()
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.date_fin >= :now')
+            ->setParameter('now', new \DateTime())  // Using the current date to check for availability
+            ->getQuery()
+            ->getResult();
+    }
+
+    // Method to find projects by name and availability (end date not passed)
+    public function findByNameAndAvailable(string $name)
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.nom LIKE :name')
+            ->andWhere('p.date_fin >= :now')
+            ->setParameter('name', '%' . $name . '%')
+            ->setParameter('now', new \DateTime())
+            ->getQuery()
+            ->getResult();
+    }
+    public function findBySearchQuery(string $searchQuery)
+{
+    $qb = $this->createQueryBuilder('p');
+
+    if ($searchQuery) {
+        $qb->where('p.nom LIKE :searchQuery OR p.description LIKE :searchQuery') // Assuming you search by name or description
+            ->setParameter('searchQuery', '%' . $searchQuery . '%');
+    }
+
+    return $qb->getQuery()->getResult();
+}
+
+
+    
 }

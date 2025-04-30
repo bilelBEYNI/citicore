@@ -3,23 +3,97 @@
 {% block title %}Ajouter Réclamation{% endblock %}
 
 {% block body %}
-
 <div class="container mt-5">
-    <div class="card shadow">
-
-        <div class="card-header bg-success text-white">
-            <h4 class="mb-0">📝 Ajouter une Réclamation</h4>
+    <div class="card mx-auto shadow" style="max-width: 600px; opacity: 0;" id="form-card">
+        <div class="card-header bg-primary text-white text-center rounded-top">
+            <h4 class="m-0">📝 Nouvelle Réclamation</h4>
         </div>
+        <div class="card-body p-4">
 
-        <div class="card-body">
-            
-            {{ include('Front/Reclamation/Reclamation/_form.html.twig') }} 
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-            <div class="d-flex justify-content-between">
-                <a href="{{ path('front_reclamation_index') }}" class="btn btn-secondary">↩️ Annuler</a>
-            </div> 
-            
+                <div class="mb-3">
+                    {{ form_label(form.Sujet, 'Sujet de la réclamation', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.Sujet, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le sujet'}}) }}
+                    {{ form_errors(form.Sujet) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.Type_Reclamation, 'Type de réclamation', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.Type_Reclamation, {'attr': {'class': 'form-select'}}) }}
+                    {{ form_errors(form.Type_Reclamation) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.Description, 'Description', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.Description, {'attr': {'class': 'form-control', 'placeholder': 'Décrivez votre réclamation', 'rows': 4}}) }}
+                    {{ form_errors(form.Description) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.Date_Creation, 'Date de création', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.Date_Creation, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.Date_Creation) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.Date_Resolution, 'Date de résolution', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.Date_Resolution, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.Date_Resolution) }}
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 mt-3">
+                    💾 Enregistrer
+                </button>
+
+            {{ form_end(form) }}
+
         </div>
     </div>
 </div>
+
+<style>
+/* Style de la carte avec animation au survol */
+.card {
+    border: none;
+    border-radius: 0.5rem;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15);
+}
+
+/* Bouton Enregistrer arrondi et transition */
+.btn-primary {
+    border-radius: 2rem;
+    transition: background-color 0.3s, transform 0.2s;
+}
+.btn-primary:hover {
+    background-color: #004085; /* Couleur légèrement plus sombre */
+    transform: translateY(-2px);
+}
+
+/* Focus sur les champs pour souligner l'interaction */
+.form-control:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+}
+
+/* Animation fade-in et slide-up */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#form-card {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+</style>
 {% endblock %}
