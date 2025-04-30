@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/UtilisateurStyle/Front/login.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="login-box">
+    <h2>Connexion</h2>
+    <form method="POST" action="{{ path('app_login') }}">
+        <div class="input-group">
+            <label for="cin">CIN</label>
+            <input type="text" id="cin" name="cin" required />
+        </div>
+        <div class="input-group">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" name="password" required />
+        </div>
+        <button type="submit" class="buttonlogin">Se connecter</button>
+    </form>
+    <div class="extra-link">
+        <p>Pas encore inscrit ? <a href="/signup">Créer un compte</a></p>
+    </div>
+</div>
+{% endblock %}

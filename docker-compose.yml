@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  mercure:
+    image: dunglas/mercure
+    restart: unless-stopped
+    environment:
+      # Uncomment the following line to disable HTTPS
+      SERVER_NAME: ':3000'
+      MERCURE_PUBLISHER_JWT_KEY: '!ChangeThisMercureHubJWTSecretKey!'
+      MERCURE_SUBSCRIBER_JWT_KEY: '!ChangeThisMercureHubJWTSecretKey!'
+      MERCURE_EXTRA_DIRECTIVES: |
+        cors_origins *
+        anonymous
+    ports:
+      - "3000:3000"
+    command: /usr/bin/caddy run -config /etc/caddy/Caddyfile.dev

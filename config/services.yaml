@@ -1,0 +1,37 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+# config/services.yaml
+
+parameters:
+    # lie le paramètre symfony à la variable d'env
+    openai_api_key: '%env(OPENAI_API_KEY)%'
+
+services:
+    # valeurs par défaut pour tous tes services
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+        # Si tu veux binder globalement toute variable $apiKey :
+        bind:
+            $apiKey: '%env(OPENAI_API_KEY)%'
+
+    # Enregistrement automatique de tout dans src/
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # Mercure configuration
+    Symfony\Component\Mercure\HubInterface: '@mercure.hub.default'
+    Symfony\Component\Mercure\PublisherInterface: '@mercure.hub.default'
+
+    # Configuration explicite si tu veux isoler juste ce service :
+    App\Service\EventImageGenerator:
+        arguments:
+            $projectDir: '%kernel.project_dir%'

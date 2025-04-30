@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendrier des événements{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <style>
+        .fc-event {
+            cursor: pointer;
+            padding: 2px 5px;
+        }
+        .fc-daygrid-event {
+            white-space: normal;
+            overflow: hidden;
+            display: block;
+            font-size: 0.9em;
+        }
+        .calendar-section {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .fc-toolbar-title {
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .fc-day-today {
+            background-color: #e8f4f8 !important;
+        }
+        .fc-event-time {
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<section class="calendar-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Calendrier des événements</h2>
+        <div id="calendar"></div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fr.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'fr',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: '/evenements/json',
+            eventDidMount: function(info) {
+                // Ajouter le titre de l'événement au contenu
+                info.el.querySelector('.fc-event-title').innerHTML = info.event.title;
+                
+                // Ajouter l'heure si disponible
+                if (info.event.start) {
+                    var timeStr = info.event.start.toLocaleTimeString('fr-FR', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    info.el.querySelector('.fc-event-time').innerHTML = timeStr;
+                }
+            },
+            eventClick: function(info) {
+                // Redirection vers la page de détails de l'événement
+                if (info.event.url) {
+                    window.location.href = info.event.url;
+                }
+            },
+            displayEventTime: true,
+            displayEventEnd: true,
+            eventTimeFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                meridiem: false,
+                hour12: false
+            },
+            dayMaxEvents: true, // Permet l'affichage de "plus" pour les jours avec beaucoup d'événements
+            views: {
+                dayGrid: {
+                    dayMaxEventRows: 4 // Limite le nombre d'événements visibles par jour
+                }
+            }
+        });
+        calendar.render();
+    });
+</script>
+{% endblock %}

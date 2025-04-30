@@ -1,0 +1,4 @@
+mercure:
+    path: /.well-known/mercure
+    controller: Symfony\Bundle\MercureBundle\Controller\Hub
+    methods: [GET]
