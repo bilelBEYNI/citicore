@@ -13,13 +13,20 @@
             </h4>
         </div>
 
-        <div class="card-body px-5 py-4">
+        <<div class="card-body px-4 py-4">
             {{ form_start(form) }}
-            
-                {{ form_widget(form, {'attr': {'class': 'form-control mb-3'}}) }}
 
-                <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn btn-info px-4 py-2 fw-bold shadow-sm">
+                {# Exemple de structure de chaque champ dans un bloc individuel #}
+                {% for field in form %}
+                    <div class="form-group mb-3">
+                        {{ form_label(field, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                        {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(field) }}
+                    </div>
+                {% endfor %}
+
+                <div class="text-end mt-4">
+                    <button type="submit" class="btn btn-info px-4 py-2 fw-semibold shadow-sm">
                         ➕ Répondre
                     </button>
                 </div>
