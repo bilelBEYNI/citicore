@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Événements{% endblock %}
+
+{% block body %}
+  <section class="events-list py-5">
+    <div class="container">
+      <h1 class="mb-4">Liste des événements</h1>
+
+      <div class="row g-4">
+        {% for item in evenementsAvecImages %}
+          {% set e = item.event %}
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+              {# Image avec LiipImagineBundle #}
+              {% if item.imageUrl %}
+                <img 
+                  src="{{ item.imageUrl | imagine_filter('event_thumb') }}"
+                  class="card-img-top" 
+                  alt="Image de {{ e.nomEvenement }}"
+                >
+              {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center" style="height:200px;">
+                  <span class="text-muted">Pas d'image</span>
+                </div>
+              {% endif %}
+
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ e.nomEvenement }}</h5>
+
+                {# Date de l'événement #}
+                {% if e.dateEvenement %}
+                  <p class="card-text mb-1">
+                    <strong>Date :</strong>
+                    {{ e.dateEvenement|date('d/m/Y H:i') }}
+                  </p>
+                {% endif %}
+
+                {# Lieu #}
+                {% if e.lieuEvenement %}
+                  <p class="card-text mb-1">
+                    <strong>Lieu :</strong> {{ e.lieuEvenement }}
+                  </p>
+                {% endif %}
+
+                {# Catégorie #}
+                {% if e.categorie %}
+                  <p class="card-text mb-3">
+                    <strong>Catégorie :</strong> {{ e.categorie.nomCategorie }}
+                  </p>
+                {% endif %}
+
+                {# Description si elle existe #}
+                {% if e.descriptionEvenement is defined and e.descriptionEvenement %}
+                  <p class="card-text flex-grow-1">{{ e.descriptionEvenement }}</p>
+                {% else %}
+                  <p class="card-text flex-grow-1 text-muted">Pas de description</p>
+                {% endif %}
+
+                {# Bouton vers la page de détail #}
+                <a href="{{ path('app_evenement_show', { id: e.id_Evenement }) }}"
+                   class="btn btn-primary mt-auto">
+                  Voir les détails
+                </a>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <p class="text-center">Aucun événement à afficher.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

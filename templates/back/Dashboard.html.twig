@@ -9,6 +9,7 @@
     <title>Dashboard - SB Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="{{ asset('styles/DashboardStyle/css/styles.css') }}" rel="stylesheet" />
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script src="js/datatables-simple-demo.js"></script>
@@ -16,6 +17,10 @@
     <script>
       google.charts.load('current', { packages: ['corechart'] });
     </script>
+</head>
+
+
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 
 <body class="sb-nav-fixed">
@@ -39,7 +44,9 @@
                     <li><a class="dropdown-item" href="#!">Settings</a></li>
                     <li><a class="dropdown-item" href="#!">Activity Log</a></li>
                     <li><hr class="dropdown-divider" /></li>
+
                     <li><a class="dropdown-item" href="{{ path('logout') }}">Logout</a></li>
+                  <li><a class="dropdown-item" href="#!">Logout</a></li>
                 </ul>
             </li>
         </ul>
@@ -102,6 +109,7 @@
                             </nav>
                         </div>
                         <div class="sb-sidenav-menu-heading">Addons</div>
+
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
                             Gestion utilisateurs
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -124,6 +132,23 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                             Gestion Evenement
                         </a>
+
+                        <a class="nav-link" href="{{path ('app_user_index')}}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                            Gestion utilisateur
+                        </a>
+                        <div class="sb-sidenav-menu-heading">Gestion</div>
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#gestionEvenementCollapse" aria-expanded="false" aria-controls="gestionEvenementCollapse">
+                            <div class="sb-nav-link-icon"><i class="fas fa-calendar-alt"></i></div>
+                            Gestion Evenement
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="gestionEvenementCollapse" aria-labelledby="headingGestionEvenement" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="{{ path('app_evenement_index') }}">Événements</a>
+                                <a class="nav-link" href="{{ path('app_categorie_index') }}">Catégories</a>
+                            </nav>
+                        </div>
                         <a class="nav-link" href="{{path ('app_demande_index')}}">
                             <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                             Gestion communication
@@ -132,6 +157,7 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                             Gestion marketplace
                         </a>
+
                          <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
                             Gestion Projets Don
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -166,6 +192,16 @@
                                 
                             </nav>
                         </div>
+
+                        <a class="nav-link" href="{{path ('app_user_index')}}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                            Gestion Projet don
+                        </a>
+                        <a class="nav-link" href="{{path ('app_user_index')}}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                            Gestion reclamation
+                        </a>
+
                         <a class="nav-link" href="tables.html">
                             <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                             Tables
@@ -202,4 +238,7 @@
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
         <script src="js/datatables-simple-demo.js"></script>
     </body>
+
 </html>
+</html>
+

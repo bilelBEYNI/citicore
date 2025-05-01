@@ -1,0 +1,17 @@
+{# filepath: templates/avis/new.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un avis{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Ajouter un avis pour la demande #{{ demande.demandeId }}</h1>
+        <div class="card">
+            <div class="card-body">
+                {{ form_start(form) }}
+                    {{ form_widget(form) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

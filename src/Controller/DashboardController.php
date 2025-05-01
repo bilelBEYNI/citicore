@@ -18,6 +18,14 @@ class DashboardController extends AbstractController
         return $this->render('back/dashboard.html.twig', [
             'controller_name' => 'Admin Dashboard',
         ]);
+
+    }
+    #[Route('/dashboard', name: 'app_dashboard')]
+    public function index(): Response
+    {
+        return $this->render('back/Dashboard.html.twig', [
+            'controller_name' => 'DashboardController',
+        ]);
     }
 
     #[Route('/participant/dashboard', name: 'participant_dashboard')]
@@ -52,4 +60,6 @@ class DashboardController extends AbstractController
 
         return $this->redirectToRoute('home'); // Redirige vers la page d'accueil par défaut
     }
+    
+ 
 }

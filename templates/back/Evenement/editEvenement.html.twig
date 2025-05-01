@@ -1,107 +1,73 @@
-{% extends 'back/dashboard.html.twig' %}
+{% extends 'back/Dashboard.html.twig' %}
 
-{% block title %}Modifier Événement{% endblock %}
+{% block title %}Modifier un Événement{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <h1 class="mb-4 text-center">Modifier événement</h1>
+<div class="container-fluid px-4" style="margin-top: 150px;">
+    <div class="row justify-content-end align-items-center min-vh-50">
+        <div class="col-lg-8 col-xl-6 mb-5">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="text-center font-weight-bold my-4">
+                        <i class="fas fa-edit me-2"></i>Modifier un Événement
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'needs-validation'}}) }}
+                        <div class="form-floating mb-4">
+                            {{ form_widget(form.nom_evenement, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'id': 'evenement_nom_evenement',
+                                    'placeholder': 'Nom de l\'événement'
+                                }
+                            }) }}
+                            {{ form_label(form.nom_evenement, 'Nom de l\'événement') }}
+                            <div class="alert alert-danger d-none mt-1" id="nomEvenementError"></div>
+                        </div>
 
-    <div class="card shadow-sm p-4 mx-auto" style="max-width: 800px;">
-        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                        <div class="form-floating mb-4">
+                            {{ form_widget(form.date_evenement, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'id': 'evenement_date_evenement',
+                                    'placeholder': 'Date de l\'événement'
+                                }
+                            }) }}
+                            {{ form_label(form.date_evenement, 'Date de l\'événement') }}
+                            <div class="alert alert-danger d-none mt-1" id="dateEvenementError"></div>
+                        </div>
 
-        {% if not form.vars.valid %}
-            <div class="alert alert-danger">
-                {{ form_errors(form) }}
+                        <div class="form-floating mb-4">
+                            {{ form_widget(form.lieu_evenement, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'id': 'evenement_lieu_evenement',
+                                    'placeholder': 'Lieu de l\'événement'
+                                }
+                            }) }}
+                            {{ form_label(form.lieu_evenement, 'Lieu de l\'événement') }}
+                            <div class="alert alert-danger d-none mt-1" id="lieuEvenementError"></div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            {{ form_widget(form.image, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'id': 'evenement_image'
+                                }
+                            }) }}
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary px-4 py-2">
+                                <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
             </div>
-        {% endif %}
-
-        <div class="row">
-            <div class="col-md-6">
-                {{ form_row(form.nom_evenement) }}
-                {{ form_row(form.date_evenement) }}
-            </div>
-            <div class="col-md-6">
-                {{ form_row(form.lieu_evenement) }}
-                
-            </div>
-        </div>
-
-        <div class="mt-4 text-center">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save me-2"></i> Enregistrer les modifications
-            </button>
-        </div>
-
-        {{ form_end(form) }}
-
-        <div class="mt-4 text-center">
-            <a href="{{ path('app_evenement_index') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-2"></i>Retour à la liste
-            </a>
         </div>
     </div>
 </div>
-
-<style>
-    .container {
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    .card {
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        background-color: #f9f9f9;
-        margin: 0 auto;
-    }
-
-    h1 {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #333;
-    }
-
-    .form-group, .form-row {
-        margin-bottom: 1rem;
-    }
-
-    label {
-        font-weight: 600;
-        color: #555;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="number"],
-    input[type="file"],
-    input[type="password"],
-    textarea,
-    select {
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 10px 15px;
-        width: 100%;
-        transition: border-color 0.3s ease;
-    }
-
-    input:focus,
-    textarea:focus,
-    select:focus {
-        border-color: #007bff;
-        outline: none;
-    }
-
-    .form-error-message {
-        color: red;
-        font-size: 0.9rem;
-    }
-
-    .row > div {
-        padding-bottom: 1rem;
-    }
-
-    .text-center {
-        text-align: center;
-    }
-</style>
 {% endblock %}

@@ -64,9 +64,7 @@ class RegistrationType extends AbstractType
                     // Attention : PLUS DE EqualTo ici
                 ],
             ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'S’inscrire',
-            ])
+            
         ;
 
         // *** Ajout d'un écouteur pour vérifier que les 2 mots de passe sont identiques ***

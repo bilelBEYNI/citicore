@@ -3,29 +3,67 @@
 {% block title %}Liste des Demandes{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1 class="text-center my-4">Liste des Demandes Acceptées</h1>
+<div class="container">
+    <h1 class="text-center my-4">Liste des Demandes Acceptées</h1>
 
-        <div class="text-end mb-4">
-            <a href="{{ path('app_demande_add_front') }}" class="btn btn-success">Ajouter une Demande</a>
-        </div>
+    <div class="text-end mb-4">
+        <a href="{{ path('app_demande_add_front') }}" class="btn btn-success">Ajouter une Demande</a>
+    </div>
 
-        <div class="row">
-            {% for demande in demandes %}
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Demande #{{ demande.Demande_id }}</h5>
-                            <p class="card-text">{{ demande.contenu }}</p>
-                            <p class="card-text"><strong>Statut :</strong> {{ demande.statut }}</p>
-                            <p class="card-text"><strong>Date de la demande :</strong> {{ demande.getFormattedDateDemande() }}</p>
+    <div class="row">
+        {% for demande in demandes %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Demande #{{ demande.demandeId }}</h5>
+                        <p class="card-text">{{ demande.contenu }}</p>
+                        <p class="card-text"><strong>Statut :</strong> {{ demande.statut }}</p>
+                        <p class="card-text"><strong>Date de la demande :</strong> 
+                            {{ demande.dateDemande ? demande.dateDemande|date('Y-m-d') : 'Non spécifiée' }}
+                        </p>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <a href="{{ path('avis_new', { id: demande.demandeId }) }}" class="btn btn-primary">Ajouter Un Avis</a>
+                        <a href="{{ path('demande_avis', { id: demande.demandeId }) }}" class="btn btn-info">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </div>
+
+                    <div class="text-center my-3">
+                        <div class="card mt-4" style="background-color: #1e293b; border: none;">
+                            <div class="card-body p-3">
+                                <h5 class="card-title text-white">QR Code demande</h5>
+                                <p>Scanner ce code pour voir le contenu de la demande</p>
+                                
+                                {
+                                <div id="qrcode-{{ demande.demandeId }}" class="my-3" style="max-width: 200px;"></div>
+
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var containerId = "qrcode-{{ demande.demandeId }}";
+                                        var qrText =
+                                            "ID du demande: {{ demande.demandeId }}\n" +
+                                            "Contenu: {{ demande.contenu }}\n";
+
+                                        // Generate QR code for the specific container
+                                        new QRCode(document.getElementById(containerId), {
+                                            text: qrText,
+                                            width: 200,
+                                            height: 200,
+                                            colorDark: "#000000",
+                                            colorLight: "#ffffff",
+                                            correctLevel: QRCode.CorrectLevel.H
+                                        });
+                                    });
+                                </script>
+                            </div>
                         </div>
-                        <div class="card-footer text-end">
-                            <a href="{{ path('app_demande_avis', {'id': demande.Demande_id}) }}" class="btn btn-info btn-sm">Voir les Avis</a>
-                        </div>
+                        <small class="text-muted">Scannez pour voir le contenu</small>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
+            </div>
+        {% endfor %}
     </div>
+</div>
 {% endblock %}

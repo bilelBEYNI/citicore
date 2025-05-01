@@ -111,7 +111,7 @@ class LoginController extends AbstractController
     {
         $roles = $user->getRoles();
 
-        // Redirection en fonction du rôle
+        
         if (in_array('ROLE_ADMIN', $roles, true)) {
             return $this->redirectToRoute('admin_dashboard');
         }
@@ -138,7 +138,6 @@ class LoginController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_PARTICIPANT');
 
-        // Récupère les organisateurs pour afficher sur le dashboard du participant
         $organisateurs = $utilisateurRepository->findBy(['Role' => 'Organisateur']);
 
         return $this->render('front/utilisateur/participant.html.twig', [
@@ -146,31 +145,7 @@ class LoginController extends AbstractController
         ]);
     }
 
-    #[Route("/register", name: "app_register")]
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder)
-    {
-        $user = new User();
-        $form = $this->createForm(RegistrationType::class, $user);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $password = $form->get('mot_de_passe')->getData();
-            $encodedPassword = $passwordEncoder->encodePassword($user, $password);
-            $user->setMotDePasse($encodedPassword);
-            $user->setRoles(['ROLE_PARTICIPANT']);
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_login');
-        }
-
-        return $this->render('registration/register.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
+   
 
     #[Route('/SignUp', name: 'SignUp')]
     public function signup(
@@ -184,17 +159,7 @@ class LoginController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var UploadedFile $photoFile */
-            $photoFile = $form->get('photo_utilisateur')->getData();
-            if ($photoFile) {
-                $safeName    = $slugger->slug(pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME));
-                $newFilename = $safeName.'-'.uniqid().'.'.$photoFile->guessExtension();
-                $photoFile->move(
-                    $this->getParameter('uploads_directory'),
-                    $newFilename
-                );
-                $user->setPhotoUtilisateur($newFilename);
-            }
+        
 
             // **Récupérer et hasher le mot de passe « plainPassword »**
             $plainPassword = $form->get('plainPassword')->getData();

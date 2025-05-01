@@ -1,7 +1,7 @@
 <?php
 
-namespace App\Controller\CommuniactionController;
-
+namespace App\Controller\CommunicationController;
+use App\Form\AvisType;
 use App\Entity\Demande;
 use App\Entity\Avis;
 use App\Form\DemandeType;
@@ -19,18 +19,27 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 
-class DemandeController extends AbstractController
-{
-    #[Route('/dashboard/demandes', name: 'app_demande_index')]
-    public function index(DemandeRepository $demandeRepository): Response
-    {
-        // Récupérer toutes les demandes
-        $demandes = $demandeRepository->findAll();
 
+
+class DemandeController extends AbstractController{
+
+    #[Route('/dashboard/demandes', name: 'app_demande_index')]
+    public function index(DemandeRepository $repo): Response
+    {
+    
+
+        // Récupérer toutes les demandes en attente
+        $demandes = $repo->findBy(['statut' => 'En attente']);
+
+        // Passer les données à la vue
         return $this->render('back/Communication/Demandes.html.twig', [
             'demandes' => $demandes,
-        ]);
+        ]
+        );
     }
+
+
+
 
     #[Route('/dashboard/demandes/tri', name: 'app_demande_tri')]
     public function triDemandes(DemandeRepository $demandeRepository): Response
@@ -77,14 +86,14 @@ class DemandeController extends AbstractController
         ]);
     }
 
-    #[Route('/dashboard/demande/modifier-statut/{id}', name: 'app_demande_update_statut', methods: ['POST'])]
+    #[Route('/dashboard/demande/modifier-statut/{id}', name: 'app_demande_update_status', methods: ['POST'])]
     public function updateStatut(int $id, Request $request, DemandeRepository $demandeRepository, EntityManagerInterface $em): Response
     {
         $demande = $demandeRepository->find($id);
 
         if (!$demande) {
             $this->addFlash('error', 'Demande non trouvée.');
-            return $this->redirectToRoute('app_demande_index');
+            return $this->redirectToRoute('liste_demandes');
         }
 
         $nouveauStatut = $request->request->get('statut');
@@ -95,13 +104,12 @@ class DemandeController extends AbstractController
             $this->addFlash('success', 'Statut mis à jour avec succès.');
         }
 
-        return $this->redirectToRoute('app_demande_index');
+        return $this->redirectToRoute('liste_demandes');
     }
 
     #[Route('/demandes', name: 'app_demande_front')]
-    public function front(DemandeRepository $demandeRepository): Response
+    public function front(DemandeRepository $demandeRepository, BuilderInterface $qrCodeBuilder): Response
     {
-        // Utiliser la méthode personnalisée pour récupérer les demandes acceptées
         $demandes = $demandeRepository->findAcceptedDemandes();
 
         return $this->render('Front/Communication/demandefront.html.twig', [
@@ -109,8 +117,46 @@ class DemandeController extends AbstractController
         ]);
     }
 
+    #[Route('/avis/new/{id}', name: 'avis_new')]
+    public function new(int $id, DemandeRepository $demandeRepository, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Récupérer la demande à partir de l'ID
+        $demande = $demandeRepository->find($id);
+
+        if (!$demande) {
+            throw $this->createNotFoundException('La demande avec cet ID n\'existe pas.');
+        }
+
+        // Créer un nouvel avis
+        $avis = new Avis();
+
+        // Associer l'ID de la demande à l'avis
+        $avis->setDemandeId($id);
+
+        // Créer le formulaire
+        $form = $this->createForm(AvisType::class, $avis);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Sauvegarder l'avis dans la base de données
+            $entityManager->persist($avis);
+            $entityManager->flush();
+
+            $demandes = $demandeRepository->findAcceptedDemandes();
+
+            return $this->render('Front/Communication/demandefront.html.twig', [
+                'demandes' => $demandes,
+            ]); // Redirigez vers la liste des demandes
+        }
+
+        return $this->render('Front/Communication/new.html.twig', [
+            'form' => $form->createView(),
+            'demande' => $demande,
+        ]);
+    }
+
     #[Route('/demandes/ajouter', name: 'app_demande_add_front')]
-    public function addFront(Request $request, EntityManagerInterface $em): Response
+    public function addFront(Request $request, EntityManagerInterface $em,DemandeRepository $demandeRepository ): Response
     {
         $demande = new Demande();
         $demande->setStatut('En attente'); // Statut par défaut
@@ -125,7 +171,11 @@ class DemandeController extends AbstractController
 
             $this->addFlash('success', 'Demande ajoutée avec succès.');
 
-            return $this->redirectToRoute('app_demande_front');
+            $demandes = $demandeRepository->findAcceptedDemandes();
+
+            return $this->render('Front/Communication/demandefront.html.twig', [
+                'demandes' => $demandes,
+            ]);
         }
 
         return $this->render('Front/Communication/addDemande.html.twig', [
@@ -142,7 +192,7 @@ class DemandeController extends AbstractController
             throw $this->createNotFoundException('La demande n\'existe pas.');
         }
 
-        return $this->render('Front/Communication/demandeAvis.html.twig', [
+        return $this->render('Front/Communication/avisParDemande.html.twig', [
             'demande' => $demande,
             'avis' => $demande->getAvis(), // Assurez-vous que l'entité Demande a une relation avec Avis
         ]);
@@ -158,8 +208,8 @@ class DemandeController extends AbstractController
         }
 
         $avis = new Avis();
-        $avis->setDemande($demande);
-        $avis->setDate_avis(new \DateTime()); // Date actuelle
+        $avis->setDemandeId($id);
+        $avis->setDateavis(new \DateTime()); // Date actuelle
 
         $form = $this->createFormBuilder($avis)
             ->add('commentaire', TextareaType::class, [
@@ -186,7 +236,19 @@ class DemandeController extends AbstractController
             'demande' => $demande,
         ]);
     }
+   
+    #[Route('/{id}/avis', name: 'demande_avis')]
+public function showAvisByDemande(Demande $demande): Response
+{
+    // On récupère les avis associés à la demande
+    $avis = $demande->getAvis(); // supposant un getter getAvis() dans Demande
 
+    // Retourner la vue avec les avis
+    return $this->render('demande/avis.html.twig', [
+        'demande' => $demande,
+        'avis' => $avis,
+    ]);
+}
 
     #[Route('/demandes/{id}/update-status', name: 'app_demande_update_status', methods: ['POST'])]
     public function updateStatus(int $id, Request $request, EntityManagerInterface $entityManager): RedirectResponse
@@ -213,10 +275,43 @@ class DemandeController extends AbstractController
     #[Route('/demande/{id}/avis', name: 'demande_avis')]
     public function avisParDemande(int $id, AviRepository $aviRepository): Response
     {
-        $avis = $aviRepository->findBy(['Demande_id' => $id]);
+        // Récupérer les avis liés à la demande
+        $avis = $aviRepository->findBy(['demandeId' => $id]);
 
-        return $this->render('Front/Communication/avisParDemande.html.twig', [
+        return $this->render('back/Communication/avisParDemande.html.twig', [
             'avis' => $avis,
+            'demandeId' => $id,
+        ]);
+    }
+
+    #[Route('/demande/ajouter', name: 'ajouter_demande')]
+    public function ajouterDemande(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $demande = new Demande();
+        $form = $this->createForm(DemandeType::class, $demande);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($demande);
+            $entityManager->flush();
+
+            // Rediriger vers la page de la liste des demandes (back)
+            return $this->redirectToRoute('liste_demandes');
+        }
+
+        return $this->render('Front/Communication/addDemande.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/back/demandes', name: 'liste_demandes')]
+    public function listeDemandes(EntityManagerInterface $entityManager): Response
+    {
+        $demandes = $entityManager->getRepository(Demande::class)->findAll();
+
+        return $this->render('back/Communication/Demandes.html.twig', [
+            'demandes' => $demandes,
         ]);
     }
 }

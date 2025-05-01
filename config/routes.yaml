@@ -13,3 +13,5 @@ admin_dashboard:
 participant_dashboard:
     path: /participant/dashboard
     controller: App\Controller\UtilisateurController\LoginController::participantDashboard
+
+

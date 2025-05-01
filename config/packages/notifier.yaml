@@ -3,9 +3,11 @@ framework:
         chatter_transports:
         texter_transports:
 
+
             infobip: '%env(INFOBIP_DSN)%'
 
             twilio: '%env(TWILIO_DSN)%'
+
 
         channel_policy:
             # use chat/slack, chat/telegram, sms/twilio or sms/nexmo
