@@ -1,54 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Réclamations{% endblock %}
-
+{% block title %}Mes Réclamations{% endblock %}
 
 {% block body %}
-<div class="container my-5" style="margin-left: 300px; padding-bottom: 50px;">
-    <h2 class="mb-4 text-center">📋 Mes Réclamations</h2>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <a href="{{ path('app_reclamation_new') }}" class="btn btn-success">
-            ➕ Ajouter une réclamation
-        </a>
-       
-    </div>
+<div class="container my-5">
+    {# Affichage des flash messages #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
 
-    <table class="table table-bordered table-hover shadow-sm" id="reclamationsTable">
+    <h2 class="text-center mb-4">📋 Mes Réclamations</h2>
+    <a href="{{ path('front_reclamation_new') }}" class="btn btn-success mb-3">➕ Ajouter une réclamation</a>
+
+    <table class="table table-bordered table-hover">
         <thead class="table-dark">
             <tr>
                 <th>Sujet</th>
                 <th>Description</th>
-                <th>Date de création</th>
-                <th>Date de résolution</th>
-                <th>Type</th>
-                <th>Statut</th>
+                <th>Date Création</th>
+                <th>Type Reclamation</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-        {% for reclamation in reclamations %}
+        {% for rec in reclamations %}
             <tr>
-                <td>{{ reclamation.Sujet }}</td>
-                <td>{{ reclamation.Description }}</td>
-                <td>{{ reclamation.Date_Creation ? reclamation.Date_Creation|date('Y-m-d H:i') : '' }}</td>
-                <td>{{ reclamation.Date_Resolution ? reclamation.Date_Resolution|date('Y-m-d H:i') : '-' }}</td>
-                <td>{{ reclamation.Type_Reclamation }}</td>
+                <td>{{ rec.sujet }}</td>
+                <td>{{ rec.description }}</td>
+                <td>{{ rec.date_Creation|date('d/m/Y H:i') }}</td>
+                <td>{{ rec.type_Reclamation }}</td>
+                
                 <td>
-                 
-                </td>
-                <td>
-                    <a href="{{ path('app_reclamation_show', {'ID_Reclamation': reclamation.ID_Reclamation}) }}" class="btn btn-sm btn-outline-primary">👁 Voir</a>
-                    <a href="{{ path('app_reclamation_edit', {'ID_Reclamation': reclamation.ID_Reclamation}) }}" class="btn btn-sm btn-outline-warning">✏️ Modifier</a>
+                    <a href="{{ path('front_reclamation_show', {ID_Reclamation: rec.ID_Reclamation}) }}" class="btn btn-sm btn-primary">👁 Voir</a>
                 </td>
             </tr>
         {% else %}
-            <tr>
-                <td colspan="7" class="text-center text-muted">Aucune réclamation trouvée.</td>
-            </tr>
+            <tr><td colspan="6" class="text-center text-muted">Aucune réclamation trouvée</td></tr>
         {% endfor %}
         </tbody>
     </table>
+    
 </div>
-
 {% endblock %}

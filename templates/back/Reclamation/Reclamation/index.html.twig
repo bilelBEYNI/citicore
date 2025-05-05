@@ -84,7 +84,10 @@
     </table>
 
     <div class="mt-4">
-        {{ knp_pagination_render(reclamations) }}
+        {{ knp_pagination_render(reclamations, '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
     </div>
 </div>
+
+
+
 {% endblock %}
