@@ -16,19 +16,14 @@
                 </a>
             </div>
 
-            <!-- Search Bar -->
-            <div class="me-3">
-                <form method="get" action="{{ path('app_projet_don_index') }}" class="d-flex">
-                    <input type="text" name="search" value="{{ searchQuery }}" class="form-control" placeholder="Rechercher un projet" style="width: 250px;" />
-                </form>
-            </div>
+            <!-- Search Bar with button inside -->
+<div class="me-3">
+    <form method="get" action="{{ path('app_projet_don_index') }}" class="d-flex">
+        <input type="text" name="search" value="{{ searchQuery }}" class="form-control me-2" placeholder="Rechercher un projet" style="width: 250px;" />
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
+</div>
 
-            <!-- Rechercher Button -->
-            <div class="me-3">
-                <button type="submit" form="search-form" class="btn btn-primary">
-                    Rechercher
-                </button>
-            </div>
 
             <!-- Tous les projets Button -->
             <div>
