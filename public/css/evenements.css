@@ -1,0 +1,90 @@
+/* Styles pour les notifications */
+.flash-message {
+    display: none;
+}
+
+/* Styles pour les cartes d'événements */
+.event-card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+}
+
+.placeholder-image {
+    background-color: #f8f9fa;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    border-radius: 4px;
+}
+
+/* Styles pour les filtres */
+.form-floating {
+    margin-bottom: 1rem;
+}
+
+#activeFilters .badge {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+#activeFilters .badge .btn-close {
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Accessibilité */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Support tactile */
+@media (hover: none) {
+    .event-card:hover {
+        transform: none;
+    }
+}
+
+/* Optimisations de performance */
+.event-card {
+    will-change: transform;
+    backface-visibility: hidden;
+}

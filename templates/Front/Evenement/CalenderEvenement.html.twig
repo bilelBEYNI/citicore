@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendrier des événements{% endblock %}
+
+{% block body %}
+<section class="calendar-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Calendrier des événements</h2>
+        <div id="calendar"></div>
+    </div>
+</section>
+
+<!-- Ajout des styles nécessaires pour FullCalendar -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+
+<!-- Ajout des scripts nécessaires pour FullCalendar -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth', // Vue par défaut : mois
+            locale: 'fr', // Langue française
+            events: '/evenements/json', // URL pour récupérer les événements au format JSON
+            eventClick: function (info) {
+                // Redirige vers l'URL de l'événement lorsqu'il est cliqué
+                window.location.href = info.event.url;
+            }
+        });
+        calendar.render();
+    });
+</script>
+{% endblock %}

@@ -71,4 +71,14 @@ services:
     App\Controller\CommuniactionController\DemandeController:
         tags: ['controller.service_arguments']
 
-   
+    # Mercure configuration
+    Symfony\Component\Mercure\HubInterface: '@mercure.hub.default'
+    Symfony\Component\Mercure\PublisherInterface: '@mercure.hub.default'
+
+    # Configuration explicite si tu veux isoler juste ce service :
+    App\Service\EventImageGenerator:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
+    App\Controller\EvenementController\FrontEvenementController:
+        tags: ['controller.service_arguments']

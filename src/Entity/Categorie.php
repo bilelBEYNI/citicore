@@ -3,94 +3,100 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use App\Entity\Evenement;
 
 #[ORM\Entity]
 class Categorie
 {
-
     #[ORM\Id]
-    #[ORM\Column(type: "integer")]
-    private int $categorie_id;
+    #[ORM\GeneratedValue]
+    #[ORM\Column(name: 'categorie_id', type: 'integer')]
+    private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    private string $nom_categorie;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $nomCategorie = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    private string $description;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $description = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    private string $imageUrl;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $image_url = null;
 
-    public function getCategorie_id()
+    #[ORM\OneToMany(mappedBy: 'categorie', targetEntity: Evenement::class)]
+    private Collection $evenements;
+
+    public function __construct()
     {
-        return $this->categorie_id;
+        $this->evenements = new ArrayCollection();
     }
 
-    public function setCategorie_id($value)
+    // Getters and Setters
+    public function getId(): ?int
     {
-        $this->categorie_id = $value;
+        return $this->id;
     }
 
-    public function getNom_categorie()
+    public function getNomCategorie(): ?string
     {
-        return $this->nom_categorie;
+        return $this->nomCategorie;
     }
 
-    public function setNom_categorie($value)
+    public function setNomCategorie(string $nomCategorie): self
     {
-        $this->nom_categorie = $value;
+        $this->nomCategorie = $nomCategorie;
+        return $this;
     }
 
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription($value)
+    public function setDescription(?string $description): self
     {
-        $this->description = $value;
+        $this->description = $description;
+        return $this;
     }
 
-    public function getImageUrl()
+    public function getImageUrl(): ?string
     {
-        return $this->imageUrl;
+        return $this->image_url;
     }
 
-    public function setImageUrl($value)
+    public function setImageUrl(?string $image_url): self
     {
-        $this->imageUrl = $value;
+        $this->image_url = $image_url;
+        return $this;
     }
 
-    #[ORM\OneToMany(mappedBy: "categorie_id", targetEntity: Evenement::class)]
-    private Collection $evenements;
+    /**
+     * @return Collection<int, Evenement>
+     */
+    public function getEvenements(): Collection
+    {
+        return $this->evenements;
+    }
 
-        public function getEvenements(): Collection
-        {
-            return $this->evenements;
+    public function addEvenement(Evenement $evenement): self
+    {
+        if (!$this->evenements->contains($evenement)) {
+            $this->evenements->add($evenement);
+            $evenement->setCategorie($this);
         }
-    
-        public function addEvenement(Evenement $evenement): self
-        {
-            if (!$this->evenements->contains($evenement)) {
-                $this->evenements[] = $evenement;
-                $evenement->setCategorie_id($this);
+
+        return $this;
+    }
+
+    public function removeEvenement(Evenement $evenement): self
+    {
+        if ($this->evenements->removeElement($evenement)) {
+            // set the owning side to null (unless already changed)
+            if ($evenement->getCategorie() === $this) {
+                $evenement->setCategorie(null);
             }
-    
-            return $this;
         }
-    
-        public function removeEvenement(Evenement $evenement): self
-        {
-            if ($this->evenements->removeElement($evenement)) {
-                // set the owning side to null (unless already changed)
-                if ($evenement->getCategorie_id() === $this) {
-                    $evenement->setCategorie_id(null);
-                }
-            }
-    
-            return $this;
-        }
+
+        return $this;
+    }
 }
