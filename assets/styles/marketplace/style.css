@@ -1,0 +1,84 @@
+/* public/css/style.css */
+
+/* Style pour le conteneur personnalisé */
+.container-custom {
+    margin-top: 20px;
+    animation: fadeInCustom 1s ease-in;
+  }
+  
+  @keyframes fadeInCustom {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  /* Style personnalisé pour le titre centré avec animation */
+  .header-title {
+    text-align: center;
+    animation: fadeInDownCustom 1s ease-out;
+  }
+  
+  @keyframes fadeInDownCustom {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Style pour le bouton d'ajout avec animation de pulsation */
+  .btn-add {
+    background-color: #08ba29;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    animation: pulseCustom 2s ease-in-out infinite;
+    text-decoration: none;
+  }
+  
+  @keyframes pulseCustom {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  
+  /* Style personnalisé pour le tableau */
+  .table-custom {
+    border-collapse: collapse;
+    width: 100%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    animation: fadeInUpCustom 1s ease-in;
+  }
+  
+  @keyframes fadeInUpCustom {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Style pour le champ de recherche */
+  .input-search {
+    width: 25%;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Ajout de marges pour le tableau et ajustement responsive si besoin */
+  .table {
+    margin-bottom: 1rem;
+  }
+  .card-title {
+    font-weight: bold;
+    font-size: 1.8rem;
+    color: #333;
+}
+
+.btn-secondary {
+    background-color: #7d6c6c;
+    border-color: #6c757d;
+}
+/* Taille personnalisée des boutons */
+/* Forcer la même taille de bouton */
+.btn-sm {
+  padding: 5px 10px !important;  /* Ajuste la taille du bouton */
+  font-size: 0.875rem !important;  /* Taille de police uniforme */
+}

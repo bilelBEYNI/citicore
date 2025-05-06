@@ -1,0 +1,97 @@
+/* Styles de base pour tous les boutons */
+button,
+.btn,
+.btn-back {
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  padding: 8px 16px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Bouton principal (valider commande) */
+.btn-success {
+  background-color: #9B59B6;
+  border: none;
+  color: rgb(175, 219, 18);
+}
+
+.btn-success:hover {
+  background-color: #8e44ad;
+}
+
+/* Boutons + / - */
+.btn-outline-secondary {
+  background-color: white;
+  border: 2px solid #D5B2D6;
+  color: #9B59B6;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #D5B2D6;
+  color: white;
+  border-color: #9B59B6;
+}
+
+/* Bouton de suppression */
+.btn-danger {
+  background-color: #6CB2EB;
+  border: none;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #0056B3;
+}
+
+/* Bouton retour boutique */
+.btn-back {
+  background-color: #D5B2D6;
+  color: white;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-back:hover {
+  background-color: #9B59B6;
+  text-decoration: none;
+  color: white;
+}
+
+/* Résumé */
+.summary-box {
+  background-color: #F8F9FA;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.summary-line {
+  margin: 12px 0;
+}
+
+/* Image produit dans le panier */
+.cart-product-img {
+  max-width: 120px;
+  height: auto;
+  border-radius: 12px;
+  padding: 6px;
+  background-color: #fefefe;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+  transition: transform 0.3s ease;
+}
+
+.cart-product-img:hover {
+  transform: scale(1.05);
+}
+
+/* Espacement entre l’image et les détails */
+.cart-item .details {
+  padding-left: 15px;
+}
+
+.product-info {
+  gap: 15px;
+}

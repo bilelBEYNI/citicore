@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
+
 {% block title %}Faire un don{% endblock %}
 
 {% block body %}
-
 <div class="container my-5">
     <h2 class="text-center mb-4">Détails du Projet</h2>
 
@@ -25,19 +25,18 @@
             </div>
         </div>
 
-        <form method="POST">
+        <!-- Form to confirm donation -->
+        <form method="POST" action="{{ path('app_projet_payer', {'id': projet_don.id_Projet_Don}) }}" id="paypal-form">
             <div class="mb-3">
                 <label for="montant" class="form-label">Montant à donner (DT)</label>
                 <input type="number" class="form-control" name="montant" min="1" required>
             </div>
             <button type="submit" class="btn btn-primary w-100">Confirmer le don</button>
         </form>
-        
-        
     </div>
-    <div class="mt-4">
-            <a href="{{ path('app_front_projet') }}" class="btn btn-secondary">Retour aux Projets</a>
-        </div>
-</div>
 
+    <div class="mt-4">
+        <a href="{{ path('app_front_projet') }}" class="btn btn-secondary">Retour aux Projets</a>
+    </div>
+</div>
 {% endblock %}

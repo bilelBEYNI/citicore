@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block body %}
+    <h1>Statistiques des Produits</h1>
+
+    <p>Produit le moins vendu : {{ moins_vendu.nom }} ({{ moins_vendu.vendu }} ventes)</p>
+
+    <form action="{{ path('produit_appliquer_remise', {id: moins_vendu.id}) }}" method="post">
+        <button type="submit" class="btn btn-danger">Appliquer une remise</button>
+    </form>
+{% endblock %}

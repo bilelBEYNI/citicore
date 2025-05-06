@@ -11,11 +11,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
-#[Route('/commande')]
 final class CommandeController extends AbstractController
 {
-    #[Route('', name: 'app_commande_index', methods: ['GET'])]
+    #[Route('/commande', name: 'app_commande_index', methods: ['GET'])]
     public function index(CommandeRepository $commandeRepository): Response
     {
         return $this->render('back/MarketPlace/Commande/index.html.twig', [
@@ -43,7 +43,7 @@ final class CommandeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_commande_show', methods: ['GET'])]
+    #[Route('/commande/{id}', name: 'app_commande_show', methods: ['GET'])]
     public function show(Commande $commande): Response
     {
         return $this->render('back/MarketPlace/Commande/show.html.twig', [
@@ -51,7 +51,7 @@ final class CommandeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_commande_edit', methods: ['GET', 'POST'])]
+    #[Route('/commande/{id}/edit', name: 'app_commande_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Commande $commande, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(CommandeType::class, $commande);
@@ -69,7 +69,7 @@ final class CommandeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_commande_delete', methods: ['POST'])]
+    #[Route('/commande/{id}', name: 'app_commande_delete', methods: ['POST'])]
     public function delete(Request $request, Commande $commande, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $commande->getId(), $request->request->get('_token'))) {

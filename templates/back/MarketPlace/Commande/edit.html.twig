@@ -1,10 +1,10 @@
 {% extends 'back/Dashboard.html.twig' %}
 
 {% block body %}
-<div class="container">
+<div class="container my-5" style="margin-left: 250px; padding-bottom: 50px;">
     <h1>Modifier la commande</h1>
 
-    {{ include('commande/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+    {{ include('back/MarketPlace/commande/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
 
     
     <a href="{{ path('app_commande_index') }}" class="button">⬅ Retour à la liste</a>

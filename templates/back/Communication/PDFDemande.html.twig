@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture Commande PDF</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #fff;
+            color: #444;
+            line-height: 1.4;
+            padding: 20px;
+        }
+        .invoice-container {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+        }
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #6f42c1;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .invoice-header img {
+            max-height: 100px;
+        }
+        .company-info {
+            text-align: right;
+            font-size: 12px;
+        }
+        h1 {
+            font-size: 22px;
+            margin: 10px 0;
+            color: #6f42c1;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table thead th {
+            background: #f8f9fa;
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        table tbody td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            font-size: 12px;
+        }
+        table td:last-child,
+        table th:last-child {
+            text-align: right;
+        }
+        .summary {
+            margin-top: 20px;
+            width: 100%;
+        }
+        .summary .line {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 12px;
+        }
+        .summary .line.total {
+            font-weight: bold;
+            color: #6f42c1;
+            font-size: 14px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 10px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <h1>Liste des Demandes</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Contenu</th>
+                <th>Date</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for demande in demandes %}
+                <tr>
+                    <td>{{ demande.demandeId }}</td>
+                    <td>{{ demande.contenu }}</td>
+                    <td>{{ demande.dateDemande ? demande.dateDemande|date('Y-m-d') : 'Non spécifiée' }}</td>
+                    <td>{{ demande.statut }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </body>
+</html>

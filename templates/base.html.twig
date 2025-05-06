@@ -13,12 +13,14 @@
         <title>Mediplus - Free Medical and Doctor Directory HTML Template.</title>
 		
 		<!-- Favicon -->
-        <link rel="icon" href="{{asset ('styles/img/favicon.png')}}">
-		
+
+		<link rel="shortcut icon" href="{{ asset('styles/img/favicon.png') }}" type="image/x-icon">
 		<!-- Google Fonts -->
 		<link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
-		
+		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
 		{% block css %}
+		<link rel="stylesheet" href="{{ asset('styles/marketplace/shop.css') }}">
 		<link rel="stylesheet" href="{{ asset('styles/UtilisateurStyle/Front/login.css') }}">
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="{{asset ('styles/css/bootstrap.min.css')}}">
@@ -38,7 +40,8 @@
         <link rel="stylesheet" href="{{asset ('styles/css/animate.min.css')}}">
 		<!-- Magnific Popup CSS -->
         <link rel="stylesheet" href="{{asset ('styles/css/magnific-popup.css')}}">
-		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/icofont@1.0.0/dist/css/icofont.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 		<!-- Medipro CSS -->
         <link rel="stylesheet" href="{{asset ('styles/css/normalize.css')}}">
         <link rel="stylesheet" href="{{asset ('styles/style.css')}}">
@@ -117,8 +120,10 @@
 							<div class="col-lg-3 col-md-3 col-12">
 								<!-- Start Logo -->
 								<div class="logo">
-									
-									<h1>CitiCore</h1>
+									<a href="{{ path('app_home') }}" style="text-decoration: none; color: inherit;">
+										<h1>CitiCore</h1>
+									  </a>
+									  
 								</div>
 								<!-- End Logo -->
 								<!-- Mobile Nav -->
@@ -132,10 +137,10 @@
 										<ul class="nav menu">
 											
 											<li><a href="#">Evenement </a></li>
-											<li><a href="#">Market Place </a></li>
-											<li><a href="#">Projet Dons </a></li>
+											<li><a href="{{ path('app_shop') }}">Market Place </a></li>
+											<li><a href="{{ path('app_front_projet') }}">Projet Dons </a></li>
 											<li><a href="{{ path('Reclamation') }}">Reclamation </a></li>
-											<li><a href="contact.html">Contact Us</a></li>
+											<li><a href="{{ path('app_demande_front') }}">Contact Us</a></li>
 											<!--<li><a href="#">Reclamation </a></li>
 											<li><a href="#">Pages <i class="icofont-rounded-down"></i></a>
 												<ul class="dropdown">
@@ -153,12 +158,13 @@
 								<div class="get-quote" 
 									 style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
 								  {% if app.user and is_granted('ROLE_PARTICIPANT') %}
+								  <a href="{{ path('app_user_edit') }}" class="d-flex align-items-center">
 									<img
 									  src="{{ asset('http://localhost/images/' ~ app.user.photoUtilisateur) }}"
 									  alt="Avatar de {{ app.user.prenom }} {{ app.user.nom }}"
 									  class="rounded-circle"
 									  style="width:50px; height:50px; object-fit:cover;"
-									/>
+									/> </a>
 									<a href="{{ path('app_logout') }}" class="btn">Se déconnecter</a>
 								  {% else %}
 									<a href="{{ path('login') }}" class="btn">Se connecter</a>
@@ -175,6 +181,7 @@
 			<!--/ End Header Inner -->
 		</header>
 		<!-- End Header Area -->
+		 <!-- Icône Favoris -->
 		
 		 {% block body %}
 		  
@@ -308,5 +315,8 @@
 <!-- Main JS -->
 <script src="{{ asset('styles/js/main.js') }}"></script>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     </body>
 </html>

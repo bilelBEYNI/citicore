@@ -11,15 +11,51 @@
                 <li class="breadcrumb-item active">Demandes</li>
             </ol>
 
-            <div class="container mt-4">
-                <table class="table table-bordered mt-3">
-                    <thead>
+            <!-- Bloc Statistiques -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Demandes Acceptées</h5>
+                            <p class="card-text fs-4">{{ nombre_acceptee }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card text-dark bg-warning mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Demandes en Attente</h5>
+                            <p class="card-text fs-4">{{ nombre_attente }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Champs de filtrage -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label for="searchContent" class="form-label">Rechercher par contenu :</label>
+                    <input type="text" id="searchContent" class="form-control" placeholder="Rechercher...">
+                </div>
+                <div class="col-md-6">
+                    <label for="filterDate" class="form-label">Filtrer par date :</label>
+                    <input type="date" id="filterDate" class="form-control">
+                </div>
+            </div>
+
+            <a href="{{ path('app_demande_export_pdf') }}" target="_blank" class="btn btn-danger mb-3">
+                <i class="fas fa-file-pdf"></i> Exporter en PDF
+            </a>
+
+            <!-- Tableau des demandes -->
+            <div class="table-responsive">
+                <table id="demandeTable" class="table table-striped align-middle">
+                    <thead class="table-dark">
                         <tr>
                             <th>ID</th>
-                            <th>CIN</th>
-                            <th>contenu</th>
+                            <th>Contenu</th>
+                            <th>Date</th>
                             <th>Statut</th>
-                            <th>Détails</th>
                             <th>Modifier</th>
                             <th>Supprimer</th>
                         </tr>
@@ -27,27 +63,40 @@
                     <tbody>
                         {% for demande in demandes %}
                             <tr>
-                                <td>{{ demande.Demande_id }}</td>
-                                <td>{{ demande.Utilisateur_id }}</td>
+                                <td>{{ demande.demandeId }}</td>
                                 <td>{{ demande.contenu }}</td>
-                                <td>{{ demande.statut }}</td>
-                                
+                                <td>{{ demande.dateDemande ? demande.dateDemande|date('Y-m-d') : '' }}</td>
                                 <td>
-                                
+                                    <span class="badge 
+                                        {% if demande.statut == 'Acceptée' %}bg-success
+                                        {% elseif demande.statut == 'Refusée' %}bg-danger
+                                        {% else %}bg-warning text-dark{% endif %}">
+                                        {{ demande.statut }}
+                                    </span>
                                 </td>
                                 <td>
-                                    <form method="post" action="{{ path('app_demande_update_status', {'id': demande.Demande_id}) }}">
-                                        <select name="statut" class="form-select form-select-sm" onchange="this.form.submit()">
-                                            <option value="En attente" {{ demande.statut == 'En attente' ? 'selected' : '' }}>En attente</option>
-                                            <option value="Acceptée" {{ demande.statut == 'Acceptée' ? 'selected' : '' }}>Acceptée</option>
-                                            <option value="Refusée" {{ demande.statut == 'Refusée' ? 'selected' : '' }}>Refusée</option>
-                                        </select>
-                                        <input type="hidden" name="_token" value="{{ csrf_token('update_status' ~ demande.Demande_id) }}">
+                                    <form action="{{ path('app_demande_update_status', { id: demande.demandeId }) }}" method="post">
+                                        <div class="input-group input-group-sm">
+                                            <select name="statut" class="form-select">
+                                                <option value="En attente" {{ demande.statut == 'En attente' ? 'selected' : '' }}>En attente</option>
+                                                <option value="Acceptée" {{ demande.statut == 'Acceptée' ? 'selected' : '' }}>Acceptée</option>
+                                                <option value="Refusée" {{ demande.statut == 'Refusée' ? 'selected' : '' }}>Refusée</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-outline-primary">Modifier</button>
+                                        </div>
                                     </form>
                                 </td>
                                 <td>
-                                    <a href="{{ path('app_demande_delete', {'id': demande.Demande_id}) }}" class="btn btn-sm btn-danger">🗑️</a>
+                                    <a href="{{ path('app_demande_delete', { id: demande.demandeId }) }}"
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette demande ?')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
                                 </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">Aucune demande.</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -56,46 +105,44 @@
         </div>
     </main>
 </div>
+{% endblock %}
 
-<!-- Modal Bootstrap -->
-<div class="modal fade" id="avisModal" tabindex="-1" aria-labelledby="avisModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="avisModalLabel">Liste des Avis</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Contenu des avis chargé dynamiquement -->
-                <div id="avisContent">
-                    <p>Chargement des avis...</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-            </div>
-        </div>
-    </div>
-</div>
+{% block stylesheets %}
+    <link href="https://cdn.jsdelivr.net/npm/datatables@1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
+{% endblock %}
 
-<script>
-    function loadAvis(demandeId) {
-        const avisContent = document.getElementById('avisContent');
-        avisContent.innerHTML = '<p>Chargement des avis...</p>';
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/datatables@1.10.21/js/jquery.dataTables.min.js"></script>
 
-        fetch(`/demandes/${demandeId}/avis`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.length > 0) {
-                    avisContent.innerHTML = '<ul>' + data.map(avis => `<li>${avis.contenu}</li>`).join('') + '</ul>';
-                } else {
-                    avisContent.innerHTML = '<p>Aucun avis trouvé pour cette demande.</p>';
-                }
-            })
-            .catch(error => {
-                avisContent.innerHTML = '<p>Erreur lors du chargement des avis.</p>';
-                console.error('Erreur:', error);
-            });
-    }
-</script>
+    <script>
+    $(function() {
+        // Initialise le DataTable
+        var table = $('#demandeTable').DataTable({
+            order: [[2, 'desc']],  // tri par défaut sur la colonne Date
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.10.21/i18n/French.json'
+            }
+        });
+
+        // Fonction de filtrage par date
+        $.fn.dataTable.ext.search.push(function(settings, data) {
+            var selectedDate = $('#filterDate').val(); // Date sélectionnée dans le filtre (YYYY-MM-DD)
+            var rowDate = data[2]; // Valeur de la colonne Date (index 2 dans le tableau)
+
+            // Si aucune date n'est sélectionnée, afficher toutes les lignes
+            if (!selectedDate) {
+                return true;
+            }
+
+            // Comparer la date sélectionnée avec la date de la ligne
+            return rowDate === selectedDate;
+        });
+
+        // Appliquer le filtre lorsque la date change
+        $('#filterDate').on('change', function() {
+            table.draw();
+        });
+    });
+    </script>
 {% endblock %}

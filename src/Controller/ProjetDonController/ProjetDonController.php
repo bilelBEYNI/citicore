@@ -15,12 +15,28 @@ use Symfony\Component\Routing\Annotation\Route;
 final class ProjetDonController extends AbstractController
 {
     #[Route(name: 'app_projet_don_index', methods: ['GET'])]
-    public function index(ProjetDonRepository $projetDonRepository): Response
+    public function index(ProjetDonRepository $projetDonRepository, Request $request): Response
     {
+        // Get the search query from the request
+        $searchQuery = $request->query->get('search');
+    
+        // Build the query for the projects
+        $queryBuilder = $projetDonRepository->createQueryBuilder('p');
+    
+        if ($searchQuery) {
+            $queryBuilder
+                ->andWhere('p.nom LIKE :searchQuery')
+                ->setParameter('searchQuery', '%' . $searchQuery . '%');
+        }
+    
+        $projetDons = $queryBuilder->getQuery()->getResult();
+    
         return $this->render('back/ProjetDon/ProjetDon/index.html.twig', [
-            'projet_dons' => $projetDonRepository->findAll(),
+            'projet_dons' => $projetDons,
+            'searchQuery' => $searchQuery,  // Pass search query back to the view for displaying in the input
         ]);
     }
+    
 
     #[Route('/new', name: 'app_projet_don_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, AssociationRepository $associationRepository): Response
@@ -122,5 +138,17 @@ public function donner(Request $request, ProjetDon $projetDon, EntityManagerInte
         'projet_don' => $projetDon,
     ]);
 }
+#[Route('/projet/don/tous', name: 'app_projet_don_show_all', methods: ['GET'])]
+public function showAll(ProjetDonRepository $projetDonRepository): Response
+{
+    // Retrieve all projects
+    $projetDons = $projetDonRepository->findAll();
+
+    return $this->render('back/ProjetDon/ProjetDon/index.html.twig', [
+        'projet_dons' => $projetDons,  // Pass all projects to the template
+        'searchQuery' => '',  // Clear search query
+    ]);
+}
+
 
 }

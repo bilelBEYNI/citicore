@@ -29,4 +29,28 @@ class DemandeRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function countByStatut(): array
+    {
+        $qb = $this->createQueryBuilder('d')
+            ->select('d.statut, COUNT(d.demandeId) AS count')  // Correction du nom de la colonne
+            ->groupBy('d.statut')
+            ->getQuery();
+
+        $result = $qb->getResult();
+
+        // Transformer les résultats en un tableau associatif pour une utilisation facile
+        $countByStatut = [
+            'Acceptée' => 0,
+            'En attente' => 0,
+            'Refusée' => 0,
+        ];
+
+        foreach ($result as $row) {
+            $countByStatut[$row['statut']] = (int) $row['count'];
+        }
+
+        return $countByStatut;
+    }
+    
 }

@@ -34,7 +34,12 @@ class ReclamationType extends AbstractType
             ],
             'placeholder' => 'Choisissez un type',
         ])
-        ;
+        ->add('Cin_Utilisateur', null, [
+            'attr' => [
+                'type' => 'hidden',
+            ],
+            'required' => false, // Si nécessaire
+        ]);
         
     }
 

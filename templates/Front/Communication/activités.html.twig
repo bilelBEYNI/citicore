@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Activités{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="text-center my-4">Mes Activités</h1>
+
+    <div class="row">
+        {% for demande in demandes %}
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Demande #{{ demande.demandeId }}</h5>
+                        <p class="card-text"><strong>Contenu :</strong> {{ demande.contenu }}</p>
+                        <p class="card-text"><strong>Statut :</strong> {{ demande.statut }}</p>
+                        <p class="card-text"><strong>Date :</strong> {{ demande.dateDemande|date('Y-m-d') }}</p>
+                    </div>
+                  
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

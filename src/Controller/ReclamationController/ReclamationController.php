@@ -4,6 +4,7 @@ namespace App\Controller\ReclamationController;
 
 use App\Entity\Reclamation;
 use App\Form\ReclamationType;
+use App\Service\SMSRecService;
 use App\Repository\ReclamationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,31 +13,20 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Knp\Component\Pager\PaginatorInterface;
 
-#[Route('/reclamation')]
+
+
 class ReclamationController extends AbstractController
 {
-    #[Route(name: 'app_reclamation_index', methods: ['GET'])]
+    #[Route('/reclamation',name: 'app_reclamation_index', methods: ['GET'])]
     public function index(Request $request, ReclamationRepository $reclamationRepository, PaginatorInterface $paginator): Response
     {
-        $qb = $reclamationRepository->createQueryBuilder('r');
-
-        // Filtrage par type de réclamation
-        if ($request->query->get('type')) {
-            $qb->andWhere('r.Type_Reclamation = :type')
-               ->setParameter('type', $request->query->get('type'));
-        }
-
-        // Recherche par sujet
-        if ($request->query->get('q')) {
-            $qb->andWhere('r.Sujet LIKE :q')
-               ->setParameter('q', '%'.$request->query->get('q').'%');
-        }
-
-        // Tri dynamique
+        $type = $request->query->get('type');
+        $query = $request->query->get('q');
         $sort = $request->query->get('sort', 'r.ID_Reclamation');
         $direction = $request->query->get('direction', 'asc');
-        $qb->orderBy($sort, $direction);
-
+    
+        $qb = $reclamationRepository->findFilteredReclamations($type, $query, $sort, $direction);
+    
         $pagination = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
@@ -49,18 +39,18 @@ class ReclamationController extends AbstractController
                 'defaultSortDirection' => 'asc',
             ]
         );
-
+    
         return $this->render('back/Reclamation/Reclamation/index.html.twig', [
             'reclamations' => $pagination,
-            'currentType' => $request->query->get('type'),
-            'currentQuery' => $request->query->get('q'),
+            'currentType' => $type,
+            'currentQuery' => $query,
             'currentSort' => $sort,
             'currentDirection' => $direction,
         ]);
     }
 
-    #[Route('/new', name: 'app_reclamation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/reclamation/new', name: 'app_reclamation_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager, SMSRecService $sms ): Response
     {
         $reclamation = new Reclamation();
         $form = $this->createForm(ReclamationType::class, $reclamation);
@@ -70,7 +60,25 @@ class ReclamationController extends AbstractController
             if ($form->isValid()) {
                 $entityManager->persist($reclamation);
                 $entityManager->flush();
-                $this->addFlash('success', 'Réclamation créée avec succès.');
+
+                // Récupère le sujet
+                $sujet = $reclamation->getSujet();
+
+                // Compose ton texte avec sprintf()
+                $message = sprintf(
+                    'Votre réclamation « %s » a bien été envoyée.',
+                    $sujet
+                );
+                
+                // Envoie le SMS
+                $smsSent = $sms->sendSms('+21692581168', $message); 
+
+                if ($smsSent) {
+                    $this->addFlash('success', 'Réclamation créée et SMS envoyé avec succès.');
+                } 
+                else {
+                    $this->addFlash('warning', 'Réclamation créée, mais échec de l\'envoi du SMS.');
+                }
 
                 return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
             } 
@@ -85,7 +93,7 @@ class ReclamationController extends AbstractController
         ]);
     }
 
-    #[Route('/{ID_Reclamation}', name: 'app_reclamation_show', methods: ['GET'])]
+    #[Route('/reclamation/{ID_Reclamation}', name: 'app_reclamation_show', methods: ['GET'])]
     public function show(Reclamation $reclamation): Response
     {
         return $this->render('back/Reclamation/Reclamation/show.html.twig', [
@@ -93,7 +101,7 @@ class ReclamationController extends AbstractController
         ]);
     }
 
-    #[Route('/{ID_Reclamation}/edit', name: 'app_reclamation_edit', methods: ['GET', 'POST'])]
+    #[Route('/reclamation/{ID_Reclamation}/edit', name: 'app_reclamation_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Reclamation $reclamation, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ReclamationType::class, $reclamation);
@@ -117,7 +125,7 @@ class ReclamationController extends AbstractController
         ]);
     }
 
-    #[Route('/{ID_Reclamation}', name: 'app_reclamation_delete', methods: ['POST'])]
+    #[Route('/reclamation/{ID_Reclamation}', name: 'app_reclamation_delete', methods: ['POST'])]
     public function delete(Request $request, Reclamation $reclamation, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$reclamation->getID_Reclamation(), $request->getPayload()->getString('_token'))) {

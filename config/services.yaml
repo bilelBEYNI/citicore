@@ -11,12 +11,26 @@ parameters:
     stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
     knp_snappy.pdf.binary: '%env(WKHTMLTOPDF_PATH)%'
     google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
-
+    paypal_client_id: '%env(PAYPAL_CLIENT_ID)%'
+    paypal_client_secret: '%env(PAYPAL_CLIENT_SECRET)%'
+    infobip.api_key: '49fa567f0a5c890d708b36da646084d6-642d55de-4c24-4759-a9b7-45ef30af4ff4'
+    infobip.sender_number: '+44 7491 163443'
+    twilio.sid:   '%env(TWILIO_SID)%'
+    twilio.token: '%env(TWILIO_TOKEN)%'
+    twilio.from:  '%env(TWILIO_FROM)%'
+    
 services:
-    # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        autowire: true
+        autoconfigure: true
+
+    Endroid\QrCode\Builder\Builder:
+        public: true
+
+    Endroid\QrCode\Builder\BuilderInterface:
+        alias: Endroid\QrCode\Builder\Builder
+
+
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -27,6 +41,22 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Service\PayPalClient:  # Correct class name: PayPalClient
+        arguments:
+            $clientId: '%env(PAYPAL_CLIENT_ID)%'
+            $clientSecret: '%env(PAYPAL_CLIENT_SECRET)%'
+
+    App\Service\SmsService:
+        arguments:
+            $apiKey: '%infobip.api_key%'
+            $senderNumber: '%infobip.sender_number%'  
+
+    App\Service\SMSRecService:
+        arguments:
+            $sid:   '%twilio.sid%'
+            $token: '%twilio.token%'
+            $from:  '%twilio.from%'
+            
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     App\Entity\CartService:
@@ -40,4 +70,5 @@ services:
             
     App\Controller\CommuniactionController\DemandeController:
         tags: ['controller.service_arguments']
-        
+
+   

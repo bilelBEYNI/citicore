@@ -62,11 +62,7 @@ class Produit
     )]
     private Collection $commandes;
 
-    public function __construct()
-    {
-        $this->commandes = new ArrayCollection();
-        $this->date_ajout = new \DateTime(); // 👈 Ajout automatique de la date du jour
-    }
+   
 
     // ==== Getters & Setters ====
 
@@ -200,5 +196,10 @@ class Produit
     public function getId(): ?int
     {
         return $this->getIdProduit();
+    }
+    public function __construct()
+    {
+        $this->commandes = new ArrayCollection();
+        $this->date_ajout = new \DateTime(); // 👈 Ajout automatique de la date du jour
     }
 }

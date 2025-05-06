@@ -2,18 +2,36 @@
 
 {% block title %}ProjetDon index{% endblock %}
 
-
 {% block body %}
-    
-    <div class="container my-5" style="margin-left: 300px; padding-bottom: 50px;">
+    <div class="container my-5" style="margin-left: 250px; padding-bottom: 50px;">
+
         <h1 class="text-center mb-4">Liste des Projets</h1>
-        <div class="text-center mb-4">
-        <h5>
-    <a href="{{ path('app_projet_don_new') }}">
-        ✚ Ajouter un nouveau projet
-    </a>
-    </h5>
+
+        <!-- Horizontal layout with buttons and search bar -->
+        <div class="d-flex justify-content-center mb-4">
+            <!-- Ajouter un nouveau projet Button -->
+            <div class="me-3">
+                <a href="{{ path('app_projet_don_new') }}" class="btn btn-success">
+                    ✚ Ajouter un nouveau projet
+                </a>
+            </div>
+
+            <!-- Search Bar with button inside -->
+<div class="me-3">
+    <form method="get" action="{{ path('app_projet_don_index') }}" class="d-flex">
+        <input type="text" name="search" value="{{ searchQuery }}" class="form-control me-2" placeholder="Rechercher un projet" style="width: 250px;" />
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
 </div>
+
+
+            <!-- Tous les projets Button -->
+            <div>
+                <a href="{{ path('app_projet_don_show_all') }}" class="btn btn-secondary">
+                    Tous les projets
+                </a>
+            </div>
+        </div>
 
         <div class="mx-auto" style="max-width: 90%;">
             <table class="table table-bordered table-striped">
@@ -29,31 +47,28 @@
                     </tr>
                 </thead>
                 <tbody>
-                {% for projet_don in projet_dons %}
-                    <tr>
-                        <td>{{ projet_don.nom }}</td>
-                        <td>{{ projet_don.montantRecu }}</td>
-                        <td>{{ projet_don.objectif }}</td>
-                        <td>{{ projet_don.dateDebut ? projet_don.dateDebut|date('Y-m-d') : '' }}</td>
-                        <td>{{ projet_don.dateFin ? projet_don.dateFin|date('Y-m-d') : '' }}</td>
-                        <td>{{ projet_don.association.nom }}</td>
-                        <td>
-                            <a href="{{ path('app_projet_don_show', {'id_Projet_Don': projet_don.id_Projet_Don}) }}" class="btn" title="View">
-    👁️
-</a>
-<a href="{{ path('app_projet_don_edit', {'id_Projet_Don': projet_don.id_Projet_Don}) }}" class="btn btn-sm btn-warning me-1" title="Edit">
-    ✏️
-</a>
-
-
-
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="7" class="text-center">No records found</td>
-                    </tr>
-                {% endfor %}
+                    {% for projet_don in projet_dons %}
+                        <tr>
+                            <td>{{ projet_don.nom }}</td>
+                            <td>{{ projet_don.montantRecu }}</td>
+                            <td>{{ projet_don.objectif }}</td>
+                            <td>{{ projet_don.dateDebut ? projet_don.dateDebut|date('Y-m-d') : '' }}</td>
+                            <td>{{ projet_don.dateFin ? projet_don.dateFin|date('Y-m-d') : '' }}</td>
+                            <td>{{ projet_don.association.nom }}</td>
+                            <td>
+                                <a href="{{ path('app_projet_don_show', {'id_Projet_Don': projet_don.id_Projet_Don}) }}" class="btn" title="View">
+                                    👁️
+                                </a>
+                                <a href="{{ path('app_projet_don_edit', {'id_Projet_Don': projet_don.id_Projet_Don}) }}" class="btn btn-sm btn-warning me-1" title="Edit">
+                                    ✏️
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center">Aucun projet trouvé</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

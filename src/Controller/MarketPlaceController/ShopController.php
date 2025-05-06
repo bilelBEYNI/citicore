@@ -47,17 +47,19 @@ class ShopController extends AbstractController
             throw $this->createNotFoundException('Produit introuvable');
         }
     
-        $panier      = $this->session->get('panier', []);
-        $panier[$id] = ($panier[$id] ?? 0) + 1;
-        $this->session->set('panier', $panier);
+        $panier = $this->session->get('panier', []);
+        
+        if (!isset($panier[$id])) {
+            $panier[$id] = 1;
+            $this->session->set('panier', $panier);
+        }
     
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
-                'cartCount' => array_sum($panier),
+                'cartCount' => count($panier),
             ]);
         }
     
-        $this->addFlash('success', 'Produit ajouté au panier.');
         return $this->redirectToRoute('app_shop');
     }
     
@@ -68,7 +70,6 @@ class ShopController extends AbstractController
         if (isset($panier[$id])) {
             unset($panier[$id]);
             $this->session->set('panier', $panier);
-            $this->addFlash('warning', 'Produit retiré du panier.');
         }
         return $this->redirectToRoute('app_cart');
     }
@@ -105,17 +106,17 @@ class ShopController extends AbstractController
     public function checkout(SessionInterface $session): Response
     {
         $panier = $session->get('panier', []);
-
         if (empty($panier)) {
-            $this->addFlash('warning', 'Votre panier est vide.');
             return $this->redirectToRoute('app_cart');
         }
 
+        // Création d'une nouvelle commande
         $commande = new Commande();
         $commande->setDateCommande(new \DateTime());
         $this->em->persist($commande);
-        $this->em->flush();
+        $this->em->flush(); // Persister la commande avant d'ajouter les produits
 
+        // Ajout des produits à la commande
         foreach ($panier as $id => $qty) {
             $produit = $this->em->getRepository(Produit::class)->find($id);
             if (!$produit) {
@@ -129,10 +130,12 @@ class ShopController extends AbstractController
             $this->em->persist($ligne);
         }
 
+        // Enregistrement des lignes de commande
         $this->em->flush();
+
+        // Suppression du panier
         $session->remove('panier');
 
-        $this->addFlash('success', 'Commande passée avec succès.');
 
         return $this->redirectToRoute('app_shop');
     }
@@ -147,15 +150,18 @@ class ShopController extends AbstractController
     #[Route('/cart/ajax/add/{id}', name: 'app_cart_ajax_add', methods: ['GET'])]
     public function addToCartAjax(Produit $produit): JsonResponse
     {
-        // même logique que ci‑dessus, mais on renvoie du JSON
         $panier = $this->session->get('panier', []);
         $id = $produit->getIdProduit();
-        $panier[$id] = ($panier[$id] ?? 0) + 1;
-        $this->session->set('panier', $panier);
-
-        $cartCount = array_sum($panier);
+    
+        if (!isset($panier[$id])) {
+            $panier[$id] = 1;
+            $this->session->set('panier', $panier);
+        }
+    
+        $cartCount = count($panier);
         return new JsonResponse([
             'cartCount' => $cartCount,
         ]);
     }
+    
 }

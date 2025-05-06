@@ -2,17 +2,24 @@
 
 {% block title %}Catalogue des Produits{% endblock %}
 
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('styles/marketplace/style.css') }}">
+{% endblock %}
 {% block body %}
-<div class="container-custom animated fadeIn">
-  <h1 class="mb-4 header-title">Catalogue des Produits</h1>
-  
+<div class="container my-5" style="margin-left: 250px; padding-bottom: 50px;">
+  <h1 class="mb-4 favoris-title">Catalogue des Produits</h1>
+
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <a href="{{ path('app_produit_new') }}" class="btn-add">Ajouter un Produit</a>
-    <input type="text" class="input-search" placeholder="Rechercher..." id="searchInput">
+
+    <a href="{{ path('app_produit_') }}" class="btn btn-primary btn-lg">Ajouter un Produit</a>
+
+    <!-- Barre de recherche stylisée -->
+    <input type="text" class="form-control w-25" placeholder="Rechercher un produit..." id="searchInput">
   </div>
 
-  <table class="table table-hover table-bordered table-custom animated fadeInUp">
-    <thead class="thead-dark">
+  <table class="table table-hover table-striped">
+    <thead class="thead-light" style="background-color: #9B59B6; color: #fff;">
       <tr>
         <th>Nom</th>
         <th>Description</th>
@@ -23,59 +30,72 @@
       </tr>
     </thead>
     <tbody id="produitTable">
-      {% for produit in produits %}
-        <tr>
+      {% for produit in pagination %}
+        <tr style="background-color: #fff; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
           <td>{{ produit.nom }}</td>
           <td>{{ produit.description }}</td>
-          <td>{{ produit.prix }} €</td>
-          <td>{{ produit.date_ajout|date('d/m/Y') }}</td>
+          <td class="favoris-prix">{{ produit.prix }} €</td>
+          <td>{{ produit.dateAjout|date('d/m/Y') }}</td>
           <td>
             {% if produit.photo %}
-              <img src="{{ asset('uploads/' ~ produit.photo) }}" alt="Photo du produit" class="img-thumbnail" style="max-width:100px;">
+              <img src="{{ asset('uploads/' ~ produit.photo) }}" class="img-thumbnail favoris-image" style="max-width:100px;">
             {% else %}
               <span class="text-muted">Aucun</span>
             {% endif %}
           </td>
-      <td>
-<a href="{{ path('app_produit_edit', {'id': produit.idProduit}) }}" class="btn btn-warning">Modifier</a>
+          <td class="text-end">
+            <a href="{{ path('edit', {'idProduit': produit.idProduit}) }}" class="btn btn-warning btn-sm">Modifier</a>
 
-  <form method="post" action="{{ path('app_produit_delete', {'id': produit.idProduit}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');" class="d-inline-block">
-    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.idProduit) }}">
-    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-  </form>
-</td>
-
-
-
+            <form method="post"
+                  action="{{ path('delete', {'idProduit': produit.idProduit}) }}"
+                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');"
+                  class="d-inline-block">
+              <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.idProduit) }}">
+              <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+            </form>
+          </td>
         </tr>
       {% else %}
         <tr>
-          <td colspan="7" class="text-center">Aucun produit trouvé.</td>
+          <td colspan="6" class="text-center text-muted">Aucun produit trouvé.</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-center my-4">
+    <nav>
+      <ul class="pagination">
+        <li class="page-item {% if pagination.currentPageNumber == 1 %}disabled{% endif %}">
+          <a class="page-link" href="{{ path('app_produit_', {'page': pagination.currentPageNumber - 1}) }}" tabindex="-1">Précédent</a>
+        </li>
+        {% for page in 1..pagination.pageCount %}
+          <li class="page-item {% if pagination.currentPageNumber == page %}active{% endif %}">
+            <a class="page-link" href="{{ path('app_produit_', {'page': page}) }}">{{ page }}</a>
+          </li>
+        {% endfor %}
+        <li class="page-item {% if pagination.currentPageNumber == pagination.pageCount %}disabled{% endif %}">
+          <a class="page-link" href="{{ path('app_produit_', {'page': pagination.currentPageNumber + 1}) }}">Suivant</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   const searchInput = document.getElementById('searchInput');
-  const tableRows = document.querySelectorAll('#produitTable tr');
-
+  const tableRows   = document.querySelectorAll('#produitTable tr');
   searchInput.addEventListener('keyup', function () {
-    const filter = searchInput.value.toLowerCase();
-
+    const filter = this.value.toLowerCase();
     tableRows.forEach(row => {
-      const rowText = row.innerText.toLowerCase();
-      if (rowText.includes(filter)) {
-        row.style.display = '';
-      } else {
-        row.style.display = 'none';
-      }
+      row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none';
     });
   });
 });
 </script>
 
-
 {% endblock %}
+
+

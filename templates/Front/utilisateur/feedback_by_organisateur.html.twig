@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1>Feedbacks pour {{ organisateur.nom }} {{ organisateur.prenom }}</h1>
+    </div>
+
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-6 text-center">
+            <img src="{{ asset('http://localhost/images/' ~ organisateur.PhotoUtilisateur) }}" 
+                 alt="Image de {{ organisateur.nom }}" 
+                 class="rounded-circle mb-3"
+                 style="width: 150px; height: 150px; object-fit: cover;">
+            <p><strong>Email :</strong> {{ organisateur.email }}</p>
+        </div>
+    </div>
+
+ 
+
+    <hr>
+
+    <div class="row mb-5">
+        <div class="col-md-10 offset-md-1">
+            <h4 class="mb-4">Liste des feedbacks</h4>
+            {% if feedbacks is not empty %}
+                {% for feedback in feedbacks %}
+                    <div class="card mb-3 shadow-sm">
+                        <div class="card-body">
+                            <p class="mb-1"><strong>  
+                                {{ feedback.date_creation|date('Y-m-d H:i:s') }}  <!-- Formatage de la date -->
+                            </strong> {{ feedback.contenu }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Aucun feedback trouvé pour cet organisateur.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .card {
+        border-radius: 10px;
+    }
+
+    h1, h4 {
+        color: #343a40;
+    }
+</style>
+{% endblock %}

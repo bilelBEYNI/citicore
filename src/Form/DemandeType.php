@@ -28,6 +28,10 @@ class DemandeType extends AbstractType
             ->add('statut', TextType::class, [
                 'label' => 'Statut',
                 'attr' => ['class' => 'form-control'],
+            ])
+            ->add('Cin_Utilisateur', TextType::class, [
+                'label' => 'CIN Utilisateur',
+                'attr' => ['class' => 'form-control'],
             ]);
     }
 

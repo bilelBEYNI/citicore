@@ -4,7 +4,67 @@
 
 {% block stylesheets %}
   <link rel="stylesheet" href="{{ asset('front/css/produit/details.css') }}?v=6.0">
+  <style>
+    .favoris-title {
+        text-align: center;
+        font-size: 2rem;
+        color: #6f42c1;
+        margin-bottom: 30px;
+    }
 
+    .favoris-card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: none;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .favoris-image {
+        max-height: 100px;
+        object-fit: contain;
+    }
+
+    .favoris-prix {
+        font-weight: bold;
+        color: #28a745;
+    }
+
+    .favoris-remise {
+        background-color: #dc3545;
+        color: white;
+        font-size: 0.75rem;
+    }
+
+    .favoris-supprimer,
+    .favoris-panier {
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .favoris-supprimer {
+        background-color: #f8d7da;
+        color: #842029;
+        border: 1px solid #f5c2c7;
+    }
+
+    .favoris-supprimer:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .favoris-panier {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+    }
+
+    .favoris-panier:hover {
+        background-color: #198754;
+        color: white;
+    }
+  </style>
 {% endblock %}
 
 {% block body %}
@@ -30,18 +90,16 @@
                                     </span>
                                 {% endif %}
                             </p>
-                
                         </div>
                     </div>
-                   <div class="col-md-4 text-end pe-4">
-    <a href="{{ path('app_favoris_toggle', {id: produit.id_produit}) }}" class="btn favoris-supprimer me-2 d-inline-flex align-items-center">
-        <i class="bi bi-heartbreak-fill me-1"></i> Supprimer
-    </a>
-    <a href="{{ path('app_cart_add', {id: produit.id_produit}) }}" class="btn favoris-panier d-inline-flex align-items-center">
-        <i class="bi bi-cart-plus-fill me-1"></i> Ajouter
-    </a>
-</div>
-
+                    <div class="col-md-4 text-end pe-4">
+                        <a href="{{ path('app_favoris_toggle', {id: produit.id_produit}) }}" class="btn favoris-supprimer me-2 d-inline-flex align-items-center">
+                            <i class="bi bi-heartbreak-fill me-1"></i> Supprimer
+                        </a>
+                        <a href="{{ path('app_cart_add', {id: produit.id_produit}) }}" class="btn favoris-panier d-inline-flex align-items-center">
+                            <i class="bi bi-cart-plus-fill me-1"></i> Ajouter
+                        </a>
+                    </div>
                 </div>
             </div>
         {% endfor %}

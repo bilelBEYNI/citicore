@@ -1,71 +1,85 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="{{ asset('front/css/produit/cart.css') }}?v=1.0">
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('styles/marketplace/cart.css') }}">
 {% endblock %}
 
-
 {% block body %}
-<div class="container">
+<div class="container my-5" style="margin-left: 250px; padding-bottom: 50px;">
     <div class="row cart-container">
         <div class="col-md-8">
-            <h2>🛒 Mon Panier</h2>
+            <h2>🛒 Mon Panier</h2><br>
 
             {% if items is empty %}
                 <div class="alert alert-light text-center mt-4">Votre panier est vide.</div>
-                <a href="{{ path('app_shop') }}" class="btn-back"><i class="bi bi-arrow-left-circle-fill"></i> Retour à la boutique</a>
+                <a href="{{ path('app_shop') }}" class="btn-back">
+                    <i class="bi bi-arrow-left-circle-fill"></i> Retour à la boutique
+                </a>
             {% else %}
                 {% for item in items %}
-                <div class="cart-item">
-                    <div class="product-info">
-                        <img src="{{ asset('uploads/' ~ item.produit.photo) }}" alt="{{ item.produit.nom }}">
+                <div class="cart-item d-flex justify-content-between align-items-center mb-3">
+                    <div class="product-info d-flex align-items-center">
+                        <img src="{{ asset('uploads/' ~ item.produit.photo) }}"
+                             alt="{{ item.produit.nom }}"
+                             class="cart-product-img me-3">
                         <div class="details">
-                            <h5>{{ item.produit.nom }}</h5>
+                            <h5 class="mb-1">{{ item.produit.nom }}</h5>
                             <div class="text-muted">{{ item.produit.prix }} € x {{ item.quantity }}</div>
                         </div>
                     </div>
-                    <div class="qty">
-                        <a href="{{ path('app_cart_update', { id: item.produit.id_produit, operation: 'minus' }) }}" class="btn-qty">–</a>
-                        <span>{{ item.quantity }}</span>
-                        <a href="{{ path('app_cart_update', { id: item.produit.id_produit, operation: 'plus' }) }}" class="btn-qty">+</a>
+
+                    <div class="d-flex align-items-center">
+                        <div class="qty mx-3 d-flex align-items-center">
+                            <form method="post" action="{{ path('app_cart_update', { id: item.produit.id_produit }) }}">
+                                <input type="hidden" name="operation" value="minus">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">–</button>
+                            </form>
+                            <span class="mx-2">{{ item.quantity }}</span>
+                            <form method="post" action="{{ path('app_cart_update', { id: item.produit.id_produit }) }}">
+                                <input type="hidden" name="operation" value="plus">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">+</button>
+                            </form>
+                        </div>
+
+                        <div class="fw-bold price me-3">
+                            {{ item.sousTotal|number_format(2, '.', ',') }} €
+                        </div>
+
+                        <a href="{{ path('app_cart_remove', { id: item.produit.id_produit }) }}" class="btn btn-danger btn-sm" title="Supprimer">
+                            <i class="bi bi-trash3-fill"></i>
+                        </a>
                     </div>
-                    <div class="fw-bold price">
-                        {{ item.sousTotal|number_format(2, '.', ',') }} €
-                    </div>
-                    <a href="{{ path('app_cart_remove', { id: item.produit.id_produit }) }}" class="btn-remove ms-3" title="Supprimer">
-                        <i class="bi bi-trash3-fill"></i>
-                    </a>
                 </div>
                 {% endfor %}
 
-                <a href="{{ path('app_shop') }}" class="btn-back"><i class="bi bi-arrow-left-circle-fill"></i> Retour à la boutique</a>
+                <a href="{{ path('app_shop') }}" class="btn-back mt-4">
+                    <i class="bi bi-arrow-left-circle-fill"></i> Retour à la boutique
+                </a>
             {% endif %}
         </div>
 
         <div class="col-md-4">
-            <div class="summary-box">
+            <div class="summary-box p-3 shadow-sm border rounded">
                 <h4>Résumé</h4>
-                <div class="summary-line">
+                <div class="summary-line d-flex justify-content-between">
                     <span>Articles</span>
                     <span>{{ items|length }}</span>
                 </div>
-                <div class="summary-line">
+                <div class="summary-line d-flex justify-content-between">
                     <span>Total</span>
                     <span>{{ total|number_format(2, '.', ',') }} €</span>
                 </div>
-                <div class="summary-line">
+                <div class="summary-line d-flex justify-content-between">
                     <span>Livraison</span>
                     <span>5.00 €</span>
                 </div>
-                <hr class="text-secondary">
-                <div class="summary-line fw-bold">
+                <hr>
+                <div class="summary-line fw-bold d-flex justify-content-between">
                     <span>Total à payer</span>
                     <span>{{ (total + 5)|number_format(2, '.', ',') }} €</span>
                 </div>
-<a href="{{ path('app_cart_confirmation') }}" class="btn btn-success">Valider ma commande</a>
-
+                <a href="{{ path('app_cart_confirmation') }}" class="btn btn-success mt-3 w-100">Valider ma commande</a>
             </div>
         </div>
     </div>

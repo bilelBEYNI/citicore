@@ -1,0 +1,122 @@
+/* Global */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #F8F9FA; /* Fond clair pour la page */
+}
+
+/* Conteneur de la page des favoris */
+.favoris-container {
+  padding: 20px;
+}
+
+/* Titre */
+.favoris-title {
+  text-align: center;
+  font-size: 2rem;
+  color: #9B59B6; /* Couleur principale pour le titre */
+  margin-bottom: 20px;
+}
+
+/* Carte des produits favoris */
+.favoris-card {
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  padding: 15px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.favoris-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Image produit */
+.favoris-image {
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Informations sur le produit */
+.favoris-nom {
+  font-size: 1.2rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.favoris-prix {
+  font-size: 1.1rem;
+  color: #9B59B6; /* Couleur du prix */
+}
+
+.favoris-remise {
+  background-color: #D5B2D6; /* Couleur de la remise */
+  color: #9B59B6;
+  padding: 3px 7px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+.text-muted {
+  color: #777;
+}
+
+.text-decoration-line-through {
+  text-decoration: line-through;
+}
+
+/* Colonnes de la carte */
+.card-body {
+  padding: 15px;
+}
+
+.card-text {
+  font-size: 0.9rem;
+}
+
+/* Section des boutons - Elimination de l'espace entre les boutons */
+.text-end {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0; /* Élimine la distance entre les boutons */
+}
+
+.btn-link {
+  color: #D5B2D6; /* Couleur pour les boutons */
+  font-size: 1.3rem;
+  transition: color 0.3s, transform 0.2s;
+  padding: 0 10px; /* Un peu de padding pour améliorer la taille du clic */
+}
+
+.btn-link:hover {
+  color: #6CB2EB; /* Couleur du bouton au survol */
+  transform: scale(1.1); /* Légère agrandissement au survol */
+}
+
+.btn-link:active {
+  transform: scale(0.98); /* Réduction au clic */
+}
+
+/* Icône de cœur (favori) */
+.bi-heartbreak-fill {
+  color: #9B59B6; /* Couleur du cœur favori */
+}
+
+/* Icône de panier */
+.bi-cart-plus-fill {
+  color: #6CB2EB; /* Couleur du panier */
+}
+
+/* Message si aucun favori */
+.text-center {
+  font-size: 1rem;
+  color: #555;
+  margin-top: 30px;
+}
+
+/* Animation des boutons */
+.btn-link:active {
+  transform: scale(0.98);
+}

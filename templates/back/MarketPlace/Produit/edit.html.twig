@@ -1,19 +1,44 @@
 {% extends 'back/Dashboard.html.twig' %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('front/css/produit/new.css') }}">
-{% endblock %}
 {% block title %}Modifier un Produit{% endblock %}
 
 {% block body %}
-  <h1>Modifier un Produit</h1>
+<div class="container my-5" style="margin-left: 250px; padding-bottom: 50px;">
+    <h2>Modifier le produit</h2>
 
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button type="submit" class="btn btn-primary">Valider</button>
-{{ form_end(form) }}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
 
+    {% if produit.photo %}
+        <div class="mb-3">
+            <label>Photo actuelle :</label><br>
+            <img src="{{ asset('uploads/' ~ produit.photo) }}" alt="Photo du produit" style="max-width: 200px;"><br>
+            <small>Chemin : <code>{{ asset('uploads/' ~ produit.photo) }}</code></small>
+        </div>
+    {% endif %}
 
-  <a href="{{ path('app_produit_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+    <div class="row">
+        <div class="col-12">
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+                {{ form_errors(form) }}
+                {% for child in form %}
+                    {% if child.vars.name != '_token' %}
+                        <div class="mb-3">
+                            {{ form_label(child) }}
+                            {{ form_widget(child, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(child) }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <a href="{{ path('app_produit_index') }}" class="btn btn-secondary">Retour</a>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -2,185 +2,146 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Reçu de commande</title>
+    <title>Facture Commande PDF</title>
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: DejaVu Sans, sans-serif;
-            font-size: 14px;
-            color: #333;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #fff;
+            color: #444;
+            line-height: 1.4;
+            padding: 20px;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
+        .invoice-container {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
         }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-        .section {
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #6f42c1;
+            padding-bottom: 10px;
             margin-bottom: 20px;
         }
-        .section-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-decoration: underline;
+        .invoice-header img {
+            max-height: 100px;
+        }
+        .company-info {
+            text-align: right;
+            font-size: 12px;
+        }
+        h1 {
+            font-size: 22px;
+            margin: 10px 0;
+            color: #6f42c1;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            margin: 20px 0;
         }
-        th, td {
-            border: 1px solid #666;
+        table thead th {
+            background: #f8f9fa;
             padding: 8px;
-            text-align: left;
+            border: 1px solid #ddd;
+            text-transform: uppercase;
+            font-size: 12px;
         }
-        .total {
+        table tbody td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            font-size: 12px;
+        }
+        table td:last-child,
+        table th:last-child {
             text-align: right;
-            font-size: 16px;
+        }
+        .summary {
             margin-top: 20px;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="header">
-        <h1>Reçu de Commande</h1>
-        <p>Merci pour votre achat !</p>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Informations client</div>
-        <p>Nom : {{ client_name|default('Rayen Test') }}</p>
-        <p>Date : {{ "now"|date("d/m/Y H:i") }}</p>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Détails de la commande</div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Produit</th>
-                    <th>Quantité</th>
-                    <th>Prix unitaire</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in cart %}
-                    <tr>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.price }} DT</td>
-                        <td>{{ item.quantity * item.price }} DT</td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="4">Aucun article dans le panier</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <p class="total">
-            Total : {{ total|default('0.00') }} DT
-        </p>
-    </div>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Reçu de commande</title>
-    <style>
-        body {
-            font-family: DejaVu Sans, sans-serif;
-            font-size: 14px;
-            color: #333;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-        .section {
-            margin-bottom: 20px;
-        }
-        .section-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-decoration: underline;
-        }
-        table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
         }
-        th, td {
-            border: 1px solid #666;
-            padding: 8px;
-            text-align: left;
+        .summary .line {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 12px;
         }
-        .total {
-            text-align: right;
-            font-size: 16px;
-            margin-top: 20px;
+        .summary .line.total {
             font-weight: bold;
+            color: #6f42c1;
+            font-size: 14px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 10px;
+            color: #888;
         }
     </style>
 </head>
 <body>
+<div class="invoice-container">
+    <header class="invoice-header">
+        <div>
+            {% if logoSrc %}
+                <img src="{{ logoSrc }}" alt="Logo">
+            {% endif %}
+        </div>
+        <div class="company-info">
+            <strong>Ma Boutique</strong><br>
+            123 Rue Exemple, Paris<br>
+            support@boutique.fr<br>
+            +33 1 23 45 67 89<br>
+            <strong>Date :</strong> {{ "now"|date("d/m/Y") }}
+        </div>
+    </header>
 
-    <div class="header">
-        <h1>Reçu de Commande</h1>
-        <p>Merci pour votre achat !</p>
-    </div>
+    <h1>Facture</h1>
 
-    <div class="section">
-        <div class="section-title">Informations client</div>
-        <p>Nom : {{ client_name|default('Rayen Test') }}</p>
-        <p>Date : {{ "now"|date("d/m/Y H:i") }}</p>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Détails de la commande</div>
-
-        <table>
-            <thead>
+    <table>
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Quantité</th>
+                <th>Prix unitaire</th>
+                <th>Sous-total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
                 <tr>
-                    <th>Produit</th>
-                    <th>Quantité</th>
-                    <th>Prix unitaire</th>
-                    <th>Total</th>
+                    <td>{{ item.produit.nom }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.produit.prix|number_format(2, ',', ' ') }} €</td>
+                    <td>{{ item.sousTotal|number_format(2, ',', ' ') }} €</td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for item in cart %}
-                    <tr>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.price }} DT</td>
-                        <td>{{ item.quantity * item.price }} DT</td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="4">Aucun article dans le panier</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            {% endfor %}
+        </tbody>
+    </table>
 
-        <p class="total">
-            Total : {{ total|default('0.00') }} DT
-        </p>
+    <div class="summary">
+        <div class="line">
+            <span>Total HT</span>
+            <span>{{ totalHT|number_format(2, ',', ' ') }} €</span>
+        </div>
+        <div class="line">
+            <span>TVA (20%)</span>
+            <span>{{ vatAmount|number_format(2, ',', ' ') }} €</span>
+        </div>
+        <div class="line total">
+            <span>Total TTC</span>
+            <span>{{ totalTTC|number_format(2, ',', ' ') }} €</span>
+        </div>
     </div>
 
+    <footer class="footer">
+        Merci pour votre commande !<br>
+        Pour toute question : support@boutique.fr • +33 1 23 45 67 89
+    </footer>
+</div>
 </body>
 </html>

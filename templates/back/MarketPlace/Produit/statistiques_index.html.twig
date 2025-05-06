@@ -1,0 +1,20 @@
+{# templates/back/MarketPlace/Produit/statistiques_index.html.twig #}
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}Statistiques des Produits{% endblock %}
+
+{% block body %}
+<div class="container my-5" style="margin-left: 250px;">
+    <h1 class="mb-4">Statistiques : Produits les moins vendus</h1>
+
+    <div class="mb-4">
+        <form action="{{ path('statistiques_remise') }}" method="post">
+            <button type="submit" class="btn btn-warning">Appliquer 10% de remise au moins vendu</button>
+        </form>
+    </div>
+
+    <div style="max-width: 900px;">
+        {{ chart(chart) }}
+    </div>
+</div>
+{% endblock %}

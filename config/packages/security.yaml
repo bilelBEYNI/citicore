@@ -27,8 +27,14 @@ security:
                 target: login
 
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/participant, roles: ROLE_PARTICIPANT }
         - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/front/reclamations, roles: ROLE_PARTICIPANT }
 
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/demandes/export/pdf, roles: ROLE_ADMIN }
+
+        - { path: ^/participant, roles: ROLE_PARTICIPANT }
+        - { path: ^/front/reclamations, roles: ROLE_PARTICIPANT }
+        - { path: ^/demandes, roles: ROLE_PARTICIPANT }
+        - { path: ^/shop, roles: ROLE_PARTICIPANT }
+        - { path: ^/front/projet, roles: ROLE_PARTICIPANT }
+        
