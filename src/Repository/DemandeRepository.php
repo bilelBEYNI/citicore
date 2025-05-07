@@ -17,7 +17,23 @@ class DemandeRepository extends ServiceEntityRepository
     }
 
     /**
-     * Récupérer les demandes avec le statut "Acceptée"
+     * Récupérer le nombre de demandes par date (YYYY-MM-DD)
+     *
+     * @return array<int, array{date: string, count: int}>
+     */
+    public function countByDate(): array
+    {
+        return $this->createQueryBuilder('d')
+            // ON EXTRAIT LES 10 PREMIERS CARACTÈRES (YYYY‑MM‑DD) DE LA DATE
+            ->select("SUBSTRING(d.dateDemande, 1, 10) AS date, COUNT(d.demandeId) AS count")
+            ->groupBy('date')
+            ->orderBy('date', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Récupérer les demandes acceptées
      *
      * @return Demande[]
      */
@@ -30,27 +46,17 @@ class DemandeRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Compter les demandes par statut
+     *
+     * @return array<int, array{statut: string, count: int}>
+     */
     public function countByStatut(): array
     {
-        $qb = $this->createQueryBuilder('d')
-            ->select('d.statut, COUNT(d.demandeId) AS count')  // Correction du nom de la colonne
+        return $this->createQueryBuilder('d')
+            ->select('d.statut AS statut, COUNT(d.demandeId) AS count')
             ->groupBy('d.statut')
-            ->getQuery();
-
-        $result = $qb->getResult();
-
-        // Transformer les résultats en un tableau associatif pour une utilisation facile
-        $countByStatut = [
-            'Acceptée' => 0,
-            'En attente' => 0,
-            'Refusée' => 0,
-        ];
-
-        foreach ($result as $row) {
-            $countByStatut[$row['statut']] = (int) $row['count'];
-        }
-
-        return $countByStatut;
+            ->getQuery()
+            ->getArrayResult();
     }
-    
 }

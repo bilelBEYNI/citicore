@@ -26,6 +26,9 @@ class Evenement
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $lieu_evenement = null;
 
+    #[ORM\Column(type: "integer")]
+    private int $organisateur_id;
+
     // Getters and Setters
 
     public function getId_Evenement(): ?int
@@ -113,4 +116,15 @@ public function getDateEvenement(): ?\DateTimeInterface
         $this->lieu_evenement = $lieu_evenement;
         return $this;
     }
+    public function getOrganisateurId(): int
+{
+    return $this->organisateur_id;
+}
+
+public function setOrganisateurId(int $organisateur_id): self
+{
+    $this->organisateur_id = $organisateur_id;
+    return $this;
+}
+
 }

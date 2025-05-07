@@ -1,15 +1,14 @@
 <?php
 
 namespace App\Controller\EvenementController;
- 
+
 use App\Service\EventImageGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\EvenementRepository;
 use App\Repository\CategorieRepository;
-use OpenAI\OpenAI;
-use Psr\Cache\CacheItemPoolInterface;
 
 final class FrontEvenementController extends AbstractController
 {
@@ -17,12 +16,24 @@ final class FrontEvenementController extends AbstractController
     public function front(
         EventImageGenerator $eventImageGenerator, 
         EvenementRepository $evenementRepository,
-        CategorieRepository $categorieRepository
+        CategorieRepository $categorieRepository,
+        Request $request
     ): Response
     {
-        $evenements = $evenementRepository->findBy([], ['date_evenement' => 'ASC']);
+        // Récupération de la catégorie sélectionnée dans les paramètres de la requête
+        $categorieId = $request->query->get('categorie');
+
+        // Récupération des événements filtrés par catégorie si nécessaire
+        if ($categorieId) {
+            $evenements = $evenementRepository->findBy(['categorie' => $categorieId], ['date_evenement' => 'ASC']);
+        } else {
+            $evenements = $evenementRepository->findBy([], ['date_evenement' => 'ASC']);
+        }
+
+        // Récupération de toutes les catégories
         $categories = $categorieRepository->findAll();
         
+        // Création de la liste des événements avec images
         $evenementsAvecImages = [];
         foreach ($evenements as $event) {
             $imagePath = $eventImageGenerator->generate($event->getNomEvenement());
@@ -35,6 +46,7 @@ final class FrontEvenementController extends AbstractController
         return $this->render('Front/evenement/FRONTevenement.html.twig', [
             'evenementsAvecImages' => $evenementsAvecImages,
             'categories' => $categories,
+            'currentCategorieId' => $categorieId, // Passer l'ID de la catégorie sélectionnée
         ]);
     }
 
@@ -68,7 +80,8 @@ final class FrontEvenementController extends AbstractController
     public function afficherEvenements(
         EventImageGenerator $imageGenerator,
         EvenementRepository $evenementRepository
-    ): Response {
+    ): Response
+    {
         // Récupère tous les événements
         $evenements = $evenementRepository->findAll();
 
@@ -87,4 +100,33 @@ final class FrontEvenementController extends AbstractController
             'evenementsAvecImages' => $evenementsAvecImages,
         ]);
     }
+    #[Route('/evenements/filtrer', name: 'app_evenement_filtrer')]
+public function filterByCategory(Request $request, EvenementRepository $evenementRepository): Response
+{
+    // Récupérer l'ID de la catégorie sélectionnée
+    $categorieId = $request->query->get('categorieId');
+    
+    // Récupérer les événements filtrés par catégorie
+    $evenements = $categorieId ? 
+        $evenementRepository->findBy(['categorie' => $categorieId], ['date_evenement' => 'ASC']) :
+        $evenementRepository->findBy([], ['date_evenement' => 'ASC']); // Tous les événements
+
+    $evenementsAvecImages = [];
+    foreach ($evenements as $event) {
+        // Génère ou récupère l'image de l'événement
+        $imagePath = '/uploads/events/' . $event->getNomEvenement() . '.jpg'; // Adapte à ton générateur d'image
+        $evenementsAvecImages[] = [
+            'title'       => $event->getNomEvenement(),
+            'start'       => $event->getDateEvenement()->format('d/m/Y H:i'),
+            'lieu'        => $event->getLieuEvenement(),
+            'categorie'   => $event->getCategorie() ? $event->getCategorie()->getNomCategorie() : 'Aucune',
+            'description' => $event->getDescriptionEvenement(),
+            'imageUrl'    => $imagePath,
+            'url'         => $this->generateUrl('app_evenement_show', ['id' => $event->getId_Evenement()])
+        ];
+    }
+
+    return $this->json($evenementsAvecImages);
+}
+
 }

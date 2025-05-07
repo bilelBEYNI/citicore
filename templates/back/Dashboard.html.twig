@@ -47,32 +47,14 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <div class="sb-sidenav-menu-heading">Core</div>
+                        <div class="sb-sidenav-menu-heading">CitiCore</div>
                         <a class="nav-link" href="index.html">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
-                        <div class="sb-sidenav-menu-heading">Interface</div>
-                        <a class="nav-link collapsed" href="" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                            layout
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <a class="nav-link" href="">
-                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                            InterfaceClient
-                        </a>
-                        <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="layout-static.html">Static Navigation</a>
-                                <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
-                            </nav>
-                        </div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Pages
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
+                        
+                      
+                    
                         <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
@@ -99,7 +81,7 @@
                                 </div>
                             </nav>
                         </div>
-                        <div class="sb-sidenav-menu-heading">Addons</div>
+                        <div class="sb-sidenav-menu-heading">Espace Admin</div>
 
                         <!-- GESTION UTILISATEURS -->
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers">
@@ -115,10 +97,23 @@
                         </div>
                         
                         <!-- GESTION EVENEMENT -->
-                        <a class="nav-link" href="{{ path('app_evenement_index') }}">
+                       
+
+                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseEvenement" aria-expanded="false" aria-controls="collapseEvenement">
                             <div class="sb-nav-link-icon"><i class="fas fa-calendar-alt"></i></div>
                             Gestion Événement
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
+                        <div class="collapse" id="collapseEvenement" aria-labelledby="headingUsers" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="{{ path('app_evenement_index') }}">Liste des evenements</a>
+                                <a class="nav-link" href="{{ path('app_categorie_index') }}">Liste des categories</a>
+                                <a class="nav-link" href="{{ path('Organisateur_evenement') }}">Mes événements</a>
+
+    
+                            </nav>
+                        </div>
+
                         
                         <!-- GESTION COMMUNICATION -->
                         <a class="nav-link" href="{{ path('app_demande_index') }}">

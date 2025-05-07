@@ -15,7 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Repository\CategorieRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Service\NotificationService;
-
+use App\Repository\UtilisateurRepository;
 class EvenementController extends AbstractController
 { 
     #[Route('/dashboard/evenement', name: 'app_evenement_index')]
@@ -56,7 +56,8 @@ class EvenementController extends AbstractController
         // Calculer les statistiques
         $totalEvenements = $evenementRepository->count([]);
         $totalCategories = $categorieRepository->count([]);
-
+        $user = $this->getUser();
+        $cin = $user->getCin();
         // Passer les données à la vue
         return $this->render('back/Evenement/Evenement.html.twig', [
             'evenements' => $pagination,
@@ -66,6 +67,7 @@ class EvenementController extends AbstractController
             'currentLieu' => $lieu,
             'currentSort' => $sort,
             'currentDirection' => $direction,
+            'cin' => $cin
         ]);
     }
 
@@ -107,32 +109,41 @@ class EvenementController extends AbstractController
     }
 
     #[Route('/dashboard/evenement/ajouter', name: 'app_evenement_new')]
-    public function add(Request $request, EntityManagerInterface $em, NotificationService $notificationService): Response
-    {
-        $evenement = new Evenement();
-        $form = $this->createForm(EvenementType::class, $evenement);
+public function add(Request $request, EntityManagerInterface $em, NotificationService $notificationService): Response
+{
+    $evenement = new Evenement();
+    $form = $this->createForm(EvenementType::class, $evenement);
 
-        $form->handleRequest($request);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($evenement);
-            $em->flush();
+    if ($form->isSubmitted() && $form->isValid()) {
+        // 🔴 Récupération de l'utilisateur connecté
+        $user = $this->getUser();
+        $cin = $user->getCin(); // Assure-toi que tu as un getter pour le CIN
+        // 🔵 Si tu stockes l'objet Utilisateur dans l'événement
+        $evenement->setOrganisateurId($cin); // Assure-toi que c'est bien une relation ManyToOne
 
-            // Send push notification
-            $notificationService->sendNewEventNotification(
-                $evenement->getNomEvenement(),
-                $evenement->getDateEvenement() ? $evenement->getDateEvenement()->format('Y-m-d H:i:s') : 'Date non définie',
-                $evenement->getLieuEvenement()
-            );
+        
 
-            $this->addFlash('success', 'Événement ajouté avec succès.');
-            return $this->redirectToRoute('app_evenement_index');
-        }
+        $em->persist($evenement);
+        $em->flush();
 
-        return $this->render('back/evenement/addEvenement.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        // Send push notification
+        $notificationService->sendNewEventNotification(
+            $evenement->getNomEvenement(),
+            $evenement->getDateEvenement()?->format('Y-m-d H:i:s') ?? 'Date non définie',
+            $evenement->getLieuEvenement()
+        );
+
+        $this->addFlash('success', 'Événement ajouté avec succès.');
+        return $this->redirectToRoute('app_evenement_index');
     }
+
+    return $this->render('back/evenement/addEvenement.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+
     
     #[Route('/dashboard/evenement/edit/{id}', name: 'app_evenement_edit')]
     public function edit(int $id, EvenementRepository $evenementRepository, Request $request, EntityManagerInterface $entityManager): Response
@@ -165,4 +176,23 @@ class EvenementController extends AbstractController
             'evenement' => $evenement,
         ]);
     }
+
+    #[Route('/dashboard/mesEvenements', name: 'Organisateur_evenement')]
+public function mesEvenements(EvenementRepository $evenementRepo): Response
+{
+    $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+    $user = $this->getUser();
+    $cin = $user->getCin();
+
+    // On suppose que 'organisateur_id' correspond à l'entité Utilisateur, pas un int
+    $evenements = $evenementRepo->findBy(['organisateur_id' => $user]);
+
+    return $this->render('back/Evenement/evenement_by_organisateur.html.twig', [
+        'organisateur' => $user,
+        'evenements' => $evenements,
+    ]);
+}
+
+    
 }

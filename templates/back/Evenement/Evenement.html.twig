@@ -78,7 +78,7 @@
                                     <td>{{ evenement.nomEvenement }}</td>
                                     <td>{{ evenement.dateEvenement ? evenement.dateEvenement|date('Y-m-d H:i') : '' }}</td>
                                     <td>{{ evenement.lieuEvenement }}</td>
-                                    <td>{{ evenement.categorie.nomCategorie }}</td>
+                                    <td>{{ evenement.categorie ? evenement.categorie.nomCategorie : 'Non catégorisé' }}</td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
                                             <a href="{{ path('app_evenement_show', {'id': evenement.id_evenement}) }}" class="btn btn-info btn-sm rounded-pill me-2">

@@ -7,9 +7,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
 
-/**
- * @extends ServiceEntityRepository<Evenement>
- */
 class EvenementRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -26,8 +23,8 @@ class EvenementRepository extends ServiceEntityRepository
 
         // Filtrage par lieu
         if ($lieu) {
-            $qb->andWhere('e.lieu_evenement = :lieu')
-               ->setParameter('lieu', $lieu);
+            $qb->andWhere('e.lieu_evenement LIKE :lieu')
+               ->setParameter('lieu', '%' . $lieu . '%');
         }
 
         // Recherche par nom d'événement
@@ -46,29 +43,5 @@ class EvenementRepository extends ServiceEntityRepository
 
         return $qb;
     }
-
-    //    /**
-    //     * @return Evenement[] Returns an array of Evenement objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('e.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Evenement
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }
+

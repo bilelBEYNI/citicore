@@ -1,0 +1,93 @@
+{# templates/back/Communication/DemandesStats.html.twig #}
+{% extends 'back/Dashboard.html.twig' %}
+
+{% block title %}Stats des Demandes{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4" style="margin-left:300px;">
+  <h1 class="mt-4">Statistiques des Demandes</h1>
+
+  {# ─── Pie Chart par Statut ─── #}
+  <h2 class="mt-4">📊 Répartition Acceptée vs Refusée</h2>
+  <div id="chartByStatutDiv" style="width: 600px; height: 400px;"></div>
+
+  {% if statusFilter %}
+    <h3 class="mt-3">Demandes au statut « {{ statusFilter }} »</h3>
+    <table class="table table-striped">
+      <thead><tr><th>ID</th><th>Contenu</th><th>Date</th></tr></thead>
+      <tbody>
+        {% for d in demandes %}
+          <tr>
+            <td>{{ d.demandeId }}</td>
+            <td>{{ d.contenu }}</td>
+            <td>{{ d.dateDemande|date('Y-m-d') }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="3">Aucune demande</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+  {# ─── Column Chart par Date ─── #}
+  <h2 class="mt-5">📈 Nombre de demandes par date</h2>
+  <div id="chartByDateDiv" style="width: 600px; height: 400px;"></div>
+
+  {% if dateFilter %}
+    <h3 class="mt-3">Demandes du {{ dateFilter }}</h3>
+    <table class="table table-striped">
+      <thead><tr><th>ID</th><th>Contenu</th><th>Statut</th></tr></thead>
+      <tbody>
+        {% for d in demandes %}
+          <tr>
+            <td>{{ d.demandeId }}</td>
+            <td>{{ d.contenu }}</td>
+            <td>{{ d.statut }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="3">Aucune demande</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+
+{# ─── SCRIPTS GOOGLE CHARTS ─── #}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+  // 1) charger la librairie
+  google.charts.load('current', { packages: ['corechart'] });
+  google.charts.setOnLoadCallback(drawAll);
+
+  // données issues de Twig
+  const dataStatut = [
+    ['Statut', 'Nombre'],
+    {% for row in chartByStatutData %}
+      ['{{ row.statut }}', {{ row.count }}]{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+  const dataDate = [
+    ['Date', 'Nombre'],
+    {% for row in chartByDateData %}
+      ['{{ row.date }}', {{ row.count }}]{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  function drawAll() {
+    // Pie Chart Acceptée vs Refusée
+    const pie = new google.visualization.PieChart(document.getElementById('chartByStatutDiv'));
+    pie.draw(google.visualization.arrayToDataTable(dataStatut), {
+      title: 'Demandes Acceptées vs Refusées',
+      legend: { position: 'bottom' }
+    });
+
+    // Column Chart par date
+    const col = new google.visualization.ColumnChart(document.getElementById('chartByDateDiv'));
+    col.draw(google.visualization.arrayToDataTable(dataDate), {
+      title: 'Demandes par date',
+      hAxis: { title: 'Date' },
+      vAxis: { title: 'Nombre' }
+    });
+  }
+</script>
+{% endblock %}

@@ -28,10 +28,16 @@ security:
 
     access_control:
         - { path: ^/login, roles: PUBLIC_ACCESS }
-
+        - { path: ^/demandes/export/pdf, roles: ROLE_ADMIN }
+        - { path: ^/demandes/80/update-status, roles: ROLE_ADMIN }
+        - { path: ^/demandes/\d+/update-status, roles: ROLE_ADMIN }
+        - { path: ^/back/demandes, roles: ROLE_ADMIN }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/demandes/export/pdf, roles: ROLE_ADMIN }
+        - { path: ^/dashboard/mesEvenements, roles: ROLE_ADMIN }
 
+        
+        - { path: ^/evenements, roles: ROLE_PARTICIPANT }
         - { path: ^/participant, roles: ROLE_PARTICIPANT }
         - { path: ^/front/reclamations, roles: ROLE_PARTICIPANT }
         - { path: ^/demandes, roles: ROLE_PARTICIPANT }

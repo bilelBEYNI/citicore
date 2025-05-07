@@ -1,0 +1,21 @@
+/* Animation pour faire glisser les cartes */
+.event-card {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.5s ease-in-out;
+  }
+  
+  .event-card.wow.fadeInUp {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Animation d'agrandissement des images lors du survol */
+  .event-image {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .event-image:hover {
+    transform: scale(1.1);
+  }
+  

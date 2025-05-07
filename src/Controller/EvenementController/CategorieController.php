@@ -154,8 +154,9 @@ class CategorieController extends AbstractController
             $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
 
             try {
+                $imagesDirectory = $this->getParameter('images_directory');
                 $imageFile->move(
-                    $this->getParameter('images_directory'), // Utilise le paramètre défini
+                    $imagesDirectory, // Utilise le paramètre défini
                     $newFilename
                 );
                 $categorie->setImageUrl($newFilename); // Met à jour l'URL de l'image

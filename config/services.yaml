@@ -18,6 +18,7 @@ parameters:
     twilio.sid:   '%env(TWILIO_SID)%'
     twilio.token: '%env(TWILIO_TOKEN)%'
     twilio.from:  '%env(TWILIO_FROM)%'
+    images_directory: '%kernel.project_dir%/public/uploads/events'
     
 services:
     _defaults:

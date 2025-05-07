@@ -80,12 +80,6 @@ class EvenementType extends AbstractType
                         'message' => 'La catégorie est requise'
                     ])
                 ]
-            ])
-            ->add('image', FileType::class, [
-                'label' => 'Image',
-                'required' => false,
-                'mapped' => false,
-                'attr' => ['class' => 'form-control']
             ]);
     }
 

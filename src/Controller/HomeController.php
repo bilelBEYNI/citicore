@@ -51,21 +51,21 @@ final class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/front/reclamations', name: 'Reclamation')]
-    public function indexReclamation(Request $request, ReclamationRepository $reclamationRepository): Response
-    {
-        dump($this->getUser());
-        $this->denyAccessUnlessGranted('ROLE_PARTICIPANT');
-        $user = $this->getUser();
-        $cin = $user->getCin();
+        #[Route('/front/reclamations', name: 'Reclamation')]
+        public function indexReclamation(Request $request, ReclamationRepository $reclamationRepository): Response
+        {
+            dump($this->getUser());
+            $this->denyAccessUnlessGranted('ROLE_PARTICIPANT');
+            $user = $this->getUser();
+            $cin = $user->getCin();
 
-        // Filtre les réclamations par CIN
-        $reclamations = $reclamationRepository->findBy(['Cin_Utilisateur' => $cin]);
+            // Filtre les réclamations par CIN
+            $reclamations = $reclamationRepository->findBy(['Cin_Utilisateur' => $cin]);
 
-        return $this->render('Front/Reclamation/Reclamation/index.html.twig', [
-            'reclamations' => $reclamations,
-        ]);
-    }
+            return $this->render('Front/Reclamation/Reclamation/index.html.twig', [
+                'reclamations' => $reclamations,
+            ]);
+        }
     
     #[Route('/logout', name: 'logout')]
     public function logout(): void

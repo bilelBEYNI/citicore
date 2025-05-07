@@ -10,7 +10,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		
 		<!-- Title -->
-        <title>Mediplus - Free Medical and Doctor Directory HTML Template.</title>
+        <title>CitiCore</title>
 		
 		<!-- Favicon -->
 
@@ -51,7 +51,20 @@
     </head>
     <body>
 	
-		
+		<!-- Zone de notification -->
+    <div id="notification-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+    <style>
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
+
+
         <div class="preloader">
             <div class="loader">
                 <div class="loader-outter"></div>
@@ -90,20 +103,13 @@
 				<div class="container">
 					<div class="row">
 						<div class="col-lg-6 col-md-5 col-12">
-							<!-- Contact -->
-							<ul class="top-link">
-								<li><a href="#">About</a></li>
-								<li><a href="#">Doctors</a></li>
-								<li><a href="#">Contact</a></li>
-								<li><a href="#">FAQ</a></li>
-							</ul>
-							<!-- End Contact -->
+						
 						</div>
 						<div class="col-lg-6 col-md-7 col-12">
 							<!-- Top Contact -->
 							<ul class="top-contact">
 								<li><i class="fa fa-phone"></i>+216-71000200</li>
-								<li><i class="fa fa-envelope"></i><a href="mailto:support@yourmail.com">MohamedAchref.kachai@esprit.tn</a></li>
+								<li><i class="fa fa-envelope"></i><a href="mailto:support@yourmail.com">CitiCorePro@CitiCore.tn</a></li>
 							</ul>
 							<!-- End Top Contact -->
 						</div>
@@ -136,7 +142,7 @@
 									<nav class="navigation">
 										<ul class="nav menu">
 											
-											<li><a href="#">Evenement </a></li>
+											<li><a href="{{ path('app_evenement_front') }}">Evenement </a></li>
 											<li><a href="{{ path('app_shop') }}">Market Place </a></li>
 											<li><a href="{{ path('app_front_projet') }}">Projet Dons </a></li>
 											<li><a href="{{ path('Reclamation') }}">Reclamation </a></li>

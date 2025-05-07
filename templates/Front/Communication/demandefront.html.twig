@@ -9,7 +9,7 @@
     <div class="text-end mb-4">
         <a href="{{ path('app_demande_add_front') }}" class="btn btn-success">Ajouter une Demande</a>
         <a href="{{ path('app_demande_Activités') }}" class="btn btn-success">Afficher mes activités</a>
-
+        
     </div>
 
     <div class="row">
@@ -18,32 +18,23 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Demande #{{ demande.demandeId }}</h5>
-                        <p class="card-text">{{ demande.contenu }}</p>
-                        <p class="card-text"><strong>Statut :</strong> {{ demande.statut }}</p>
-                        <p class="card-text"><strong>Date de la demande :</strong> 
+                        <p class="card-text" data-id="{{ demande.demandeId }}">{{ demande.contenu }}</p>
+                        <p class="card-text statut-text" data-id="{{ demande.demandeId }}"><strong>Statut :</strong> {{ demande.statut }}</p>
+                        <p class="card-text date-text" data-id="{{ demande.demandeId }}"><strong>Date de la demande :</strong> 
                             {{ demande.dateDemande ? demande.dateDemande|date('Y-m-d') : 'Non spécifiée' }}
                         </p>
                     </div>
-
-                    <div class="card-footer d-flex justify-content-between align-items-center">
-                        <a href="{{ path('avis_new', { id: demande.demandeId }) }}" class="btn btn-primary">Ajouter Un Avis</a>
-                        <a href="{{ path('demande_avis', { id: demande.demandeId }) }}" class="btn btn-info">
-                            <i class="fas fa-eye"></i>
-                        </a>
-                    </div>
-
-                    <div class="card mt-4" style="background-color: #1e293b; border: none;">
+                    <div class="card mt-4" style="background-color: #343A40; border: none;">
                         <div class="card-body p-3">
-                            <h5 class="card-title text-white">QR Code pour Demande #{{ demande.demandeId }}</h5>
-                            <p>Scannez ce QR code pour voir les détails de cette demande.</p>
                             
-                            {# QR code container with unique ID #}
+                            <p>Scannez ce QR code pour voir les détails de cette demande.</p>
+
                             <div id="qrcode-{{ demande.demandeId }}" class="my-3" style="max-width: 200px;"></div>
 
-                            {# Include QRCode.js library #}
-                            <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-                            
-                            {# Generate the QR code #}
+                            <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+                                integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA=="
+                                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
                                     var qrContainerId = "qrcode-{{ demande.demandeId }}";
@@ -51,7 +42,6 @@
                                                  "Contenu de la demande: {{ demande.contenu }}\n" +
                                                  "Date de la demande: {{ demande.dateDemande|date('Y-m-d') }}";
 
-                                    // Generate QR code for this demande
                                     new QRCode(document.getElementById(qrContainerId), {
                                         text: qrText,
                                         width: 200,
@@ -64,9 +54,115 @@
                             </script>
                         </div>
                     </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <a href="{{ path('avis_new', { id: demande.demandeId }) }}" class="btn btn-primary">Ajouter Un Avis</a>
+                        <a href="{{ path('demande_avis', { id: demande.demandeId }) }}" class="btn btn-info">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <button class="btn btn-secondary translate-content" data-id="{{ demande.demandeId }}">Traduire</button>
+                    </div>
+
+                    
                 </div>
             </div>
         {% endfor %}
     </div>
 </div>
+
+{# Script pour le bouton de traduction #}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const translateButtons = document.querySelectorAll('.translate-content');
+
+        translateButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const demandeId = this.getAttribute('data-id');
+                const contentElement = document.querySelector(`.card-text[data-id="${demandeId}"]`);
+                const statutElement = document.querySelector(`.statut-text[data-id="${demandeId}"]`);
+                const dateElement = document.querySelector(`.date-text[data-id="${demandeId}"]`);
+
+                // Vérifiez si le texte original est déjà stocké
+                if (!contentElement.hasAttribute('data-original')) {
+                    // Stockez le texte original en français
+                    contentElement.setAttribute('data-original', contentElement.textContent);
+                    statutElement.setAttribute('data-original', statutElement.textContent);
+                    dateElement.setAttribute('data-original', dateElement.innerHTML);
+
+                    // Traduisez le contenu en anglais
+                    const originalContent = contentElement.textContent;
+                    fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(originalContent)}&langpair=fr|en`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.responseData && data.responseData.translatedText) {
+                                contentElement.textContent = data.responseData.translatedText;
+                            } else {
+                                alert('Erreur lors de la traduction du contenu.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            alert('Erreur lors de la traduction du contenu.');
+                        });
+
+                    // Traduisez le statut en anglais
+                    const originalStatut = statutElement.textContent.replace('Statut :', '').trim();
+                    fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(originalStatut)}&langpair=fr|en`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.responseData && data.responseData.translatedText) {
+                                statutElement.innerHTML = `<strong>Statut :</strong> ${data.responseData.translatedText}`;
+                                button.textContent = 'Revenir en français'; // Changez le texte du bouton
+                            } else {
+                                alert('Erreur lors de la traduction du statut.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            alert('Erreur lors de la traduction du statut.');
+                        });
+
+                    // Traduisez la date en anglais
+                    const originalDate = dateElement.textContent.replace('Date de la demande :', '').trim();
+                    dateElement.innerHTML = `<strong>Request Date :</strong> ${originalDate}`;
+                } else {
+                    // Basculez entre le texte traduit et le texte original
+                    const originalContent = contentElement.getAttribute('data-original');
+                    const originalStatut = statutElement.getAttribute('data-original');
+                    const originalDate = dateElement.getAttribute('data-original');
+
+                    if (contentElement.textContent !== originalContent) {
+                        // Revenez au texte original
+                        contentElement.textContent = originalContent;
+                        statutElement.innerHTML = originalStatut;
+                        dateElement.innerHTML = originalDate;
+                        button.textContent = 'Traduire'; // Changez le texte du bouton
+                    } else {
+                        // Traduisez à nouveau en anglais
+                        const originalContent = contentElement.getAttribute('data-original');
+                        fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(originalContent)}&langpair=fr|en`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.responseData && data.responseData.translatedText) {
+                                    contentElement.textContent = data.responseData.translatedText;
+                                    button.textContent = 'Revenir en français'; // Changez le texte du bouton
+                                }
+                            });
+
+                        const originalStatut = statutElement.getAttribute('data-original').replace('Statut :', '').trim();
+                        fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(originalStatut)}&langpair=fr|en`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.responseData && data.responseData.translatedText) {
+                                    statutElement.innerHTML = `<strong>Statut :</strong> ${data.responseData.translatedText}`;
+                                }
+                            });
+
+                        const originalDate = dateElement.getAttribute('data-original').replace('Date de la demande :', '').trim();
+                        dateElement.innerHTML = `<strong>Request Date :</strong> ${originalDate}`;
+                    }
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
